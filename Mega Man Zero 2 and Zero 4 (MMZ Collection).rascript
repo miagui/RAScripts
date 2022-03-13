@@ -43,6 +43,7 @@ function mmz2_game_context() => word(0x13f190)
 
 function mmz2_state() => word(0x13f410)
          mmz2_state_playing = 0x0400
+         mmz2_state_gameover = 0x0800
 
 function mmz2_screen_overlay() => word(0x13f412)
          mmz2_no_overlay = 0x0000
@@ -77,6 +78,8 @@ function mmz2_boss_hp() => byte(tbyte(0x13d740) + 0xb4)
 function mmz2_level_progress() => byte(0x13d88c)
 function mmz2_eighty_six_flag() => byte(0x13d6b9) >= 0x56 && byte(0x13d6b9) < 0x80
 function mmz2_rank_a() => byte(0x14729d) == 5 || byte(0x14729d) == 6
+
+function mmz2_stage_finished_flags() => byte(0x1472b0)
 function mmz2_text_pointer() => tbyte(0x13e83c)
 
 mmz2_missions = {
@@ -208,7 +211,7 @@ mmz2_achiev_clear_mission("Residential Area", "Operation Righteous Strike", 5)
 mmz2_achiev_clear_mission("Temple of Flame", "Melt Down", 5)
 mmz2_achiev_clear_mission("Temple of Ice", "Cool Hearted Fellow", 5)
 mmz2_achiev_clear_mission("Temple of Wind", "The Cloudy Stone", 5)
-mmz2_achiev_clear_mission("Yggdrasil", "In Mother's Light", 10)
+// mmz2_achiev_clear_mission("Yggdrasil", "In Mother's Light", 10)
 
 //=======================================
 //============== 86 POINTS ==============
@@ -276,13 +279,13 @@ mmz2_achiev_damageless_boss("[MMZ2] Golem Type I", "Ice Golem", 5, "Residential 
 mmz2_achiev_damageless_boss("[MMZ2] The Wind God of Pincer Attacks", "Kuwagust Anchus", 10, "Bombardment Aircraft", 12, 13)
 
 mmz2_achiev_damageless_boss_artwork("[MMZ2] Guardian in the Tree's Shadow", "Burble Hekelot", 10, 12)
-mmz2_achiev_damageless_boss("[MMZ2] Ocean Goddess of the Blue Sea", "Fairy Leviathan", 10, "Computer Zone 2", 2, 3)
-mmz2_achiev_damageless_boss("[MMZ2] Bright Green Slash Attacks", "Sage Harpuia", 10, "Crystal Cave", 4, 7)
-mmz2_achiev_damageless_boss("[MMZ2] Crimson Strong Arm", "Fighting Fefnir", 10, "Shuttle Factory", 2, 3)
-mmz2_achiev_damageless_boss("[MMZ2] Nightmare of the Sky Bridge", "Rainbow Devil MK.II", 10, "Neo Arcadia Entrance", 2, 3)
-mmz2_achiev_damageless_boss("[MMZ2] Fefnir Armed Phenomenon", "Fefnir Armed Phenomenon Transformation", 10, "Temple of Flame", 3, 5)
-mmz2_achiev_damageless_boss("[MMZ2] Leviathan Armed Phenomenon", "Leviathan Armed Phenomenon Transformation", 10, "Temple of Ice", 3, 5)
-mmz2_achiev_damageless_boss("[MMZ2] Harpuia Armed Phenomenon", "Harpuia Armed Phenomenon Transformation", 10, "Temple of Wind", 2, 4)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] Ocean Goddess of the Blue Sea", "Fairy Leviathan", 10, 16)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] Bright Green Slash Attacks", "Sage Harpuia", 10, 14)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] Crimson Strong Arm", "Fighting Fefnir", 10, 15)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] Nightmare of the Sky Bridge", "Rainbow Devil MK.II", 10, 13)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] Fefnir Armed Phenomenon", "Fefnir Armed Phenomenon Transformation", 10, 18)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] Leviathan Armed Phenomenon", "Leviathan Armed Phenomenon Transformation", 10, 19)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] Harpuia Armed Phenomenon", "Harpuia Armed Phenomenon Transformation", 10, 17)
 
 achievement("[MMZ2] The Lightning Beetle and The Wind God", "Defeat Herculious Anchus and Kuwagust Anchus without taking damage and without using EX Skills at Rank A or higher", 25, 
             trigger =   playing_mmz2() &&
@@ -292,8 +295,19 @@ achievement("[MMZ2] The Lightning Beetle and The Wind God", "Defeat Herculious A
                         mmz2_rank_a() &&
                         mmz2_no_ex_skill())
 
-mmz2_achiev_damageless_boss("[MMZ2] Supreme Ruler", "Elpizo First Form", 10, "Yggdrasil", 12, 14)
-mmz2_achiev_damageless_boss("[MMZ2] The Last - The Wish Punished", "Elpizo Final Form", 25, "Yggdrasil", 15, 16)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] Supreme Ruler", "Elpizo First Form", 10, 20)
+mmz2_achiev_damageless_boss_artwork("[MMZ2] The Last - The Wish Punished", "Elpizo Final Form", 25, 21)
+
+// Old Logic
+// mmz2_achiev_damageless_boss("[MMZ2] Ocean Goddess of the Blue Sea", "Fairy Leviathan", 10, "Computer Zone 2", 2, 3)
+// mmz2_achiev_damageless_boss("[MMZ2] Bright Green Slash Attacks", "Sage Harpuia", 10, "Crystal Cave", 4, 7)
+// mmz2_achiev_damageless_boss("[MMZ2] Crimson Strong Arm", "Fighting Fefnir", 10, "Shuttle Factory", 2, 3)
+// mmz2_achiev_damageless_boss("[MMZ2] Nightmare of the Sky Bridge", "Rainbow Devil MK.II", 10, "Neo Arcadia Entrance", 2, 3)
+// mmz2_achiev_damageless_boss("[MMZ2] Fefnir Armed Phenomenon", "Fefnir Armed Phenomenon Transformation", 10, "Temple of Flame", 3, 5)
+// mmz2_achiev_damageless_boss("[MMZ2] Leviathan Armed Phenomenon", "Leviathan Armed Phenomenon Transformation", 10, "Temple of Ice", 3, 5)
+// mmz2_achiev_damageless_boss("[MMZ2] Harpuia Armed Phenomenon", "Harpuia Armed Phenomenon Transformation", 10, "Temple of Wind", 2, 4)
+// mmz2_achiev_damageless_boss("[MMZ2] Supreme Ruler", "Elpizo First Form", 10, "Yggdrasil", 12, 14)
+// mmz2_achiev_damageless_boss("[MMZ2] The Last - The Wish Punished", "Elpizo Final Form", 25, "Yggdrasil", 15, 16)
 
 
 //=======================================
@@ -333,8 +347,8 @@ achievement("[MMZ2] DownloadMoreHP.com", "Upgrade your life bar to the maximum p
                         ((byte(0x14c432) == 1 && prev(byte(0x14c432)) == 0 && byte(0x14c42d) == 32) ||
                         (byte(0x14c432) == 1 && byte(0x14c42d) == 32 && prev(byte(0x14c42d)) == 28)))
 
-achievement("[MMZ2] Red Bull in 23XX", "Collect all Sub-Tanks 2", 10, 
-            trigger =   playing_mmz2() && measured(mmz2_all_sub_tanks() == 4, playing_mmz2()) && prev(mmz2_all_sub_tanks()) == 3)
+achievement("[MMZ2] Red Bull in 23XX", "Collect all Sub Tanks", 10, 
+            trigger =   playing_mmz2() && measured(mmz2_all_sub_tanks() == 4, playing_mmz2()) && prev(mmz2_all_sub_tanks()) == 3, id = 201209)
 
 achievement("[MMZ2] Armed to the Teeth", "Obtain all EX Skills", 25, 
             trigger =   playing_mmz2() && measured(mmz2_all_ex_skills() == 10, playing_mmz2()) && prev(mmz2_all_ex_skills()) == 9)
@@ -342,7 +356,7 @@ achievement("[MMZ2] Armed to the Teeth", "Obtain all EX Skills", 25,
 achievement("[MMZ2] What Will I Dress Up for Today?", "Obtain all forms", 25, 
             trigger =   playing_mmz2() && measured(mmz2_all_forms() == 10, playing_mmz2()) && prev(mmz2_all_forms()) == 9)
 
-achievement("[MMZ2] Elf Hunt", "Collect all Cyber-elves", 25, 
+achievement("[MMZ2] Elf Hunt [m]", "Collect all Cyber-elves", 25, 
             trigger =   playing_mmz2() && measured(mmz2_all_cyber_elves() == 81, playing_mmz2()) && prev(mmz2_all_cyber_elves()) == 80)
 
 
@@ -350,7 +364,7 @@ achievement("[MMZ2] Elf Hunt", "Collect all Cyber-elves", 25,
 //============ ENTIRE GAME CHALLENGES =============
 //=================================================
 
-achievement("[MMZ2] Godspeed", "Beat the game under 45 minutes (New Game+ not allowed)", 25, 
+achievement("[MMZ2] Godspeed", "Beat the game under 45 minutes IGT", 25, 
             trigger =   playing_mmz2() &&
                         mmz2_state() == mmz2_state_playing &&
                         mmz2_screen_overlay() == mmz2_no_overlay &&
@@ -363,13 +377,15 @@ achievement("[MMZ2] Master", "Beat the game on Hard mode", 50,
                         mmz2_diff() == hard_mode &&
                         mmz2_cleared("Yggdrasil"))
 
-achievement("[MMZ2] Strong Will", "Beat the game without dying (one session)", 50, 
+achievement("[MMZ2] Strong Will", "Beat the game without dying (One Session/New Game+ Allowed)", 50, 
             trigger =   playing_mmz2() &&
                         mmz2_state() == mmz2_state_playing &&
                         once(mmz2_mission() == mmz2_missions["Sand Wilderness"] &&
+                             mmz2_stage_finished_flags() == 0 &&
                              mmz2_level_progress() == 1 &&
                              prev(mmz2_level_progress()) == 0) &&
                         never(mmz2_lives() < prev(mmz2_lives())) &&
+                        never(mmz2_state() == mmz2_state_gameover) &&
                         never(mmz2_game_context() == mmz2_ctx_title_screen) &&
                         trigger_when(mmz2_cleared("Yggdrasil")))
 
@@ -377,7 +393,7 @@ achievement("[MMZ2] Strong Will", "Beat the game without dying (one session)", 5
 //============= LEADERBOARD =============
 //=======================================
 
-leaderboard("[MMZ2] Normal Speedrun", "Finish Mega Man Zero 2 the fastest as possible on Normal mode", 
+leaderboard("[MMZ2] Speedrun - Normal", "Fastest in game time - Normal", 
             playing_mmz2() && mmz2_game_context() == mmz2_ctx_playing && mmz2_screen_overlay() == mmz2_no_overlay && mmz2_state() == mmz2_state_playing && mmz2_diff() == norm_mode,
             (playing_mmz2() && mmz2_game_context() == mmz2_ctx_title_screen) || (game_sel() != sel_mmz2), 
             playing_mmz2() && mmz2_cleared("Yggdrasil"), 
@@ -385,14 +401,13 @@ leaderboard("[MMZ2] Normal Speedrun", "Finish Mega Man Zero 2 the fastest as pos
             format="FRAMES", lower_is_better=true, id=20
             )
 
-leaderboard("[MMZ2] Hard Speedrun", "Finish Mega Man Zero 2 the fastest as possible on Hard mode", 
+leaderboard("[MMZ2] Speedrun - Hard", "Fastest in game time - Hard", 
             playing_mmz2() && mmz2_game_context() == mmz2_ctx_playing && mmz2_screen_overlay() == mmz2_no_overlay && mmz2_state() == mmz2_state_playing && mmz2_diff() == hard_mode,
             (playing_mmz2() && mmz2_game_context() == mmz2_ctx_title_screen) || (game_sel() != sel_mmz2), 
             playing_mmz2() && mmz2_cleared("Yggdrasil"), 
             mmz2_igt(), 
             format="FRAMES", lower_is_better=true, id=21
             )
-
 
 
 
@@ -414,6 +429,7 @@ function mmz4_game_context() => word(0x145050)
 // Using as 16 bits to make use of the complementary game state next to it.
 function mmz4_state() => word(0x1452d4)
          mmz4_state_playing = 0x0400
+         mmz4_state_gameover = 0x0900
          mmz4_state_saveload = 0x0205
          mmz4_state_database = 0x0206
          mmz4_mg_plant_panic = 0x0007
@@ -483,7 +499,7 @@ function mmz4_elf_name() => byte(0x14cb09)
          mmz4_elf_croire = 0x03
          mmz4_elf_nouvelle = 0x04
          mmz4_elf_recrue = 0x05
-function mmz4_elf_level() => byte(0x14cb08)
+function mmz4_elf_level() => byte(0x14cb04)
 
 // Mission/Stage
 function mmz4_mission() => byte(0x143528)
@@ -492,6 +508,7 @@ function mmz4_weather_flag() => byte(0x141eb4)
 function mmz4_level_progress() => byte(0x14352a)
 function mmz4_eighty_six_flag() => byte(0x1434d5) >= 0x56 && byte(0x1434d5) < 0x80
 function mmz4_rank_a() => byte(0x14817d) == 5 || byte(0x14817d) == 6
+function mmz4_stage_finished_flags() => byte(0x14818c)
 
 mmz4_missions = {
    "Caravan Chase": 1,
@@ -602,9 +619,9 @@ mmz4_achiev_clear_mission("Living City", "Blackheart Beat", 5)
 mmz4_achiev_clear_mission("Area Zero Invasion", "Showdown", 5)
 mmz4_achiev_clear_mission("The Prison", "Neige's Rescue", 5)
 mmz4_achiev_clear_mission("Ragnarok Control Center", "Commander's Redemption", 5)
-mmz4_achiev_clear_mission("Teleporter Base", "Unprotected Transporter", 5)
-mmz4_achiev_clear_mission("Teleporter Circuit", "Ragnarok's Security System Shutdown", 5)
-mmz4_achiev_clear_mission("Ragnarok Core", "Now I Know What I'm Fighting For...", 10)
+//mmz4_achiev_clear_mission("Teleporter Base", "Unprotected Transporter", 5)
+//mmz4_achiev_clear_mission("Teleporter Circuit", "Ragnarok's Security System Shutdown", 5)
+//mmz4_achiev_clear_mission("Ragnarok Core", "Now I Know What I'm Fighting For...", 10)
 
 //=======================================
 //============== 86 POINTS ==============
@@ -753,19 +770,19 @@ achievement ("[MMZ4] Body Crafter", "Craft all body chips", 10,
 achievement("[MMZ4] Foot Crafter", "Craft all foot chips", 10,
             trigger = playing_mmz4() && measured(all_foot() == 7, playing_mmz4()) && prev(all_foot()) == 6)
 
-achievement("[MMZ4] Minecraft", "Craft all recipes", 10,
+achievement("[MMZ4] Minecraft [m]", "Craft all recipes", 10,
             trigger = playing_mmz4() && measured(all_recipes() == 28, playing_mmz4()) && prev(all_recipes()) == 27)
 
-achievement("[MMZ4] Energy Drink", "Collect all sub tanks 2", 10,
+achievement("[MMZ4] Energy Drink", "Collect all Sub Tanks", 10,
             trigger = playing_mmz4() && 
                     (mmz4_sub_total_one() ||
                     mmz4_sub_total_two() ||
                     mmz4_sub_total_three() ||
-                    mmz4_sub_total_four()))
+                    mmz4_sub_total_four()), id = 201271)
 
-achievement("[MMZ4] I've Been Through So Many Weathers Now...", "Obtain all EX Skills", 25,
-            trigger = playing_mmz4() &&
-                    measured(mmz4_all_ex_skills() == 8, playing_mmz4()) && prev(mmz4_all_ex_skills()) == 7)
+// achievement("[MMZ4] I've Been Through So Many Weathers Now...", "Obtain all EX Skills", 25,
+//             trigger = playing_mmz4() &&
+//                     measured(mmz4_all_ex_skills() == 8, playing_mmz4()) && prev(mmz4_all_ex_skills()) == 7)
           
 function mmz4_achiev_unlock_stuff(title, desc, points, minigame_mem, minigame_value) {
     achievement(title, desc, points,
@@ -776,12 +793,12 @@ function mmz4_achiev_unlock_stuff(title, desc, points, minigame_mem, minigame_va
                 )
 }
 
-mmz4_achiev_unlock_stuff("[MMZ4] Upgraded Collector", "Unlock Ultimate Mode", 25, mmz4_unlocked_ultimate_mode, 0x38)
+mmz4_achiev_unlock_stuff("[MMZ4] Upgraded Collector [m]", "Unlock Ultimate Mode", 25, mmz4_unlocked_ultimate_mode, 0x38)
 mmz4_achiev_unlock_stuff("[MMZ4] Minimalist Cyber Elf", "Unlock the Plant Panic mini game", 25, mmz4_unlocked_plant_panic, 0x3e)
 mmz4_achiev_unlock_stuff("[MMZ4] Hard Mode", "Unlock the Busy Basket mini game", 25, mmz4_unlocked_busy_basket, 0x44)
 mmz4_achiev_unlock_stuff("[MMZ4] Rank S Reploid", "Unlock the Lumberjack mini game", 50, mmz4_unlocked_lumberjack, 0x4a)
-mmz4_achiev_unlock_stuff("[MMZ4] Knowledge for the Life Time ", "Unlock the Lava Surf mini game", 10, mmz4_unlocked_lava_surf, 0x50)
-mmz4_achiev_unlock_stuff("[MMZ4] What Are Recipes?", "Unlock the Elf Chase mini game", 25, mmz4_unlocked_elf_chase, 0x56)
+mmz4_achiev_unlock_stuff("[MMZ4] Knowledge for the Life Time [m]", "Unlock the Lava Surf mini game", 10, mmz4_unlocked_lava_surf, 0x50)
+mmz4_achiev_unlock_stuff("[MMZ4] What Are Recipes? [m]", "Unlock the Elf Chase mini game", 25, mmz4_unlocked_elf_chase, 0x56)
 mmz4_achiev_unlock_stuff("[MMZ4] Running to Save the Humanity", "Unlock the Slam Harvest mini game", 25, mmz4_unlocked_slam_harvest, 0x5c)
 mmz4_achiev_unlock_stuff("[MMZ4] Mini Games Enjoyer", "Unlock the Energy Lab mini game", 10, mmz4_unlocked_energy_lab, 0x61)
 
@@ -836,29 +853,31 @@ achievement("[MMZ4] Columns", "Reach 200 score or higher on Energy Lab mini game
 achievement("[MMZ4] Overpowered Elf", "Beat the game on Ultimate Mode", 25, 
             trigger =   playing_mmz4() &&
                         mmz4_cleared(mmz4_missions["Ragnarok Core"]) &&
-                        mmz4_diff() == mmz4_unlocked_ultimate_mode)
+                        mmz4_diff() == ulti_mode)
 
-achievement("[MMZ4] Nothing Beats", "Beat the game without dying (one session, Easy Mode not allowed)", 50, 
+achievement("[MMZ4] Nothing Beats", "Beat the game without dying (One Session, Easy Mode not allowed)", 50, 
             trigger =   playing_mmz4() &&
                         once(mmz4_mission() == mmz4_missions["Caravan Chase"] &&
-                             mmz4_igt() == 1 && 
-                             prev(mmz4_igt()) == 0) &&
+                             mmz4_stage_finished_flags() == 0 &&
+                             mmz4_level_progress() == 3 && 
+                             prev(mmz4_level_progress()) == 2) &&
                         never(mmz4_lives() < prev(mmz4_lives())) &&
+                        never(mmz4_state() == mmz4_state_gameover) &&
                         never(mmz4_diff() == easy_mode) &&
                         never(mmz4_game_context() == mmz4_ctx_title_screen) &&
                         trigger_when(mmz4_cleared(mmz4_missions["Ragnarok Core"]))
             )
 
-achievement("[Z Collection] I Only Care About the Story, Okay!?", "[Z Collection] Beat Easy Scenario", 50, 
+achievement("[Z Collection] I Only Care About the Story, Okay!?", "Finish Easy Scenario", 50, 
             trigger =   game_sel() == sel_scenario &&
-                        current_game() != game_mmz4 &&
+                        current_game() == game_mmz4 &&
                         mmz4_cleared(mmz4_missions["Ragnarok Core"]))
 
 //=======================================
 //============= LEADERBOARD =============
 //=======================================
 
-leaderboard("[MMZ4] Normal Speedrun", "Finish Mega Man Zero 4 the fastest as possible on Normal mode", 
+leaderboard("[MMZ4] Speedrun - Normal", "Fastest in game time - Normal", 
             playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == norm_mode,
             (playing_mmz4() && mmz4_game_context() == mmz4_ctx_title_screen) || (game_sel() != sel_mmz4), 
             playing_mmz4() && mmz4_cleared(mmz4_missions["Ragnarok Core"]), 
@@ -866,7 +885,7 @@ leaderboard("[MMZ4] Normal Speedrun", "Finish Mega Man Zero 4 the fastest as pos
             format="FRAMES", lower_is_better=true, id=41
             )
 
-leaderboard("[MMZ4] Hard Speedrun", "Finish Mega Man Zero 4 the fastest as possible on Hard mode", 
+leaderboard("[MMZ4] Speedrun - Hard", "Fastest in game time - Hard", 
             playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == hard_mode,
             (playing_mmz4() && mmz4_game_context() == mmz4_ctx_title_screen) || (game_sel() != sel_mmz4), 
             playing_mmz4() && mmz4_cleared(mmz4_missions["Ragnarok Core"]), 
@@ -874,7 +893,7 @@ leaderboard("[MMZ4] Hard Speedrun", "Finish Mega Man Zero 4 the fastest as possi
             format="FRAMES", lower_is_better=true, id=42
             )
 
-leaderboard("[MMZ4] Ultimate Speedrun", "Finish Mega Man Zero 4 the fastest as possible on Ultimate mode", 
+leaderboard("[MMZ4] Speedrun - Ultimate", "Fastest in game time - Ultimate", 
             playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == ulti_mode,
             (playing_mmz4() && mmz4_game_context() == mmz4_ctx_title_screen) || (game_sel() != sel_mmz4), 
             playing_mmz4() && mmz4_cleared(mmz4_missions["Ragnarok Core"]), 
@@ -882,7 +901,7 @@ leaderboard("[MMZ4] Ultimate Speedrun", "Finish Mega Man Zero 4 the fastest as p
             format="FRAMES", lower_is_better=true, id=43
             )
 
-leaderboard("[MMZ4] Easy Speedrun", "Finish Mega Man Zero 4 the fastest as possible on Easy mode", 
+leaderboard("[MMZ4] Speedrun - Easy", "Fastest in game time - Easy", 
             playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == easy_mode,
             (playing_mmz4() && mmz4_game_context() == mmz4_ctx_title_screen) || (game_sel() != sel_mmz4), 
             playing_mmz4() && mmz4_cleared(mmz4_missions["Ragnarok Core"]), 
@@ -890,7 +909,7 @@ leaderboard("[MMZ4] Easy Speedrun", "Finish Mega Man Zero 4 the fastest as possi
             format="FRAMES", lower_is_better=true, id=44
             )
 
-leaderboard("[MMZ4] Plant Panic", "Finish Plant Panic mini game with the highest score", 
+leaderboard("[MMZ4] Mini Game - Plant Panic", "Finish Plant Panic mini game with the highest score", 
             playing_mmz4() && mmz4_state() == mmz4_mg_plant_panic && mmz4_game_context() == mmz4_ctx_playing_minigame && mmz4_minigame_timer() != prev(mmz4_minigame_timer()),
             game_sel() != sel_mmz4 || (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && !mmz4_minigame_finished(), 
             playing_mmz4() && (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && mmz4_minigame_finished(), 
@@ -898,7 +917,7 @@ leaderboard("[MMZ4] Plant Panic", "Finish Plant Panic mini game with the highest
             format="VALUE", lower_is_better=false, id=45
             )
 
-leaderboard("[MMZ4] Busy Market", "Finish Busy Market mini game with the highest score", 
+leaderboard("[MMZ4] Mini Game - Busy Market", "Finish Busy Market mini game with the highest score", 
             playing_mmz4() && mmz4_state() == mmz4_mg_busy_basket && mmz4_game_context() == mmz4_ctx_playing_minigame && mmz4_minigame_timer() != prev(mmz4_minigame_timer()),
             game_sel() != sel_mmz4 || (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && !mmz4_minigame_finished(), 
             playing_mmz4() && (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && mmz4_minigame_finished(), 
@@ -906,7 +925,7 @@ leaderboard("[MMZ4] Busy Market", "Finish Busy Market mini game with the highest
             format="VALUE", lower_is_better=false, id=46
             )
 
-leaderboard("[MMZ4] Lumberjack", "Finish Lumberjack mini game with the highest score", 
+leaderboard("[MMZ4] Mini Game - Lumberjack", "Finish Lumberjack mini game with the highest score", 
             playing_mmz4() && mmz4_state() == mmz4_mg_lumberjack && mmz4_game_context() == mmz4_ctx_playing_minigame && mmz4_minigame_timer() != prev(mmz4_minigame_timer()),
             game_sel() != sel_mmz4 || (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && !mmz4_minigame_finished(), 
             playing_mmz4() && (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && mmz4_minigame_finished(), 
@@ -914,7 +933,7 @@ leaderboard("[MMZ4] Lumberjack", "Finish Lumberjack mini game with the highest s
             format="VALUE", lower_is_better=false, id=47
             )
 
-leaderboard("[MMZ4] Lava Surf", "Finish Lava Surf mini game with the highest score", 
+leaderboard("[MMZ4] Mini Game - Lava Surf", "Finish Lava Surf mini game with the highest score", 
             playing_mmz4() && mmz4_state() == mmz4_mg_lava_surf && mmz4_game_context() == mmz4_ctx_playing_minigame && mmz4_minigame_timer() != prev(mmz4_minigame_timer()),
             game_sel() != sel_mmz4 || (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && !mmz4_minigame_finished(), 
             playing_mmz4() && (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && mmz4_minigame_finished(), 
@@ -922,15 +941,15 @@ leaderboard("[MMZ4] Lava Surf", "Finish Lava Surf mini game with the highest sco
             format="VALUE", lower_is_better=false, id=48
             )
 
-leaderboard("[MMZ4] Elf Chase", "Finish Elf Chase mini game the fastest as you can", 
+leaderboard("[MMZ4] Mini Game - Elf Chase", "Finish Elf Chase mini game the fastest as you can", 
             playing_mmz4() && mmz4_state() == mmz4_mg_elf_chase && mmz4_game_context() == mmz4_ctx_playing_minigame && mmz4_minigame_timer() != prev(mmz4_minigame_timer()),
             game_sel() != sel_mmz4 || mmz4_minigame_timer() == 0 || (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && !mmz4_minigame_finished(), 
             playing_mmz4() && (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && mmz4_minigame_finished(), 
             mmz4_minigame_score(), 
-            format="FRAMES", lower_is_better=false, id=49
+            format="FRAMES", lower_is_better=true, id=49
             )
 
-leaderboard("[MMZ4] Slam Harvest", "Finish Slam Harvest mini game with the highest score", 
+leaderboard("[MMZ4] Mini Game - Slam Harvest", "Finish Slam Harvest mini game with the highest score", 
             playing_mmz4() && mmz4_state() == mmz4_mg_slam_harvest && mmz4_game_context() == mmz4_ctx_playing_minigame && mmz4_minigame_timer() != prev(mmz4_minigame_timer()),
             game_sel() != sel_mmz4  || (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && !mmz4_minigame_finished(), 
             playing_mmz4() && (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && mmz4_minigame_finished(), 
@@ -938,7 +957,7 @@ leaderboard("[MMZ4] Slam Harvest", "Finish Slam Harvest mini game with the highe
             format="VALUE", lower_is_better=false, id=50
             )
 
-leaderboard("[MMZ4] Energy Lab", "Finish Energy Lab mini game with the highest score", 
+leaderboard("[MMZ4] Mini Game - Energy Lab", "Finish Energy Lab mini game with the highest score", 
             playing_mmz4() && mmz4_state() == mmz4_mg_energy_lab && mmz4_game_context() == mmz4_ctx_playing_minigame && mmz4_minigame_timer() != prev(mmz4_minigame_timer()),
             game_sel() != sel_mmz4 || (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && !mmz4_minigame_finished(), 
             playing_mmz4() && (mmz4_game_context() == mmz4_ctx_selecting_minigame || mmz4_game_context() == mmz4_ctx_updated_score_minigame) && mmz4_minigame_finished(), 
