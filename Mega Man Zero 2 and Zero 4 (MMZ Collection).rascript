@@ -344,8 +344,8 @@ achievement("[MMZ2] Elemental Cycle", "Obtain all elements", 3,
                         
 achievement("[MMZ2] DownloadMoreHP.com", "Upgrade your life bar to the maximum possible", 10, 
             trigger =   playing_mmz2() &&
-                        ((byte(0x14c432) == 1 && prev(byte(0x14c432)) == 0 && byte(0x14c42d) == 32) ||
-                        (byte(0x14c432) == 1 && byte(0x14c42d) == 32 && prev(byte(0x14c42d)) == 28)))
+                        ((bit0(0x14c432) == 1 && prev(bit0(0x14c432)) == 0 && byte(0x14c42d) == 32) ||
+                        (bit0(0x14c432) == 1 && byte(0x14c42d) == 32 && prev(byte(0x14c42d)) == 28)))
 
 achievement("[MMZ2] Red Bull in 23XX", "Collect all Sub Tanks", 10, 
             trigger =   playing_mmz2() && measured(mmz2_all_sub_tanks() == 4, playing_mmz2()) && prev(mmz2_all_sub_tanks()) == 3, id = 201209)
@@ -809,22 +809,26 @@ mmz4_achiev_unlock_stuff("[MMZ4] Mini Games Enjoyer", "Unlock the Energy Lab min
 achievement("[MMZ4] No Plants Allowed", "Reach 150 score or higher on Plant Panic mini game", 5,
             trigger =   playing_mmz4() &&
                         mmz4_state() == mmz4_mg_plant_panic &&
-                        mmz4_minigame_score() >= 150)
+                        mmz4_minigame_score() >= 150 &&
+                        mmz4_minigame_score() > prev(mmz4_minigame_score()))
 
 achievement("[MMZ4] Mega Basket", "Reach 150 score or higher on Busy Market mini game", 5,
             trigger =   playing_mmz4() &&
                         mmz4_state() == mmz4_mg_busy_basket &&
-                        mmz4_minigame_score() >= 150)
+                        mmz4_minigame_score() >= 150 &&
+                        mmz4_minigame_score() > prev(mmz4_minigame_score()))
 
 achievement("[MMZ4] Timber Cutter", "Reach 200 score or higher on Lumberjack mini game", 5,
             trigger =   playing_mmz4() &&
                         mmz4_state() == mmz4_mg_lumberjack &&
-                        mmz4_minigame_score() >= 200)
+                        mmz4_minigame_score() >= 200 &&
+                        mmz4_minigame_score() > prev(mmz4_minigame_score()))
 
 achievement("[MMZ4] Playing Firefighter", "Reach 750 score or higher on Lava Surf mini game", 5,
             trigger =   playing_mmz4() &&
                         mmz4_state() == mmz4_mg_lava_surf &&
-                        mmz4_minigame_score() >= 750)
+                        mmz4_minigame_score() >= 750 &&
+                        mmz4_minigame_score() > prev(mmz4_minigame_score()))
 
 achievement("[MMZ4] Elf Carrier", "Finish Elf Chase mini game within 40 seconds", 5,
             trigger =   playing_mmz4() &&
@@ -838,19 +842,21 @@ achievement("[MMZ4] Elf Carrier", "Finish Elf Chase mini game within 40 seconds"
 achievement("[MMZ4] Energy Harvester", "Reach 350 score or higher on Slam Harvest mini game", 5,
             trigger =   playing_mmz4() &&
                         mmz4_state() == mmz4_mg_slam_harvest &&
-                        mmz4_minigame_score() >= 350)
+                        mmz4_minigame_score() >= 350 &&
+                        mmz4_minigame_score() > prev(mmz4_minigame_score()))
 
 achievement("[MMZ4] Columns", "Reach 200 score or higher on Energy Lab mini game", 5,
             trigger =   playing_mmz4() &&
                         mmz4_state() == mmz4_mg_energy_lab &&
-                        mmz4_minigame_score() >= 200)
+                        mmz4_minigame_score() >= 200 &&
+                        mmz4_minigame_score() > prev(mmz4_minigame_score()))
 
 
 //=======================================
 //============ MISCELLANEOUS ============
 //=======================================
 
-achievement("[MMZ4] Overpowered Elf", "Beat the game on Ultimate Mode", 25, 
+achievement("[MMZ4] Overpowered Elf", "Beat the game on Ultimate Mode", 10, 
             trigger =   playing_mmz4() &&
                         mmz4_cleared(mmz4_missions["Ragnarok Core"]) &&
                         mmz4_diff() == ulti_mode)
