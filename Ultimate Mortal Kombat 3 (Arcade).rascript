@@ -171,35 +171,35 @@ achievement("Champion Ladder", "Finish the Master II tower.", 10,
 //        Fatality
 // ========================
 
-achievement("Best Way to Finish a Fight", "Perform any finishing move.", 2,
+achievement("Best Way to Finish a Fight", "Perform any finishing move (Arcade Mode).", 2,
             trigger =   p1_only() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() > 0 &&
                         p1_hp() > 0)
 
 
-achievement("Ran Over", "Perform a Stage Fatality on The Subway.", 2,
+achievement("Ran Over", "Perform a Stage Fatality on The Subway (Arcade Mode).", 2,
             trigger =   p1_only() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() == f_pit_fatality &&
                         game_stage() == 0x00 &&
                         p1_hp() > 0)
 
-achievement("Meat Skewer", "Perform a Stage Fatality on Bell Tower.", 3,
+achievement("Meat Skewer", "Perform a Stage Fatality on Bell Tower (Arcade Mode).", 3,
             trigger =   p1_only() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() == f_pit_fatality &&
                         game_stage() == 0x07 &&
                         p1_hp() > 0)
 
-achievement("Crusher", "Perform a Stage Fatality on The Pit III.", 3,
+achievement("Crusher", "Perform a Stage Fatality on The Pit III (Arcade Mode).", 3,
             trigger =   p1_only() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() == f_pit_fatality &&
                         game_stage() == 0x0a &&
                         p1_hp() > 0)
 
-achievement("Welcome to Hell", "Perform a Stage Fatality on Scorpion's Lair.", 2,
+achievement("Welcome to Hell", "Perform a Stage Fatality on Scorpion's Lair (Arcade Mode).", 2,
             trigger =   p1_only() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() == f_pit_fatality &&
@@ -253,12 +253,12 @@ achievement(fatalities_name["Human Smoke"], "Human Smoke: Perform a Fatality and
 //     Flawless Victory
 // ========================
 // TODO: Test Achievements
-achievement("Flawless Victory", "Get a Flawless Victory.", 1, 
+achievement("Flawless Victory", "Get a Flawless Victory (Arcade Mode).", 1, 
             trigger =   p1_only() &&
                         unless(p1_hp() < 0xa6) &&
                         p1_rounds_wins() > prev(p1_rounds_wins()))
 
-achievement("Double Flawless Victory", "Get a Double Flawless Victory.", 4, 
+achievement("Double Flawless Victory", "Get a Double Flawless Victory (Arcade Mode).", 4, 
             trigger =   p1_only() &&
                         unless(p1_hp() < 0xa6) &&
                         never(p1_rounds_wins() == 0) &&
@@ -283,21 +283,21 @@ achievement("Flawless Against the Tyrant", "Defeat Shao Kahn with a Flawless Vic
 // ========================
 // TODO: Test Achievements
 
-achievement("True Warrior of Earthrealm", "Win 3 battles in a row.", 5,
+achievement("True Warrior of Earthrealm", "Win 3 battles in a row (Arcade Mode).", 5,
             trigger =   unless(!p1_only()) &&
                         once(p1_matches_won_row() == 0) &&
                         measured(repeated(3, p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1)) &&
                         (always_true() || never(p1_matches_won_row() < prev(p1_matches_won_row())) && never(game_state() == gs_char_select)),
             id = 209495)
 
-achievement("True Master of Earthrealm", "Win 7 battles in a row.", 10,
+achievement("True Master of Earthrealm", "Win 7 battles in a row (Arcade Mode).", 10,
             trigger =   unless(!p1_only()) &&
                         once(p1_matches_won_row() == 0) &&
                         measured(repeated(7, p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1)) &&
                         (always_true() || never(p1_matches_won_row() < prev(p1_matches_won_row())) && never(game_state() == gs_char_select)),
             id = 209496)
 
-achievement("True Champion of Earthrealm", "Win 11 battles in a row.", 50,
+achievement("True Champion of Earthrealm", "Win 11 battles in a row (Arcade Mode).", 50,
             trigger =   unless(!p1_only()) &&
                         once(p1_matches_won_row() == 0) &&
                         measured(repeated(11, p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1)) &&
@@ -317,7 +317,7 @@ achievement("Boon Tobias", "Defeat Noob Saibot.", 25,
                         p1_rounds_wins() == 2,
             id = 209499)
 
-achievement("UMK3 Mega Endurance", "Beat the Mega Endurance Kombat", 50,
+achievement("UMK3 Mega Endurance", "Beat the Mega Endurance Kombat (no timeout).", 50,
             trigger =   never(!p1_only()) &&
                         once(p2_char() == 0x17) &&
                         once(p2_char() == characters["Classic Sub-Zero"]) &&

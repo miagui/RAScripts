@@ -2,22 +2,52 @@
 // #ID = 2680
 
 function menu_selected() => bword(0x64d150)
-function menu_difficult_selected() => bword(0x64d154)
 
-function difficulty() => bword(0x64c46c)
-function retry_chips() => bword(0x64c8b8)
-function max_combo() => bword(0xc4e124)
-function metals() => bword(0x64c4c4)
+// Game
+function game_difficulty() => bword(0x64c46c)
 
-// Stage Clear Flags
-// b0 = Booster Forest
-// b1 = Troia Base
-// b2 = Primrose
-// b3 = Pitch Black
-// b4 = Dynasty
-// b5 = Inferno
-// b6 = Central White
-// b7 = Metal Valley
+function player_hp_display() => dword(0xc472b0)
+function player_retry_chips() => bword(0x64c8b8)
+function player_max_combo() => bword(0xc4e124)
+function player_metals() => bword(0x64c4c4)
+function player_char1() => byte(0x64c42c)
+function player_char2() => byte(0x64c42d)
+         pl_x = 0x00
+         pl_zero = 0x01
+         pl_axl = 0x02
+         pl_alia = 0x03
+         pl_layer = 0x04
+         pl_pallette = 0x05
+
+function player_navigator() => byte(0x64c8b4)
+         nav_none = 0xff
+         nav_alia = 0x00
+         nav_layer = 0x01
+         nav_pallette = 0x02
+
+function game_igt() => dword(0x64c4a8) // Formatted as seconds
+function game_stage() => byte(0x64c88f)
+         st_noahs_park=0x00
+         st_troia_base = 0x01
+         st_primrose = 0x02
+         st_pitch_black = 0x03
+         st_dynasty = 0x04
+         st_inferno = 0x05
+         st_central_white = 0x06
+         st_metal_valley = 0x07
+         st_booster_forest = 0x08
+         st_jakob = 0x09
+         st_gateway = 0x0a 
+         st_sigma_palace = 0x0b
+
+// =========================================
+//                Stage Flags              
+// =========================================
+
+// Kitchen Sink
+function weapon_flags() => byte(0x64c4d5)
+
+// Cleared
 function intro_stage_clear() => bit0(0x64c4ae)
 function troia_base_clear() => bit1(0x64c4ae)
 function primrose_clear() => bit2(0x64c4ae)
@@ -28,16 +58,7 @@ function central_white() => bit6(0x64c4ae)
 function metal_valley() => bit7(0x64c4ae)
 function booster_forest_clear() => bit0(0x64c4af)
 
-function weapon_flags() => byte(0x64c4d5)
-
 // Hunter Rank
-rank_aaa = 0x00
-rank_aa = 0x01
-rank_a = 0x02
-rank_b = 0x03
-rank_c = 0x05
-rank_d = 0x05
-
 function intro_hunter_rank() => byte(0x64c52c)
 function troia_hunter_rank() => byte(0x64c52d)
 function primrose_hunter_rank() => byte(0x64c52e)
@@ -49,6 +70,12 @@ function metal_hunter_rank() => byte(0x64c533)
 function forest_hunter_rank() => byte(0x64c534)
 function jakob_hunter_rank() => byte(0x64c535)
 function palace_hunter_rank() => byte(0x64c536)
+rank_aaa = 0x00
+rank_aa = 0x01
+rank_a = 0x02
+rank_b = 0x03
+rank_c = 0x04
+rank_d = 0x05
 
 // Clear Time (Frames)
 function intro_clear_time() => bword(0x64c53c)
