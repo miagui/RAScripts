@@ -71,6 +71,8 @@ function p1_score_00xx0000() => byte(0x008510)
 function p1_score_0000xx00() => byte(0x008513)
 
 function p1_hit_combo() => byte(0x00885F)
+function p1_hit_combo_display() => byte(0xae45)
+
 function p1_move() => byte(0x0084AB)
 function p1_animation() => word(0x841e)
 function p1_taunts_remaining() => byte(0x0084BD)
@@ -155,6 +157,12 @@ function p1_only() => unless(game_active_players_connected() != 0x01) // Normal
 function p1_hit_with_move(move) {
     return  (p1_move_type() == move_type_super_combo || p1_projectile_hit_opponent() == projectile_hit) && 
             p1_hit_combo() > prev(p1_hit_combo()) && 
+            p1_move() == move
+} 
+
+function p1_hit_with_move_2(move) {
+    return  (p1_move_type() == move_type_super_combo || p1_projectile_hit_opponent() == projectile_hit) && 
+            p1_hit_combo_display() > prev(p1_hit_combo_display()) && 
             p1_move() == move
 } 
 
@@ -285,7 +293,7 @@ achievement("Resolution", "Finish Arcade Mode as Chun-Li.", 5,
             id = 217593
             )
 
-achievement("Spinning Bird Kick", "Finish Arcade Mode using only Chun-Li SF2.", 5,
+achievement("Spinning Bird Kick", "Finish Arcade Mode using only Classic Chun-Li.", 5,
                 trigger = p1_only() &&
                           playing_arcade() &&
                           p1_char() == characters["Chun-Li"] && 
@@ -297,7 +305,7 @@ achievement("Spinning Bird Kick", "Finish Arcade Mode using only Chun-Li SF2.", 
             id = 217607
             )
 
-// achievement_beat_game_char("Spinning Bird Kick", "Chun-Li SF2", 0)
+// achievement_beat_game_char("Spinning Bird Kick", "Classic Chun-Li", 0)
 achievement_beat_game_char("Untamable Fists", "Balrog", 0)
 achievement_beat_game_char("Doll Eyes", "Cammy", 0)
 achievement_beat_game_char("Mach-Smasher", "E. Honda", 0)
@@ -340,7 +348,27 @@ achievement_beat_dramatic_team("Muay Thai Fighters", "Sagat", "Adon", 0)
 achievement_beat_dramatic_team("Hibiki and Jimmy", "Dan", "Blanka", 0)
 achievement_beat_dramatic_team("Wrestling Fanatics", "R. Mika", "Zangief", 0)
 achievement_beat_dramatic_team("Tough and Short Tempered", "Birdie", "Balrog", 0)
-achievement_beat_dramatic_team("The Devils", "Akuma", "Gen", 0)
+
+    achievement("The Devils", "Finish Dramatic Battle using only Akuma and Gen (2-Normal difficulty, 3 rounds, Normal timer).", 5,
+                trigger = p1_only() &&
+                          playing_dramatic_battle() &&
+                          once(ladder_match() == 0) &&
+                          unless(p1_char() != characters["Akuma"] && p1_char() != characters["Gen"] && p1_char() != characters["Gen (Crane)"]) &&
+                          unless(p2_char() != characters["Akuma"] && p2_char() != characters["Gen"] && p2_char() != characters["Gen (Crane)"]) &&
+                          trigger_when(ladder_match() == 0x05 && p1_has_won_arcade_match()) &&
+                          default_diff_rounds() &&
+                          settings_timer_speed() == 0x01 &&
+                          (
+                            always_false() || 
+                            never(p1_char() != characters["Akuma"] && p1_char() != characters["Gen"] && p1_char() != characters["Gen (Crane)"] && p1_has_won_arcade_match()) &&
+                            never(p2_char() != characters["Akuma"] && p2_char() != characters["Gen"] && p2_char() != characters["Gen (Crane)"] && p1_has_won_arcade_match()) &&
+                            never(p1_char() != characters["Akuma"] && p1_char() != characters["Gen"] && p1_char() != characters["Gen (Crane)"] && ladder_match() == 0) &&
+                            never(p2_char() != characters["Akuma"] && p2_char() != characters["Gen"] && p2_char() != characters["Gen (Crane)"] && ladder_match() == 0)
+                          ),
+                id = 217624)
+
+// achievement_beat_dramatic_team("The Devils", "Akuma", "Gen", 0)
+achievement_beat_dramatic_team("Final Fight", "Guy", "Cody", 0)
 achievement_beat_dramatic_team("Ansatsuken Art", "Ryu", "Ken", 0)
 achievement_beat_dramatic_team("Japanese Martial Arts", "E. Honda", "Sodom", 0)
 achievement_beat_dramatic_team("Schoolgirls Rivalry", "Karin", "Sakura", 0)
@@ -376,7 +404,7 @@ achievement("Serious Mode", "Finish Arcade Mode on Mazi Mode (2-Normal difficult
                         settings_timer_speed() == 0x01,
             id = 0)
 
-achievement("Strongest Mode", "Finish Arcade Mode on Saikyou Mode (2-Normal difficulty, 3 rounds, Normal timer).", 25,
+achievement("Strongest Mode", "Finish Arcade Mode on Saikyou Mode (2-Normal difficulty, 3 rounds, Normal timer).", 10,
             trigger =   p1_only() &&
                         playing_arcade() &&
                         p1_saikyou_flag() &&
@@ -387,7 +415,7 @@ achievement("Strongest Mode", "Finish Arcade Mode on Saikyou Mode (2-Normal diff
                         settings_timer_speed() == 0x01,
             id = 0)
 
-achievement("Simple Fighting Style", "Finish Arcade Mode using only X-ISM on Normal Mode (2-Normal difficulty, 3 rounds, Normal timer).", 10,
+achievement("Simple Fighting Style", "Finish Arcade Mode using only X-ISM on Normal Mode (2-Normal difficulty, 3 rounds, Normal timer).", 5,
             trigger =   p1_only() &&
                         playing_arcade() &&
                         !p1_classic_flag() &&
@@ -400,7 +428,7 @@ achievement("Simple Fighting Style", "Finish Arcade Mode using only X-ISM on Nor
             id = 0)
 
 
-achievement("Standard Fighting Style", "Finish Arcade Mode using only A-ISM (2-Normal difficulty, 3 rounds, Normal timer).", 10,
+achievement("Standard Fighting Style", "Finish Arcade Mode using only A-ISM (2-Normal difficulty, 3 rounds, Normal timer).", 5,
             trigger =   p1_only() &&
                         playing_arcade() &&
                         p1_fighting_style_2() == fighting_style_aism && game_active_players_ingame() == 1 &&
@@ -412,7 +440,7 @@ achievement("Standard Fighting Style", "Finish Arcade Mode using only A-ISM (2-N
             id = 0)
 
 
-achievement("Variable Fighting Style", "Finish Arcade Mode using only V-ISM (2-Normal difficulty, 3 rounds, Normal timer).", 10,
+achievement("Variable Fighting Style", "Finish Arcade Mode using only V-ISM (2-Normal difficulty, 3 rounds, Normal timer).", 5,
             trigger =   p1_only() &&
                         playing_arcade() &&
                         p1_fighting_style_2() == fighting_style_vism && game_active_players_ingame() == 1 &&
@@ -530,13 +558,13 @@ achievement("Zan'ei and Kouga", "Gen: Hit your opponent with all Super Combos fr
 achievement("Death Cross Dancing", "Juli & Juni: Hit your opponent with all Super Combos during a Dramatic Battle playthrough.", 5,
                 trigger =   p1_only() &&
                             playing_dramatic_battle() &&
-                            ((measured(tally(2, once(p1_char() == characters["Juli"] && p1_hit_with_move(0x22)),
+                            ((measured(tally(2, once(p1_char() == characters["Juli"] && p1_hit_with_move_2(0x22)),
                                               once(p1_char() == characters["Juli"] && p1_move_type() == move_type_super_combo && p1_move() == 0x1c && p1_animation() == 0xef18)))) ||
-                            (measured(tally(2, once(p1_char() == characters["Juni"] && p1_hit_with_move(0x22)),
+                            (measured(tally(2, once(p1_char() == characters["Juni"] && p1_hit_with_move_2(0x22)),
                                               once(p1_char() == characters["Juni"] && p1_move_type() == move_type_super_combo && p1_move() == 0x1c && p1_animation() == 0xe5b0))))),
             id = 0)
 
-achievement("The Actual Saikyou Style", "Dan: Use Chouhatsu Densetsu during a fight and let it play entirely (Arcade Mode).", 5,
+achievement("The Actual Saikyou Style", "Dan: Use Chouhatsu Densetsu during a fight and let it play entirely (Arcade Mode).", 4,
             trigger =   p1_only() &&
                         playing_arcade() &&
                         unless(p1_char() != characters["Dan"]) &&
@@ -548,9 +576,9 @@ achievement("The Actual Saikyou Style", "Dan: Use Chouhatsu Densetsu during a fi
 achievement("Curse You, CPU!", "Dan: Taunt 10 times in mid air during Chouhatsu Shinwa (Arcade Mode).", 5,
             trigger =   p1_only() &&
                         playing_arcade() &&
-                        unless(p1_char() != characters["Dan"]) &&
+                        never(p1_char() != characters["Dan"]) &&
                         unless(p1_in_air_flag() == 0) &&
-                        unless(word(0x843a) == 0) && // Chouhatsu Shinwa Timer (Dan) [16 bits]
+                        never(word(0x843a) == 0) && // Chouhatsu Shinwa Timer (Dan) [16 bits]
                         measured(repeated(10, p1_attacking_flag() == 1 && prev(p1_attacking_flag()) == 0)),
             id = 0)
 

@@ -172,21 +172,21 @@ achievement("Friendship. Friendship, again?", "Perform a Friendship (Arcade Mode
                         round_finishing_move() == f_friendship &&
                         p1_hp() > 0)
 
-achievement("The Train", "Perform a Stage Fatality on The Subway.", 2,
+achievement("The Train", "Perform a Stage Fatality on The Subway (Arcade Mode).", 2,
             trigger =   p1_only() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() == f_pit_fatality &&
                         game_stage() == 0x00 &&
                         p1_hp() > 0)
 
-achievement("The Spikes", "Perform a Stage Fatality on Bell Tower.", 2,
+achievement("The Spikes", "Perform a Stage Fatality on Bell Tower (Arcade Mode).", 2,
             trigger =   p1_only() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() == f_pit_fatality &&
                         game_stage() == 0x07 &&
                         p1_hp() > 0)
 
-achievement("The Crusher", "Perform a Stage Fatality on The Pit III.", 2,
+achievement("The Crusher", "Perform a Stage Fatality on The Pit III (Arcade Mode).", 2,
             trigger =   p1_only() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() == f_pit_fatality &&
@@ -214,7 +214,7 @@ achievement("Flawless Victory", "Get a Flawless Victory.", 1,
                         unless(p1_hp() < 0xa6) &&
                         p1_rounds_wins() > prev(p1_rounds_wins()))
 
-achievement("Double Flawless Victory", "Get a Double Flawless Victory.", 4, 
+achievement("Double Flawless Victory", "Get a Double Flawless Victory.", 3, 
             trigger =   p1_only() &&
                         unless(p1_hp() < 0xa6) &&
                         never(p1_rounds_wins() == 0) &&
@@ -223,14 +223,14 @@ achievement("Double Flawless Victory", "Get a Double Flawless Victory.", 4,
 achievement("Taming the Centaur", "Defeat Motaro with a Flawless Victory on Master tower.", 10,
             trigger =   p1_only() &&
                         p1_hp() == 0xa6 &&
-                        trigger_when(p1_flawless_victory_flag() == 1 && prev(p1_flawless_victory_flag()) == 0) &&
+                        trigger_when(p1_rounds_wins() > prev(p1_rounds_wins())) &&
                         ladder_tower() == tower_master &&
                         p2_char() == characters["Motaro"])
 
 achievement("Discharging the Emperor", "Defeat Shao Kahn with a Flawless Victory on Master tower.", 10,
             trigger =   p1_only() &&
                         p1_hp() == 0xa6 &&
-                        trigger_when(p1_flawless_victory_flag() == 1 && prev(p1_flawless_victory_flag()) == 0) &&
+                        trigger_when(p1_rounds_wins() > prev(p1_rounds_wins())) &&
                         ladder_tower() == tower_master &&
                         p2_char() == characters["Shao Kahn"])
 
@@ -247,21 +247,22 @@ achievement("Cold and in Danger", "Frosty!", 1,
                         p2_hp() <= 0x08 &&
                         p2_last_hit() == 0x0006 && prev(p2_last_hit()) != 0x0006)
 
-achievement("Totally not Kano", "Defeat Noob Saibot.", 25,
-            trigger =   p1_only() &&
-                        never(p2_char() != 0x11) &&
-                        once(match_current_round() == 1 && game_state() == gs_round_intro) &&
-                        prev(p1_rounds_wins()) == 0 &&
-                        p1_rounds_wins() == 1)
 
-achievement("Unsmoking the Smoke", "Defeat Smoke.", 25,
+achievement("Unsmoking the Smoke", "Defeat Smoke.", 5,
             trigger =   p1_only() &&
                         never(p2_char() != characters["Smoke"]) &&
                         once(match_current_round() == 1 && game_state() == gs_round_intro) &&
                         prev(p1_rounds_wins()) == 0 &&
                         p1_rounds_wins() == 1)
 
-achievement("MK3 1CC", "Beat the game on Master tower without losing a match.", 50, 
+achievement("Totally Not Kano", "Defeat Noob Saibot.", 10,
+            trigger =   p1_only() &&
+                        never(p2_char() != 0x11) &&
+                        once(match_current_round() == 1 && game_state() == gs_round_intro) &&
+                        prev(p1_rounds_wins()) == 0 &&
+                        p1_rounds_wins() == 1)
+
+achievement("MK3 1CC", "Beat the game on Master tower without losing a match.", 25, 
             trigger =   never(!p1_only()) &&
                         once(game_state() == gs_fighting && ladder_match() == 0) &&
                         never(p2_rounds_wins() == 2) &&

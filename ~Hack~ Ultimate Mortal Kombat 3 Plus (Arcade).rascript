@@ -132,10 +132,10 @@ function p1_human() => p1_state() > 0
 function match_finishing_move_darkening() => byte(0x00c442) == 1
 function no_kombat_code() => match_kombat_kode() == 0xFFFF
 function game_beaten() {
-    return  (ladder_tower() == tower_novice && ladder_match() == 7 && p1_rounds_wins() == 1 && p2_hp() == 0 && prev(p2_hp()) > 0) || 
-            (ladder_tower() == tower_warrior && ladder_match() == 8 && p1_rounds_wins() == 1 && p2_hp() == 0 && prev(p2_hp()) > 0) || 
-            (ladder_tower() == tower_master_i && ladder_match() == 9 && p1_rounds_wins() == 1 && p2_hp() == 0 && prev(p2_hp()) > 0) || 
-            (ladder_tower() == tower_master_ii && ladder_match() == 10 && p1_rounds_wins() == 1 && p2_hp() == 0 && prev(p2_hp()) > 0)
+    return  (ladder_tower() == tower_novice && prev(ladder_match()) == 7 && p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1) || 
+            (ladder_tower() == tower_warrior && prev(ladder_match()) == 8 && p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1) || 
+            (ladder_tower() == tower_master_i && prev(ladder_match()) == 9 && p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1) || 
+            (ladder_tower() == tower_master_ii && prev(ladder_match()) == 10 && p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1)
 } 
 
 // ========================
@@ -196,7 +196,7 @@ achievement("Warrior Tower", "Finish the Warrior tower (No Kombat Kodes).", 5,
                         ladder_tower() == tower_warrior,
             id = 210601)
 
-achievement("Master I Tower", "Finish the Master I tower (No Kombat Kodes).", 10, 
+achievement("Master Tower", "Finish the Master tower (No Kombat Kodes).", 10, 
             trigger =   p1_only() &&
                         never(game_state() == gs_fighting && !no_kombat_code()) &&
                         once(ladder_match() == 0 && game_state() == gs_fighting) &&
@@ -204,7 +204,7 @@ achievement("Master I Tower", "Finish the Master I tower (No Kombat Kodes).", 10
                         ladder_tower() == tower_master_i,
             id = 210602)
 
-achievement("Master II Tower", "Finish the Master II tower on Extreme difficulty (No Kombat Kodes).", 25, 
+achievement("Champion Tower", "Finish the Champion tower on Extreme difficulty (No Kombat Kodes).", 25, 
             trigger =   p1_only() &&
                         never(game_state() == gs_fighting && !no_kombat_code()) &&
                         once(ladder_match() == 0 && game_state() == gs_post_char_select && game_cpu_diff() == 9) &&
@@ -289,7 +289,7 @@ achievement("Ice Spike", "Super Sub-Zero: Perform a Fatality, Babality and Frien
                 )
 
 for char in characters {
-    if (char != "Chameleon" && char != "Khameleon" && char != "Shao Kahn" && char != "Motaro" && char != "Triborg")
+    if (char != "Chameleon" && char != "Khameleon" && char != "Shao Kahn" && char != "Motaro")
     achievement(format("MKX Brutality - {0}", char), format("{0}: Perform a MKX Brutality (Arcade Mode).", char), 10,
                 trigger = unless(!p1_only()) &&
                           unless(p1_char() != characters[char]) &&
