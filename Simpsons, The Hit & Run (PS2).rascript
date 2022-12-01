@@ -67,6 +67,8 @@ function mission_stage() => dword(pointer_mission() + 0x70)
 function mission_name_2bytes() => word(pointer_mission() + 0x78)
          m_name_wager = 0x7267
          m_name_race = 0x7273
+
+function is_bonus_mission() => word(0x005fdd6d) == 0x6d62
          
 function mission_remaining_time() => dword(pointer_mission() + 0x90)
 function mission_super_state() => dword(0x5fdd50)
@@ -86,7 +88,11 @@ function highest_level_played() => dword(0x5E6CF0)
 function highest_mission_played() => dword(0x5E6CF4)
 function coins() => dword(0x5E6CFC)
 function total_cars_owned() => dword(0x5E72A0)
-function current_vehicle() => byte(0x61026C)
+function current_vehicle_old() => byte(0x61026C)
+function current_vehicle_pointer() => dword(0x5fcad4)
+         offset_vehicle_id = 0x10c
+
+function current_vehicle_id() => byte(current_vehicle_pointer() + offset_vehicle_id)
 
 vehicles = {
    "Ferrini - Red": 0, // Level 6 default
@@ -198,13 +204,13 @@ mission5_offset = 0x80
 mission6_offset = 0xa0
 mission7_offset = 0xc0
 missionbonus_offset = 0x140
+missionbonus2_offset = 0x160 // Level 2 and afterwards
 
 function achiev_finish_mission(mission_name, level_start_address, mission_offset, points, cheevo_id) {
     achievement(mission_name, format("Finish {0}.", mission_name), points,
                 trigger =   in_game() &&
                             cheat_protection() &&
-                            bit0(level_start_address + mission_offset) == true && prev(bit0(level_start_address + mission_offset)) == false,
-                    id = cheevo_id
+                            bit0(level_start_address + mission_offset) == true && prev(bit0(level_start_address + mission_offset)) == false
                )
 }
 
@@ -213,8 +219,7 @@ function achiev_finish_all_street_races(title, level_start_address, level_number
                 trigger =   in_game() &&
                             cheat_protection() &&
                             measured(bit0(level_start_address + 0xE0) + bit0(level_start_address + 0x100) + bit0(level_start_address + 0x120) == 3) &&
-                            prev(bit0(level_start_address + 0xE0)) + prev(bit0(level_start_address + 0x100)) + prev(bit0(level_start_address + 0x120)) == 2,
-                    id = cheevo_id
+                            prev(bit0(level_start_address + 0xE0)) + prev(bit0(level_start_address + 0x100)) + prev(bit0(level_start_address + 0x120)) == 2
                )
 }
 
@@ -345,30 +350,30 @@ achiev_finish_mission("Alien \"Auto\"topsy Part III", 0x5e6b04, 0xc0, 5, 0)
 
 // Bonus
 achiev_finish_mission("This Old Shanty", 0x5e5c9c, missionbonus_offset, 5, 0)
-achiev_finish_mission("Dial B for Blood", 0x5e5ee8, missionbonus_offset, 5, 0)
-achiev_finish_mission("Princi-Pal", 0x5e6154, missionbonus_offset, 5, 0)
-achiev_finish_mission("Beached Love", 0x5e63c0, missionbonus_offset, 5, 0)
-achiev_finish_mission("Kinky Frinky", 0x5e662c, missionbonus_offset, 5, 0)
-achiev_finish_mission("Milking the Pigs", 0x5e6898, missionbonus_offset, 5, 0)
-achiev_finish_mission("Flaming Tires", 0x5e6b04, missionbonus_offset, 5, 0)
+achiev_finish_mission("Dial B for Blood", 0x5e5ee8, missionbonus2_offset, 5, 0)
+achiev_finish_mission("Princi-Pal", 0x5e6154, missionbonus2_offset, 5, 0)
+achiev_finish_mission("Beached Love", 0x5e63c0, missionbonus2_offset, 5, 0)
+achiev_finish_mission("Kinky Frinky", 0x5e662c, missionbonus2_offset, 5, 0)
+achiev_finish_mission("Milking the Pigs", 0x5e6898, missionbonus2_offset, 5, 0)
+achiev_finish_mission("Flaming Tires", 0x5e6b04, missionbonus2_offset, 5, 0)
 
 // Street Races
 achiev_finish_all_street_races("Daytime Suburb Racing", 0x5e5c9c, 1, 10, 0)
-achiev_finish_all_street_races("Daytime Downtown Racing", 0x5e5ee8, 2, 10, 0)
-achiev_finish_all_street_races("Daytime Squidport Racing", 0x5e6154, 3, 10, 0)
-achiev_finish_all_street_races("Night Suburb Racing", 0x5e63c0, 4, 10, 0)
-achiev_finish_all_street_races("Night Downtown Racing", 0x5e662c, 5, 10, 0)
-achiev_finish_all_street_races("Night Squidport Racing", 0x5e6898, 6, 10, 0)
-achiev_finish_all_street_races("Halloween Racing", 0x5e6b04, 7, 10, 0)
+achiev_finish_all_street_races("Daytime Downtown Racing", 0x5e5ee8 + 0x20, 2, 10, 0)
+achiev_finish_all_street_races("Daytime Squidport Racing", 0x5e6154 + 0x20, 3, 10, 0)
+achiev_finish_all_street_races("Night Suburb Racing", 0x5e63c0 + 0x20, 4, 10, 0)
+achiev_finish_all_street_races("Night Downtown Racing", 0x5e662c + 0x20, 5, 10, 0)
+achiev_finish_all_street_races("Night Squidport Racing", 0x5e6898 + 0x20, 6, 10, 0)
+achiev_finish_all_street_races("Halloween Racing", 0x5e6b04 + 0x20, 7, 10, 0)
 
 // Unlock all vehicles
 achiev_unlock_all_vehicles("Surveillance Van", 0x5e5c9c, 0x5e5e10, 1, 10, 0)
-achiev_unlock_all_vehicles("WWII Vehicle", 0x5e5ee8, 0x5e607c, 2, 10, 0)
-achiev_unlock_all_vehicles("Book Burning Van", 0x5e6154, 0x5e62e8, 3, 10, 0)
-achiev_unlock_all_vehicles("Krusty's Limo", 0x5e63c0, 0x5e6554, 4, 10, 0)
-achiev_unlock_all_vehicles("El Carro Loco", 0x5e662c, 0x5e67c0, 5, 10, 0)
-achiev_unlock_all_vehicles("36 Stutz Bearcat", 0x5e6898, 0x5e6a2c, 6, 10, 0)
-achiev_unlock_all_vehicles("Hearse", 0x5e6b04, 0x5e6c98, 7, 10, 0)
+achiev_unlock_all_vehicles("WWII Vehicle", 0x5e5ee8 + 0x20, 0x5e607c, 2, 10, 0)
+achiev_unlock_all_vehicles("Book Burning Van", 0x5e6154 + 0x20, 0x5e62e8, 3, 10, 0)
+achiev_unlock_all_vehicles("Krusty's Limo", 0x5e63c0 + 0x20, 0x5e6554, 4, 10, 0)
+achiev_unlock_all_vehicles("El Carro Loco", 0x5e662c + 0x20, 0x5e67c0, 5, 10, 0)
+achiev_unlock_all_vehicles("36 Stutz Bearcat", 0x5e6898 + 0x20, 0x5e6a2c, 6, 10, 0)
+achiev_unlock_all_vehicles("Hearse", 0x5e6b04 + 0x20, 0x5e6c98, 7, 10, 0)
 
 // Unlock all clothings
 achiev_unlock_all_clothings("King Size Homer", 0x5e5e14, 1, 10, 0)
@@ -477,7 +482,7 @@ function trig_marge_at_kwik_mart()
 achievement("Matt Groening Gaming", "Kick Marge all the way to Kwik E-Mart during Level 1.", 3,
             trigger =   game_context() == ctx_normal_game_playing &&
                         current_level() == 0 &&
-                        current_mission() != 5 &&
+                        current_mission() != 6 &&
                         trig_marge_at_kwik_mart()
            )
 
@@ -504,6 +509,7 @@ function trig_push_milhouse_at_cliff()
                         char_pos_z > 260.0 && char_pos_z < 323.0 && // ok
                         character_model_name == 0x686c696d // "Milh" 32 bits ASCII
     }
+    return trigger
     
 }
 
@@ -536,28 +542,26 @@ achievement("500-Yard Gash", "Unlock the bonus movie.", 5,
 //                Challenges              
 // =========================================
 
-// TODO: Test all these
-
-// TODO: Add reset when leaving mission
 function finish_mission_with_car(title, mission_name, level, mission, car, points, cheevo_id) {
     achievement(title, format("Finish {0} using only the {1}.", mission_name, car), points,
                 trigger =   in_game() &&
                             cheat_protection() &&
                             never(current_level() != level - 1) &&
-                            never(current_mission() != mission - 1) &&
+                            never(prev(current_mission()) != mission - 1)  &&
                             never(mission_name_2bytes() == m_name_wager) && // mission type is identified through mission name
                             never(mission_name_2bytes() == m_name_race) &&
-                            never(mission_outside_mission() == true) &&
+                            never(is_bonus_mission()) &&
+                            never(tally(60, mission_outside_mission() == true))  &&
                             once(mission_super_state() == 2) &&
                             trigger_when(mission_state() == m_state_success && prev(mission_state()) == m_state_inprogress) &&
-                            current_vehicle() == vehicles[car] &&
-                            never(player_inside_vehicle() == true && current_vehicle() != vehicles[car])
+                            current_vehicle_id() == vehicles[car] &&
+                            never(player_inside_vehicle() == true && current_vehicle_id() != vehicles[car])
                 )
 }
 
 // Unique Cars
 finish_mission_with_car("1970 Blue Flame", "The Fat and the Furious", 1, 8, "Speed Rocket", 5, 0)
-finish_mission_with_car("Marge vs. the Monorail", "Cell-Outs", 2, 7, "Monorail Car", 25, 0)
+finish_mission_with_car("Marge vs. the Monorail", "Cell-Outs", 2, 7, "Monorail Car", 10, 0)
 finish_mission_with_car("Knightboat: The Crime Solving Boat", "The Old Pirate and the Sea", 3, 7, "Knight Boat", 5, 0)
 finish_mission_with_car("Quad Bike", "Return of the Nearly-Dead", 4, 4, "ATV", 10, 0)
 finish_mission_with_car("Monster Truck", "...and Baby Makes 8", 5, 2, "Obliteratatron Big Wheel Truck", 5, 0)
@@ -565,11 +569,11 @@ finish_mission_with_car("Unfunny Pink Car", "Getting Down with the Clown", 6, 2,
 finish_mission_with_car("Radio-Controlled", "There's Something About Monty", 7, 4, "R/C Buggy", 10, 0)
 
 // Other Cars
-finish_mission_with_car("Fire Truck Challenge", "Fishy Deals", 3, 6, "Fire Truck", 10, 0)
+finish_mission_with_car("Fire Truck Challenge", "Fishy Deals", 3, 6, "Fire Truck", 25, 0)
 finish_mission_with_car("Donut Challenge", "For A Few Donuts More", 4, 1, "Donut Truck", 10, 0)
 finish_mission_with_car("Duff Challenge", "From Outer Space", 4, 7, "Duff Truck", 10, 0)
 // finish_mission_with_car("Funny Pink Car Challenge", "Getting Down with the Clown", 6, 2, "Family Sedan", 10, 0)
-finish_mission_with_car("Cola Challenge", "Duff For Me, Duff ", 6, 4, "Cola Truck", 10, 0)
+finish_mission_with_car("Cola Challenge", "Duff For Me, Duff For You", 6, 4, "Cola Truck", 10, 0)
 finish_mission_with_car("Plow King Challenge", "Full Metal Jackass", 6, 5, "Plow King", 10, 0)
 finish_mission_with_car("Armored Challenge", "Rigor Motors", 7, 1, "Armored Truck", 10, 0)
 
@@ -580,6 +584,7 @@ achievement("I Can't See Anything", "Finish Alien \"Auto\"topsy Part III with th
                             never(current_mission() != 6) &&
                             never(mission_name_2bytes() == m_name_wager) && // mission type is identified through mission name
                             never(mission_name_2bytes() == m_name_race) &&
+                            never(is_bonus_mission()) &&
                             never(mission_outside_mission() == true) &&
                             once(mission_super_state() == 2) &&
                             trigger_when(mission_state() == m_state_success && prev(mission_state()) == m_state_inprogress) &&

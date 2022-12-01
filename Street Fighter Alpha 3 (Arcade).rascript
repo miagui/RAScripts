@@ -459,7 +459,6 @@ achievement("Brave or Grave", "Defeat M. Bison in Final Battle Mode on 8-Expert 
                         trigger_when(p1_has_won_arcade_match()) &&
                         settings_difficulty() == 0x07 &&
                         settings_p1_max_round() == 0x02 &&
-                        settings_p2_max_round() == 0x02 &&
                         settings_timer_speed() == 0x01,
             id = 0)
 

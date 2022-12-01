@@ -8,7 +8,7 @@
 
 // Game
 function menu_selected() => dword(0x64d150)
-function game_difficulty() => dword(0x64c46c)
+function game_difficulty() => byte(0x64c4da)
          diff_easy = 0x00
          diff_normal = 0x01
          diff_hard = 0x02
@@ -220,7 +220,10 @@ function all_items_pitch_black() => bit6(0x64c5b0) + bit3(0x64c5b2) + bit3(0x64c
 function all_items_inferno() => bit7(0x64c5ec) + bit5(0x64c5b9) + bit0(0x64c5b9) + bit1(0x64c5b8) // V
 function all_items_central_white() => bit0(0x64c5be) + bit4(0x64c5f0) // V
 function all_items_metal_valley() => bit4(0x64c5c0) + bit6(0x64c5c1) + bit1(0x64c5f4) + bit2(0x64c5c1) // V
-function all_items_booster_forest() => bit2(0x64c5f8) + bit0(0x64c65c) + bit1(0x64c6a5) + bit7(0x64c5c5) // V
+function all_items_booster_forest() => bit3(0x64c5c5) + bit7(0x64c5c5) + bit2(0x64c5c6) + bit3(0x64c5f8) // V
+
+
+
 
 function all_chips_everyone() => bit0(0x64c633) + bit0(0x64c634) + bit0(0x64c636) + bit0(0x64c637) + bit0(0x64c638) + bit0(0x64c639) + bit0(0x64c850) // Total 7
 
@@ -258,8 +261,7 @@ function achievement_clear_mission(title, stage_name, stage_id, points, cheevo_i
     achievement(title, format("Finish {0} stage.", stage_name), points,
                 trigger =   game_stage() == stage_id &&
                             stage_intermission_flag() == false &&
-                            stage_has_been_sucessfully_cleared(),
-                id = cheevo_id
+                            stage_has_been_sucessfully_cleared()
                 ) 
 }
 
@@ -268,8 +270,7 @@ function achievement_clear_mission_no_revisit(title, stage_name, stage_id, point
                 trigger =   game_stage() == stage_id &&
                             stage_intermission_flag() == false &&
                             stage_has_been_sucessfully_cleared() &&
-                            stage_fighting_stage_boss_flag() == true,
-                id = cheevo_id
+                            stage_fighting_stage_boss_flag() == true
                 ) 
 }
 
@@ -277,8 +278,7 @@ function achievement_exf_finish(title, boss_name, stage_id, points, cheevo_id) {
     achievement(title, format("Defeat {0} with an EXF Double Attack.", boss_name), points,
                 trigger =   game_stage() == stage_id &&
                             stage_intermission_flag() == false &&
-                            stage_exf_finish_flag() == true && prev(stage_exf_finish_flag()) == false,
-                id = cheevo_id
+                            stage_exf_finish_flag() == true && prev(stage_exf_finish_flag()) == false
                 ) 
 }
 
@@ -288,8 +288,7 @@ function achievement_no_damage_clear(stage_name, stage_id, points, cheevo_id) {
                             stage_intermission_flag() == false &&
                             trigger_when(stage_has_been_sucessfully_cleared()) &&
                             stage_no_damage_taken_flag() == true &&
-                            game_difficulty() >= diff_normal,
-                id = cheevo_id
+                            game_difficulty() >= diff_normal
                 ) 
 }
 
@@ -299,8 +298,7 @@ function achievement_rank_aaa_clear(stage_name, stage_id, points, cheevo_id) {
                             stage_intermission_flag() == false &&
                             stage_rank() == rank_aaa && prev(stage_rank()) != rank_aaa &&
                             stage_sucessfully_cleared_mission_flag() == 1 &&
-                            game_difficulty() >= diff_normal,
-                id = cheevo_id
+                            game_difficulty() >= diff_normal
                 ) 
 }
 
@@ -324,7 +322,7 @@ achievement("Disruption of the New World", "Beat the game on Normal difficulty."
             )
 
 
-achievement("Lost Paradise", "Beat the game on Hard difficulty.", 25,
+achievement("Paradise Lost", "Beat the game on Hard difficulty.", 50,
                 trigger =   game_stage() == st_sigma_palace &&
                             stage_has_been_sucessfully_cleared() &&
                             game_difficulty() == diff_hard,
@@ -360,28 +358,28 @@ achievement_exf_finish("Double Attack Against the Lucifer", "Lumine", st_sigma_p
 achievement_no_damage_clear("Noah's Park", st_noahs_park, 10, 223539)
 achievement_no_damage_clear("Troia Base", st_troia_base, 10, 223540)
 achievement_no_damage_clear("Primrose", st_primrose, 10, 223541)
-achievement_no_damage_clear("Pitch Black", st_pitch_black, 10, 223542)
-achievement_no_damage_clear("Dynasty [VOID]", st_dynasty, 10, 223543)
-achievement_no_damage_clear("Inferno", st_inferno, 10, 223544)
-achievement_no_damage_clear("Central White [VOID]", st_central_white, 10, 223545)
+achievement_no_damage_clear("Pitch Black", st_pitch_black, 25, 223542)
+achievement_no_damage_clear("Dynasty [VOID]", st_dynasty, 0, 223543)
+achievement_no_damage_clear("Inferno", st_inferno, 25, 223544)
+achievement_no_damage_clear("Central White [VOID]", st_central_white, 0, 223545)
 achievement_no_damage_clear("Metal Valley", st_metal_valley, 10, 223546)
 achievement_no_damage_clear("Booster Forest", st_booster_forest, 10, 223547)
 achievement_no_damage_clear("Jakob", st_jakob, 10, 223548)
 achievement_no_damage_clear("Gateway", st_gateway, 25, 223549)
-achievement_no_damage_clear("Sigma Palace", st_sigma_palace, 25, 223550)
+achievement_no_damage_clear("Sigma Palace", st_sigma_palace, 10, 223550)
 
-achievement_rank_aaa_clear("Noah's Park", st_noahs_park, 25, 223551)
-achievement_rank_aaa_clear("Troia Base", st_troia_base, 25, 223552)
+achievement_rank_aaa_clear("Noah's Park", st_noahs_park, 10, 223551)
+achievement_rank_aaa_clear("Troia Base", st_troia_base, 10, 223552)
 achievement_rank_aaa_clear("Primrose", st_primrose, 25, 223553)
-achievement_rank_aaa_clear("Pitch Black", st_pitch_black, 25, 223554)
+achievement_rank_aaa_clear("Pitch Black", st_pitch_black, 10, 223554)
 achievement_rank_aaa_clear("Dynasty", st_dynasty, 10, 223555)
-achievement_rank_aaa_clear("Inferno", st_inferno, 25, 223556)
+achievement_rank_aaa_clear("Inferno", st_inferno, 10, 223556)
 achievement_rank_aaa_clear("Central White", st_central_white, 25, 223557)
-achievement_rank_aaa_clear("Metal Valley", st_metal_valley, 25, 223558)
-achievement_rank_aaa_clear("Booster Forest", st_booster_forest, 25, 223559)
-achievement_rank_aaa_clear("Jakob", st_jakob, 25, 223560)
+achievement_rank_aaa_clear("Metal Valley", st_metal_valley, 10, 223558)
+achievement_rank_aaa_clear("Booster Forest", st_booster_forest, 10, 223559)
+achievement_rank_aaa_clear("Jakob", st_jakob, 10, 223560)
 achievement_rank_aaa_clear("Gateway", st_gateway, 25, 223561)
-achievement_rank_aaa_clear("Sigma Palace", st_sigma_palace, 25, 223562)
+achievement_rank_aaa_clear("Sigma Palace [VOID]", st_sigma_palace, 0, 223562)
 
 // =========================================
 //                   Misc              
@@ -397,11 +395,12 @@ achievement("Hover a Little More", "Obtain the Rare Metal in the river on the fi
 achievement("Forgot Something Here?", "Enter the secret room on Noah's Park.", 2,
             trigger = game_stage() == st_noahs_park &&
                       stage_camera_x() >= 243 && stage_camera_x() <= 244 &&
-                      stage_camera_y() == 12.0
+                      stage_camera_y() == 12.0 &&
+                      stage_camera_z() <= -153.0
             )
 
 achievement("Sneaking", "Get through Pitch Black stage without activating any alarm and with lights off.", 4,
-            trigger = game_stage() == st_pitch_black &&
+            trigger = never(game_stage() != st_pitch_black) &&
                       once(stage_load_section() == 2 && prev(stage_load_section()) != 2) &&
                       trigger_when(stage_has_been_sucessfully_cleared() || stage_fighting_stage_boss_flag() == true) &&
                       never(bit7(0x9cd798) == true) &&
@@ -422,11 +421,11 @@ achievement("Additional Mobility", "Obtain all items from Central White stage wi
                         never(byte(0x64db40) != st_central_white)
             ) 
 
-achievement("Havoc Wrecker", "Defeat Vile 4 times before reaching Sigma Palace.", 10,
+achievement("Havoc Wrecker", "Encounter Vile 4 times before reaching Sigma Palace.", 10,
             trigger =   inside_a_stage() &&
                         bit2(0x64c4af) == false &&
-                        sum_of(range(4, 7), b => bit(b,0x64c4d4)) == 4 &&
-                        prev(sum_of(range(4, 7), b => bit(b,0x64c4d4))) == 3 &&
+                        measured(sum_of(range(0, 3), b => bit(b,0x64c4d4)) == 4) &&
+                        prev(sum_of(range(0, 3), b => bit(b,0x64c4d4))) == 3 &&
                         always_true()
             )
 
@@ -500,7 +499,7 @@ achievement("Bullets Team-Up", "Finish a stage with Axl and Pallette.", 3,
 achievement("Crabs-K Infestation", "Eliminate 250 Crabs-K on Noah's Park intermission.", 10,
             trigger =   stage_intermission_flag() == true &&
                         game_stage() == st_noahs_park &&
-                        intermission_park_crabs_eliminated() >= 250 && prev(intermission_park_crabs_eliminated()) < 250
+                        stage_foes_defeated() >= 250 && prev(stage_foes_defeated()) < 250
             )
 
 achievement("Endurance Test", "Score 4000 distance points without using Zero's techniques on Inferno intermission.", 10,
@@ -537,42 +536,42 @@ achievement("Not a Invincible Claw", "Finish Noah's Park intermission.", 4,
 achievement("Noah's Park 100%", "Collect all items from Noah's Park stage.", 5,
             trigger =   inside_a_stage() &&
                         game_stage() == st_noahs_park &&
-                        all_items_noahs_park() == 3 && prev(all_items_noahs_park()) == 2)
+                        measured(all_items_noahs_park() == 3) && prev(all_items_noahs_park()) == 2)
 
 achievement("Troia Base 100%", "Collect all items from Troia Base stage.", 5,
             trigger =   inside_a_stage() &&
                         game_stage() == st_troia_base &&
-                        all_items_troia_base() == 4 && prev(all_items_troia_base()) == 3)
+                        measured(all_items_troia_base() == 4) && prev(all_items_troia_base()) == 3)
 
 achievement("Primrose 100%", "Collect all items from Primrose stage.", 5,
             trigger =   inside_a_stage() &&
                         game_stage() == st_primrose &&
-                        all_items_primrose() == 3 && prev(all_items_primrose()) == 2)
+                        measured(all_items_primrose() == 3) && prev(all_items_primrose()) == 2)
 
 achievement("Pitch Black 100%", "Collect all items from Pitch Black stage.", 5,
             trigger =   inside_a_stage() &&
                         game_stage() == st_pitch_black &&
-                        all_items_pitch_black() == 4 && prev(all_items_pitch_black()) == 3)
+                        measured(all_items_pitch_black() == 4) && prev(all_items_pitch_black()) == 3)
 
 achievement("Inferno 100%", "Collect all items from Inferno stage.", 5,
             trigger =   inside_a_stage() &&
                         game_stage() == st_inferno &&
-                        all_items_inferno() == 4 && prev(all_items_inferno()) == 3)
+                        measured(all_items_inferno() == 4) && prev(all_items_inferno()) == 3)
 
 achievement("Central White 100%", "Collect all items from Central White stage.", 5,
             trigger =   inside_a_stage() &&
                         game_stage() == st_central_white &&
-                        all_items_central_white() == 2 && prev(all_items_central_white()) == 1)
+                        measured(all_items_central_white() == 2) && prev(all_items_central_white()) == 1)
 
 achievement("Metal Valley 100%", "Collect all items from Metal Valley stage.", 5,
             trigger =   inside_a_stage() &&
                         game_stage() == st_metal_valley &&
-                        all_items_metal_valley() == 4 && prev(all_items_metal_valley()) == 3)
+                        measured(all_items_metal_valley() == 4) && prev(all_items_metal_valley()) == 3)
 
 achievement("Booster Forest 100%", "Collect all items from Booster Forest stage.", 5,
             trigger =   inside_a_stage() &&
                         game_stage() == st_booster_forest &&
-                        all_items_booster_forest() == 4 && prev(all_items_booster_forest()) == 3)
+                        measured(all_items_booster_forest() == 4) && prev(all_items_booster_forest()) == 3)
 
 address_purple_metals_1 = 0x64c88c
 address_purple_metals_2 = 0x64c88d
@@ -630,10 +629,10 @@ achievement("My Turn!", "Buy Pallet Bullets.", 25,
                         metal_glitch_protection() &&
                         bit0(0x64c632) == true && prev(bit0(0x64c632)) == false)
 
-achievement("Σ Blade", "Buy Sigma Blade.", 5,
+achievement("Σ Blade", "Buy the Sigma Blade for Zero.", 5,
             trigger =   inside_chip_dev() &&
                         metal_glitch_protection() &&
-                        bit0(0x64c632) == true && prev(bit0(0x64c632)) == false)
+                        bit0(0x64c6e0) == true && prev(bit0(0x64c6e0)) == false)
 
 achievement("All 100%", "Buy all permanent green chips (All).", 10,
             trigger =   inside_chip_dev() &&
@@ -731,7 +730,7 @@ function achievement_damageless_boss_zero(title, boss_name, stage_id, points, ch
 }
 
 function achievement_damageless_boss_axl(title, boss_name, stage_id, points, cheevo_id) {
-    achievement(format("Axl vs. {0}", boss_name), format("Axl: Defeat {0} without taking damage and without using weapons (no Double Attack).", boss_name), 10,
+    achievement(format("Axl vs. {0}", boss_name), format("Axl: Defeat {0} without taking damage (no Double Attack).", boss_name), 10,
                 trigger =   (
                                 (game_stage() == stage_id) ||
                                 (fighting_boss_on_boss_rush(stage_id - 1))
@@ -740,7 +739,6 @@ function achievement_damageless_boss_axl(title, boss_name, stage_id, points, che
                                  stage_boss_hp() == stage_max_boss_hp_display()) &&
                             never(player_hp_display() < prev(player_hp_display())) &&
                             never(player_current_char() != pl_axl) &&
-                            never(player_weapon() != 0) &&
                             never(used_double_attack()) &&
                             never(stage_boss_hp_bar_inactive()) &&
                             never(game_stage() == st_booster_forest && inside_ride_armor()) &&
@@ -857,7 +855,7 @@ leaderboard("Intermission - Noah's Park", "Eliminate the highest amount of Crabs
            start = game_stage() == st_noahs_park && stage_has_been_cleared() && stage_intermission_flag() == true,
            cancel = game_stage() != st_noahs_park || stage_intermission_flag() == false,
            submit = game_stage() == st_noahs_park && stage_has_been_cleared() && stage_intermission_flag() == true,
-           value = intermission_park_crabs_eliminated(),
+           value = stage_foes_defeated(),
            format = "VALUE", lower_is_better=false)
 
 leaderboard("Intermission - Inferno", "Walk the highest distance as you can on Inferno intermission (no Zero's techniques).",
