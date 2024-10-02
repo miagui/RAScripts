@@ -5,6 +5,9 @@
 //              Memory Accessors              
 // =========================================
 
+b_true = 1
+b_false = 0
+
 // Settings
 function settings_cpu_level() => byte(0x5E07B2)
 function settings_cpu_level_default() => byte(0x5E07B2) >= 0x03
@@ -57,21 +60,22 @@ function p1_1st_char() => byte(0x5BE274)
 function p1_2nd_char() => byte(0x5BE275)
 function p1_3rd_char() => byte(0x5BE276)
 
-function p1_rounds_wins() => byte(0x5BE280)
+function p1_rounds_wins() => byte(0x5be243)
 function p1_rounds_losses() => byte(0x5BE281)
+function p2_rounds_losses() => byte(0x5be251)
 
 function p1_current_move_type() => byte(0x5B98E8)
 
 function p1_current_char() => byte(0x5CD140)
 function p1_current_char_orochi() => byte(0x5cd2a6)
 function p1_moves() => word(0x5CD142)
-function p1_hp() => byte(0x5CD208)
+function p1_hp() => word(0x5CD208)
 function p1_hit_combo() => byte(0x5CD4A0)
 
 // P2
 function p2_current_char() => byte(0x5CD360)
 function p2_moves() => word(0x5CD362)
-function p2_hp() => byte(0x5CD428)
+function p2_hp() => word(0x5CD428)
 function p2_hit_combo() => byte(0x5CD280)
 
 characters = {
@@ -148,6 +152,12 @@ characters = {
 // =========================================
 
 function p1_only() => game_human_players_active() == 1
+function in_arcade_mode() =>    game_mode() != gm_practice &&
+                                game_mode() != gm_neogeo_mode &&
+                                game_mode() != gm_challenge
+
+function p1_has_won() => p1_rounds_wins() > prev(p1_rounds_wins())
+
 function team_play_arcade_beaten() {
     return (
             (
@@ -176,7 +186,7 @@ function single_play_arcade_beaten() {
 function p1_team_has_char(char_id) => p1_1st_char() == char_id || p1_2nd_char() == char_id || p1_3rd_char() == char_id
 function p1_dont_have_char(char_id) => p1_1st_char() != char_id && p1_2nd_char() != char_id && p1_3rd_char() != char_id
 
-function p1_has_won() => p1_rounds_wins() > prev(p1_rounds_wins())
+
 function arcade_match_won() => arcade_matches_won() > prev(arcade_matches_won())
 
 function macro_protection() => never(byte(0x5f45f0) == 3) && repeated(900, always_true())
@@ -187,7 +197,7 @@ function macro_protection() => never(byte(0x5f45f0) == 3) && repeated(900, alway
 
 achievement("Lone Wolf", "Reach and defeat St-Boss on Single Play (Level-4 difficulty).", 10,
                 trigger =   game_mode() == gm_single_play &&
-                            game_is_fighting() == true &&
+                            game_is_fighting() == b_true &&
                             p1_only() &&
                             settings_cpu_level_default() &&
                             trigger_when(single_play_arcade_beaten())
@@ -197,7 +207,7 @@ achievement("Lone Wolf", "Reach and defeat St-Boss on Single Play (Level-4 diffi
 function beat_arcade_team(char1, char2, char3, title, cheevo_id) {
     achievement(title, format("Reach and defeat St-Boss using only {0}, {1} and {2} (Level-4 difficulty).", char1, char2, char3), 10,
                 trigger =   game_mode() == gm_team_play &&
-                            game_is_fighting() == true &&
+                            game_is_fighting() == b_true &&
                             p1_only() &&
                             once(arcade_matches_won() == 0) &&
                             never(p1_dont_have_char(characters[char1]) && p1_has_won()) &&
@@ -257,7 +267,7 @@ beat_arcade_team("EX Robert", "EX Kensou", "EX Takuma", "EX Team", 0)
 
 achievement("Awakened Orochi Team", "Reach and defeat St-Boss using only Orochi Yashiro, Orochi Shermie and Orochi Chris (Level-4 difficulty).", 10,
                 trigger =   game_mode() == gm_team_play &&
-                            game_is_fighting() == true &&
+                            game_is_fighting() == b_true &&
                             p1_only() &&
                             once(arcade_matches_won() == 0) &&
                             never(p1_dont_have_char(characters["Yashiro"]) && p1_has_won()) &&
@@ -275,7 +285,7 @@ achievement("Awakened Orochi Team", "Reach and defeat St-Boss using only Orochi 
 
 achievement("NESTS Bosses Team", "Reach and defeat St-Boss using only Krizalid, C-Zero, Zero or Igniz (Level-4 difficulty).", 10,
                 trigger =   game_mode() == gm_team_play &&
-                            game_is_fighting() == true &&
+                            game_is_fighting() == b_true &&
                             p1_only() &&
                             once(arcade_matches_won() == 0) &&
                             never((p1_1st_char() < 0x3b || p1_1st_char() > 0x3e) && p1_has_won()) &&
@@ -294,30 +304,28 @@ achievement("NESTS Bosses Team", "Reach and defeat St-Boss using only Krizalid, 
 // =========================================
 
 function hit_with_hsdm(title, character, does_hits, points, cheevo_id) {
-    if does_hits == true {
+    if does_hits == b_true {
         achievement(title, format("{0}: Hit your opponent with a Max 2 on Arcade Mode.", character), points,
-                    trigger =   game_mode() != gm_practice &&
-                                game_mode() != gm_neogeo_mode &&
-                                game_is_fighting() == true &&
+                    trigger =   in_arcade_mode() &&
+                                game_is_fighting() == b_true &&
                                 p1_only() &&
                                 macro_protection() &&
                                 p1_current_char() == characters[character] &&
-                                p1_current_move_type() == 0x04 &&
+                                __ornext(p1_current_move_type() == 0x04 || match_hsdm_bg() == 0x81) &&
                                 p1_hit_combo() > prev(p1_hit_combo())
                     )
     }
     else {
         achievement(title, format("{0}: Hit your opponent with a Max 2 on Arcade Mode.", character), points,
-                    trigger =   game_mode() != gm_practice &&
-                                game_mode() != gm_neogeo_mode &&
-                                game_is_fighting() == true &&
+                    trigger =   in_arcade_mode() &&
+                                game_is_fighting() == b_true &&
                                 p1_only() &&
                                 macro_protection() &&
                                 p1_current_char() == characters[character] &&
-                                p1_current_move_type() == 0x04 &&
+                                __ornext(p1_current_move_type() == 0x04 || match_hsdm_bg() == 0x81) &&
                                 (
                                     p2_hp() < prev(p2_hp()) || // lost hp
-                                    p2_hp() > 0x80 && prev(p2_hp()) < 0x80 // lost round exception
+                                    p2_hp() >= 0x8000 && prev(p2_hp()) < 0x8000 // lost round exception
                                 )
                                 
                     )
@@ -326,11 +334,10 @@ function hit_with_hsdm(title, character, does_hits, points, cheevo_id) {
 }
 
 function hit_with_hsdm_orochi(title, character, does_hits, points, cheevo_id) {
-    if does_hits == true {
+    if does_hits == b_true {
         achievement(title, format("{0}: Hit your opponent with a Max 2 on Arcade Mode.", character), points,
-                    trigger =   game_mode() != gm_practice &&
-                                game_mode() != gm_neogeo_mode &&
-                                game_is_fighting() == true &&
+                    trigger =   in_arcade_mode() &&
+                                game_is_fighting() == b_true &&
                                 p1_only() &&
                                 macro_protection() &&
                                 p1_current_char() == characters[character] &&
@@ -341,9 +348,8 @@ function hit_with_hsdm_orochi(title, character, does_hits, points, cheevo_id) {
     }
     else {
         achievement(title, format("{0}: Hit your opponent with a Max 2 on Arcade Mode.", character), points,
-                    trigger =   game_mode() != gm_practice &&
-                                game_mode() != gm_neogeo_mode &&
-                                game_is_fighting() == true &&
+                    trigger =   in_arcade_mode() &&
+                                game_is_fighting() == b_true &&
                                 p1_only() &&
                                 macro_protection() &&
                                 p1_current_char() == characters[character] &&
@@ -359,11 +365,10 @@ function hit_with_hsdm_orochi(title, character, does_hits, points, cheevo_id) {
 }
 
 function hit_with_hsdm_no_orochi(title, character, does_hits, points, cheevo_id) {
-    if does_hits == true {
+    if does_hits == b_true {
         achievement(title, format("{0}: Hit your opponent with a Max 2 on Arcade Mode.", character), points,
-                    trigger =   game_mode() != gm_practice &&
-                                game_mode() != gm_neogeo_mode &&
-                                game_is_fighting() == true &&
+                    trigger =   in_arcade_mode() &&
+                                game_is_fighting() == b_true &&
                                 p1_only() &&
                                 macro_protection() &&
                                 p1_current_char() == characters[character] &&
@@ -374,9 +379,8 @@ function hit_with_hsdm_no_orochi(title, character, does_hits, points, cheevo_id)
     }
     else {
         achievement(title, format("{0}: Hit your opponent with a Max 2 on Arcade Mode.", character), points,
-                    trigger =   game_mode() != gm_practice &&
-                                game_mode() != gm_neogeo_mode &&
-                                game_is_fighting() == true &&
+                    trigger =   in_arcade_mode() &&
+                                game_is_fighting() == b_true &&
                                 p1_only() &&
                                 macro_protection() &&
                                 p1_current_char() == characters[character] &&
@@ -391,77 +395,115 @@ function hit_with_hsdm_no_orochi(title, character, does_hits, points, cheevo_id)
     
 }
 
-hit_with_hsdm("God\'s Duster", "Kyo", true, 5, 0)
-hit_with_hsdm("Heaven Blast Dress", "Benimaru", true, 5, 0)
-hit_with_hsdm("Fu Rin Ka Zan", "Daimon", false, 5, 0)
-hit_with_hsdm("Rising Force", "Terry", true, 5, 0)
-hit_with_hsdm("Zan Ei Super Sonic Swirl", "Andy", true, 5, 0)
-hit_with_hsdm("Cross Giganticness", "Joe", true, 5, 0)
-hit_with_hsdm("Zero Distance Phoenix Flattener", "Kim", true, 5, 0)
-hit_with_hsdm("Earth Sphere Smasher", "Chang", true, 5, 0)
-hit_with_hsdm("Instant Death", "Choi", true, 5, 0)
+hit_with_hsdm("God\'s Duster", "Kyo", b_true, 5, 0)
+hit_with_hsdm("Heaven Blast Dress", "Benimaru", b_true, 5, 0)
+hit_with_hsdm("Fu Rin Ka Zan", "Daimon", b_false, 5, 0)
+hit_with_hsdm("Rising Force", "Terry", b_true, 5, 0)
+hit_with_hsdm("Zan Ei Super Sonic Swirl", "Andy", b_true, 5, 0)
+hit_with_hsdm("Cross Giganticness", "Joe", b_true, 5, 0)
+hit_with_hsdm("Zero Distance Phoenix Flattener", "Kim", b_true, 5, 0)
+hit_with_hsdm("Earth Sphere Smasher", "Chang", b_true, 5, 0)
+hit_with_hsdm("Instant Death", "Choi", b_true, 5, 0)
 // hit_with_hsdm("Psycho Medley", "Athena", exception, 5, 0)
-hit_with_hsdm("Dragon Awakening ", "Kensou", true, 5, 0)
-hit_with_hsdm("Manipulate Flame Dance", "Chin", true, 5, 0)
-hit_with_hsdm("Dead End Inferno", "Leona", true, 5, 0)
-hit_with_hsdm("Galactica Vanguard", "Ralf", false, 5, 0)
+hit_with_hsdm("Dragon Awakening ", "Kensou", b_true, 5, 0)
+hit_with_hsdm("Manipulate Flame Dance", "Chin", b_true, 5, 0)
+hit_with_hsdm("Dead End Inferno", "Leona", b_true, 5, 0)
+hit_with_hsdm("Galactica Vanguard", "Ralf", b_false, 5, 0)
 // hit_with_hsdm("Roaring Sphere", "Clark", exception, 5, 0)
-hit_with_hsdm("Ryuko Ranbu: Rage", "Ryo", true, 5, 0)
-hit_with_hsdm("Ryuko Ranbu: Absolute", "Robert", true, 5, 0)
-hit_with_hsdm("Tiger Killer", "Takuma", false, 5, 0)
-hit_with_hsdm("Shiranui Nine Tails Fox", "Mai", true, 5, 0)
-hit_with_hsdm("Super! Ryuko Ranbu", "Yuri", true, 5, 0)
-hit_with_hsdm("Key of Victory", "May Lee", true, 5, 0)
-hit_with_hsdm("Flame Disentengle", "Iori", true, 5, 0)
-hit_with_hsdm("ECSTASY 816", "Mature", true, 5, 0)
-hit_with_hsdm("Corpse March", "Vice", true, 5, 0)
-hit_with_hsdm("...!!", "Yamazaki", true, 5, 0)
-hit_with_hsdm("M. Infinity Rose", "Blue Mary", false, 5, 0)
-hit_with_hsdm("Liar's Element", "Billy", true, 5, 0)
-hit_with_hsdm_no_orochi("\"ERROR...\"code**2002**", "Yashiro", true, 5, 0)
-hit_with_hsdm_no_orochi("Lighting Leg Lariat", "Shermie", false, 5, 0)
-hit_with_hsdm_no_orochi("Fate of Flame", "Chris", true, 5, 0)
-hit_with_hsdm("Crimson Star Road", "K'", true, 5, 0)
-hit_with_hsdm("End of the World", "Maxima", true, 5, 0)
-hit_with_hsdm("Super Black Hawk", "Whip", true, 5, 0)
-hit_with_hsdm("Gaea Gear", "Vanessa", true, 5, 0)
-hit_with_hsdm("Bloom of Chrysanthemum", "Seth", true, 5, 0)
-hit_with_hsdm("Hypnotic Tiger", "Ramon", true, 5, 0)
-hit_with_hsdm("Freeze Completion", "Kula", true, 5, 0)
-hit_with_hsdm("Rinkou", "Nameless", true, 5, 0)
-hit_with_hsdm("Survivors Banquette", "Angel", true, 5, 0)
-hit_with_hsdm("Kaiser Phoenix", "Omega Rugal", true, 5, 0)
-hit_with_hsdm("Final Showdown Zero Style", "Kusanagi", true, 5, 0)
-hit_with_hsdm("Shingo Style God's Duster", "Shingo", false, 5, 0)
-hit_with_hsdm("Secret Mirage", "King", true, 5, 0)
-hit_with_hsdm("Tenshin Zan Hou Ga", "Xiangfei", true, 5, 0)
-hit_with_hsdm("Daisyarin Nodowa Otoshi", "Hinako", false, 5, 0)
-hit_with_hsdm("Caliburn", "Heidern", true, 5, 0)
-hit_with_hsdm("Dokusyu Kou", "Lin", false, 5, 0)
-hit_with_hsdm("Lion Killer", "EX Takuma", true, 5, 0)
-hit_with_hsdm("Psycho Ball Gravity", "Bao", true, 5, 0)
-hit_with_hsdm("Zankou Haiki Jin", "Jhun", true, 5, 0)
-hit_with_hsdm("Heavenly Feather Slash", "Kyo-1", true, 5, 0)
-hit_with_hsdm("Honeybee", "Foxy", false, 5, 0)
-hit_with_hsdm("Dual Ultimate Ecstasy Crunch", "Kasumi", true, 5, 0)
-hit_with_hsdm("Thunder Break", "Geese", true, 5, 0)
-hit_with_hsdm("Raging Dead End", "Nightmare Geese", true, 5, 0)
-hit_with_hsdm("EX Ryuko Ranbu ", "EX Robert", true, 5, 0)
-hit_with_hsdm("Arrow Dash Dragon Crunch", "EX Kensou", true, 5, 0)
-hit_with_hsdm("Hi no Kaguzuchi", "Kyo-2", false, 5, 0)
-hit_with_hsdm("Ibuki Nagayo", "Goenitz", true, 5, 0)
-hit_with_hsdm("Lighting Disaster", "Krizalid", true, 5, 0)
-hit_with_hsdm("Dark Stream Heaven Breaker I", "C-Zero", true, 5, 0)
-hit_with_hsdm("Dark Stream Heaven Breaker II", "Zero", false, 5, 0)
-hit_with_hsdm("Dis-integrational Universe", "Igniz", true, 5, 0)
-hit_with_hsdm_orochi("Harmagedon", "Yashiro", true, 5, 0)
-hit_with_hsdm_orochi("Unmei no Ya", "Shermie", true, 5, 0)
-hit_with_hsdm_orochi("Emerges from a Chrysalis", "Chris", true, 5, 0)
+hit_with_hsdm("Ryuko Ranbu: Rage", "Ryo", b_true, 5, 0)
+hit_with_hsdm("Ryuko Ranbu: Absolute", "Robert", b_true, 5, 0)
+hit_with_hsdm("Tiger Killer", "Takuma", b_false, 5, 0)
+hit_with_hsdm("Shiranui Nine Tails Fox", "Mai", b_true, 5, 0)
+hit_with_hsdm("Super! Ryuko Ranbu", "Yuri", b_true, 5, 0)
+hit_with_hsdm("Key of Victory", "May Lee", b_true, 5, 0)
+hit_with_hsdm("Flame Disentengle", "Iori", b_true, 5, 0)
+hit_with_hsdm("ECSTASY 816", "Mature", b_true, 5, 0)
+hit_with_hsdm("Corpse March", "Vice", b_true, 5, 0)
+hit_with_hsdm("...!!", "Yamazaki", b_true, 5, 0)
+hit_with_hsdm("M. Infinity Rose", "Blue Mary", b_false, 5, 0)
+hit_with_hsdm("Liar's Element", "Billy", b_true, 5, 0)
+hit_with_hsdm_no_orochi("\"ERROR...\"code**2002**", "Yashiro", b_true, 5, 0)
+hit_with_hsdm_no_orochi("Lighting Leg Lariat", "Shermie", b_false, 5, 0)
+hit_with_hsdm_no_orochi("Fate of Flame", "Chris", b_true, 5, 0)
+hit_with_hsdm("Crimson Star Road", "K'", b_true, 5, 0)
+hit_with_hsdm("End of the World", "Maxima", b_true, 5, 0)
+hit_with_hsdm("Super Black Hawk", "Whip", b_true, 5, 0)
+hit_with_hsdm("Gaea Gear", "Vanessa", b_true, 5, 0)
+hit_with_hsdm("Bloom of Chrysanthemum", "Seth", b_true, 5, 0)
+hit_with_hsdm("Hypnotic Tiger", "Ramon", b_true, 5, 0)
+hit_with_hsdm("Freeze Completion", "Kula", b_true, 5, 0)
+hit_with_hsdm("Rinkou", "Nameless", b_true, 5, 0)
+hit_with_hsdm("Survivors Banquette", "Angel", b_true, 5, 0)
+hit_with_hsdm("Kaiser Phoenix", "Omega Rugal", b_true, 5, 0)
+hit_with_hsdm("Final Showdown Zero Style", "Kusanagi", b_true, 5, 0)
+hit_with_hsdm("Shingo Style God's Duster", "Shingo", b_false, 5, 0)
+hit_with_hsdm("Secret Mirage", "King", b_true, 5, 0)
+hit_with_hsdm("Tenshin Zan Hou Ga", "Xiangfei", b_true, 5, 0)
+// hit_with_hsdm("Daisyarin Nodowa Otoshi", "Hinako", b_false, 5, 0) // EXCEPTION: need special logic to use the HSDM bg flag instead of hit
+hit_with_hsdm("Caliburn", "Heidern", b_true, 5, 0)
+// hit_with_hsdm("Dokusyu Kou", "Lin", b_false, 5, 0) // EXCEPTION: need special logic to use only the HSDM, since it doesn't do hits
+hit_with_hsdm("Lion Killer", "EX Takuma", b_true, 5, 0)
+hit_with_hsdm("Psycho Ball Gravity", "Bao", b_true, 5, 0)
+hit_with_hsdm("Zankou Haiki Jin", "Jhun", b_true, 5, 0)
+hit_with_hsdm("Heavenly Feather Slash", "Kyo-1", b_true, 5, 0)
+hit_with_hsdm("Honeybee", "Foxy", b_false, 5, 0)
+hit_with_hsdm("Dual Ultimate Ecstasy Crunch", "Kasumi", b_true, 5, 0)
+hit_with_hsdm("Thunder Break", "Geese", b_true, 5, 0)
+hit_with_hsdm("Raging Dead End", "Nightmare Geese", b_true, 5, 0)
+hit_with_hsdm("EX Ryuko Ranbu ", "EX Robert", b_true, 5, 0)
+hit_with_hsdm("Arrow Dash Dragon Crunch", "EX Kensou", b_true, 5, 0)
+hit_with_hsdm("Hi no Kaguzuchi", "Kyo-2", b_false, 5, 0)
+hit_with_hsdm("Ibuki Nagayo", "Goenitz", b_true, 5, 0)
+hit_with_hsdm("Lighting Disaster", "Krizalid", b_true, 5, 0)
+hit_with_hsdm("Dark Stream Heaven Breaker I", "C-Zero", b_true, 5, 0)
+hit_with_hsdm("Dark Stream Heaven Breaker II", "Zero", b_false, 5, 0)
+hit_with_hsdm("Dis-integrational Universe", "Igniz", b_true, 5, 0)
+// hit_with_hsdm_orochi("Harmagedon", "Yashiro", b_true, 5, 0) // EXCEPTION: need special logic to use the HSDM bg flag instead of hit
+hit_with_hsdm_orochi("Unmei no Ya", "Shermie", b_true, 5, 0)
+hit_with_hsdm_orochi("Emerges from a Chrysalis", "Chris", b_true, 5, 0)
+
+achievement("Dokusyu Kou", "Lin: Hit your opponent with a Max 2 on Arcade Mode.", 10,
+            trigger =   in_arcade_mode() &&
+                        game_is_fighting() == b_true &&
+                        p1_only() &&
+                        macro_protection() &&
+                        p1_current_char() == characters["Lin"] &&
+                        match_hsdm_bg() == 0x81 &&
+                        prev(match_hsdm_bg()) != 0x81
+            )
+            
+achievement("Daisyarin Nodowa Otoshi", "Hinako: Hit your opponent with a Max 2 on Arcade Mode.", 5,
+            trigger =   in_arcade_mode() &&
+                        game_is_fighting() == b_true &&
+                        p1_only() &&
+                        macro_protection() &&
+                        p1_current_char() == characters["Hinako"] &&
+                        match_hsdm_bg() == 0x81 &&
+                        prev(match_hsdm_bg()) != 0x81
+            )
+
+achievement("Harmagedon", "Yashiro: Hit your opponent with a Max 2 on Arcade Mode.", 10,
+            trigger =   in_arcade_mode() &&
+                        game_is_fighting() == b_true &&
+                        p1_only() &&
+                        macro_protection() &&
+                        p1_current_char_orochi() == characters["Orochi Yashiro"] &&
+                        match_hsdm_bg() == 0x81 &&
+                        p1_hit_combo() > prev(p1_hit_combo())
+            )
+
+
+
+
+
+
+
+
+
 
 achievement("Psycho Medley", "Athena: Hit your opponent with all hits from Max 2 on Arcade Mode.", 10,
-            trigger =   game_mode() != gm_practice &&
-                        game_mode() != gm_neogeo_mode &&
-                        game_is_fighting() == true &&
+            trigger =   in_arcade_mode() &&
+                        game_is_fighting() == b_true &&
                         p1_only() &&
                         macro_protection() &&
                         p1_current_char() == characters["Athena"] &&
@@ -469,9 +511,8 @@ achievement("Psycho Medley", "Athena: Hit your opponent with all hits from Max 2
             )
 
 achievement("Roaring Sphere", "Clark: Hit your opponent with all hits from Max 2 on Arcade Mode.", 10,
-            trigger =   game_mode() != gm_practice &&
-                        game_mode() != gm_neogeo_mode &&
-                        game_is_fighting() == true &&
+            trigger =   in_arcade_mode() &&
+                        game_is_fighting() == b_true &&
                         p1_only() &&
                         macro_protection() &&
                         p1_current_char() == characters["Clark"] &&
@@ -480,7 +521,7 @@ achievement("Roaring Sphere", "Clark: Hit your opponent with all hits from Max 2
 
 achievement("Ryoku Ranbu: Destroy", "Ryo: Hit your opponent with Ryuko Ranbu: Destroy (Geki Ryuuko Ranbu) on Arcade or Practice.", 10,
             trigger =   game_mode() != gm_neogeo_mode &&
-                        game_is_fighting() == true &&
+                        game_is_fighting() == b_true &&
                         p1_only() &&
                         macro_protection() &&
                         p1_current_char() == characters["Ryo"] &&

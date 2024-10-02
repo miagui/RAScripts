@@ -7,6 +7,7 @@
 // =========================================
 
 function bios_current_executable() => dword(0x015510)
+function game_code_executable() => dword(0x00100010)
 
 // MK2
 function mk2_game_state() => byte(0x51A03A)
@@ -77,6 +78,8 @@ function p1_combo3_unlocked() => byte(0xC29853)
 function p1_combo4_unlocked() => byte(0xC29854)
 function p1_combo5_unlocked() => byte(0xC29855)
 
+function game_is_running() => dword(0xc29680) > prev(dword(0xc29680))
+
 characters = {
     "Liu Kang": 0x00,
     "Kung Lao": 0x01,
@@ -88,22 +91,27 @@ characters = {
 //             Utility Functions              
 // =========================================
 
-function is_main_game() => never(bios_current_executable() != 0x53554c53) 
-function is_mk2() => never(bios_current_executable() != 0x5652414a) 
+function is_main_game() => never(game_code_executable() != 0xae000004) 
+function is_mk2() => never(game_code_executable() != 0x70001c28)
 
 function is_koop() => is_main_game() && game_save_data_ascii() == 0x6f2d6f4b
 function is_singleplayer() => is_main_game() && game_save_data_ascii() != 0x6f2d6f4b
 
 function in_game() => game_state() == gs_gameplay
+function outside_main_menu() => game_state() != gs_main_menu
+
+function game_beaten_fmv() => game_current_fmv() == fmv_final_ending && prev(game_current_fmv()) != fmv_final_ending
+function game_beaten() => game_state() == 0x13 && prev(game_state()) == gs_gameplay
 
 function mk2_p1_only() => mk2_p1_state() > 0 && mk2_p2_state() == 0
 
 
 // 13 + 56 + 7 + 72 + 5 + 3 + 80 + 6 + 2 = 244, checked already and ok
+// edit: reworked, it's 242 now.
 function all_single_player_red_koins() =>   sum_of(range(2, 4), b => bit(b,0x5d828a))+
                                             sum_of(range(0, 2), b => bit(b,0x5d828b))+
                                             sum_of(range(6, 7), b => bit(b,0x5d828b))+
-                                            sum_of(range(0, 1), b => bit(b,0x5d828c))+
+
                                             sum_of(range(5, 7), b => bit(b,0x5d828c))+
                                             sum_of(range(0, 31), b => bit(b,0x5d828d))+
                                             sum_of(range(0, 23), b => bit(b,0x5d8291))+
@@ -148,6 +156,13 @@ function p2_total_upgrades() {
             byte(0xc2986d) + byte(0xc2986e) + byte(0xc2986f) + byte(0xc29870) + byte(0xc29871)
 }
 
+function check_animation_players(animation_id) {
+    return (
+        (p1_animation() == animation_id && prev(p1_animation()) != animation_id) ||
+        (p2_animation() == animation_id && prev(p2_animation()) != animation_id)
+    )
+}
+
 // =========================================
 //            Events Achievements            
 // =========================================
@@ -175,82 +190,109 @@ function achiev_event(title, description, area_id, event_id, points, cheevo_id) 
                 )
 }
 
-function achiev_event_character(title, team_name, name1, name2, description, area_id, event_id, points, cheevo_id) {
-    achievement(format(title + " ({0})", team_name), format("{0} and {1}: " + description, name1, name2), points,
+function achiev_animation_event_character(title, team_name, name1, name2, description, area_id, animation_id, points, cheevo_id) {
+    achievement(format(title + " ({0})", team_name), format(description, name1, name2), points,
                 trigger =   is_koop() && 
                             in_game() &&
                             (p1_char() == characters[name1] || p1_char() == characters[name2]) &&
                             (p2_char() == characters[name1] || p2_char() == characters[name2]) &&
-                            check_event_update(area_id, event_id)
+                            game_current_area() == area_id &&
+                            check_animation_players(animation_id)
+                )   
+}
+
+
+function achiev_medallion_character(title, team_name, name1, name2, description, medallion_address, points, cheevo_id) {
+    achievement(format(title + " ({0})", team_name), format(description, name1, name2), points,
+                trigger =   is_koop() && 
+                            in_game() &&
+                            (p1_char() == characters[name1] || p1_char() == characters[name2]) &&
+                            (p2_char() == characters[name1] || p2_char() == characters[name2]) &&
+                            medallion_address == 1 &&
+                            prev(medallion_address) == 0
                 )   
 }
 
 
 // save protection and triggers good
 // Shaolin Monks
-achiev_event_character("Tsung's Island Escape", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Oni Warlord for the first time.", 0x65, 0x11, 5, 0)
-achiev_event_character("The Portal", "Shaolin Monks", "Liu Kang", "Kung Lao", "Enter The Portal for the first time.", 0xc0, 0x58, 10, 0)
-achiev_event_character("Evil Monastery", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Kitana, Jade and Mileena.", 0xc3, 0x3a, 10, 0)
-achiev_event_character("Living Forest", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Reptile.", 0x90, 0x0e, 10, 0)
-achiev_event_character("Soul Tombs", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Baraka.", 0x0f, 0x37, 10, 0)
-achiev_event_character("The Wasteland", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Goro.", 0x2f, 0x05, 10, 0)
-achiev_event_character("Netherrealm", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Scorpion.", 0xa0, 0x8a, 5, 0)
-achiev_event_character("Kahn's Arena", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Shao Kahn and beat the game.", 0x49, 0x06, 10, 0)
+achiev_medallion_character("Tsung's Island Escape", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Oni Warlord and obtain Long Jump as {0} and {1}.", bit0(0xc2984c), 5, 0)
+achiev_medallion_character("The Portal", "Shaolin Monks", "Liu Kang", "Kung Lao", "Enter The Portal for the first time as {0} and {1}.", bit7(0xc29743), 10, 0)
+achiev_medallion_character("Evil Monastery", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Kitana, Jade and Mileena and obtain Fists of Ruins as {0} and {1}.", bit0(0xc2984e), 10, 0)
+achiev_medallion_character("Living Forest", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Reptile and obtain Wall Climb as {0} and {1}.", bit0(0xc29848), 10, 0)
+achiev_medallion_character("Soul Tombs", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Baraka and obtain Wall Jump as {0} and {1}.", bit0(0xc2984a), 10, 0)
+achiev_medallion_character("The Wasteland", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Goro and obtain Double Jump as {0} and {1}.", bit0(0xc2984b), 10, 0)
+achiev_animation_event_character("Netherrealm", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Scorpion as {0} and {1}.", 0xa0, 0xbb9, 5, 0)
+// achiev_event_character("Kahn's Arena", "Shaolin Monks", "Liu Kang", "Kung Lao", "Defeat Shao Kahn and beat the game as {0} and {1}.", 0x49, 0x06, 10, 0)
 
 // Ninjas
-achiev_event_character("Tsung's Island Escape", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Oni Warlord for the first time.", 0x65, 0x11, 5, 0)
-achiev_event_character("The Portal", "Ninjas", "Sub-Zero", "Scorpion", "Enter The Portal for the first time.", 0xc0, 0x58, 10, 0)
-achiev_event_character("Evil Monastery", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Kitana, Jade and Mileena.", 0xc3, 0x3a, 10, 0)
-achiev_event_character("Living Forest", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Reptile.", 0x90, 0x0e, 10, 0)
-achiev_event_character("Soul Tombs", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Baraka.", 0x0f, 0x37, 10, 0)
-achiev_event_character("The Wasteland", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Goro.", 0x2f, 0x05, 10, 0)
-achiev_event_character("Netherrealm", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Scorpion.", 0xa0, 0x8a, 5, 0)
-achiev_event_character("Kahn's Arena", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Shao Kahn and beat the game.", 0x49, 0x06, 10, 0)
+achiev_medallion_character("Tsung's Island Escape", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Oni Warlord and obtain Long Jump as {0} and {1}.", bit0(0xc2984c), 5, 0)
+achiev_medallion_character("The Portal", "Ninjas", "Sub-Zero", "Scorpion", "Enter The Portal for the first time as {0} and {1}.", bit7(0xc29743), 10, 0)
+achiev_medallion_character("Evil Monastery", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Kitana, Jade and Mileena and obtain Fists of Ruins as {0} and {1}.", bit0(0xc2984e), 10, 0)
+achiev_medallion_character("Living Forest", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Reptile and obtain Wall Climb as {0} and {1}.", bit0(0xc29848), 10, 0)
+achiev_medallion_character("Soul Tombs", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Baraka and obtain Wall Jump as {0} and {1}.", bit0(0xc2984a), 10, 0)
+achiev_medallion_character("The Wasteland", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Goro and obtain Double Jump as {0} and {1}.", bit0(0xc2984b), 10, 0)
+achiev_animation_event_character("Netherrealm", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Scorpion as {0} and {1}.", 0xa0, 0xbb9, 5, 0)
+// achiev_event_character("Kahn's Arena", "Ninjas", "Sub-Zero", "Scorpion", "Defeat Shao Kahn and beat the game as {0} and {1}.", 0x49, 0x06, 10, 0)
 
-achievement("Champion of Mortal Kombat (Shaolin Monks)", "Liu Kang and Kung Lao: Defeat Shao Kahn and beat the game on Hard difficulty.", 25,
+
+achievement("Kahn's Arena (Shaolin Monks)", "Defeat Shao Kahn and beat the game as Liu Kang and Kung Lao.", 10,
             trigger =   is_koop() && 
-                        in_game() &&
-                        game_difficulty() == diff_hard &&
                         (p1_char() == characters["Liu Kang"] || p1_char() == characters["Kung Lao"]) &&
                         (p2_char() == characters["Liu Kang"] || p2_char() == characters["Kung Lao"]) &&
-                        check_event_update(0x49, 0x06)
+                        game_beaten()
             )
 
-achievement("Champion of Mortal Kombat (Ninjas)", "Sub-Zero and Scorpion: Defeat Shao Kahn and beat the game on Hard difficulty.", 25,
+achievement("Kahn's Arena (Ninjas)", "Defeat Shao Kahn and beat the game as Sub-Zero and Scorpion.", 10,
             trigger =   is_koop() && 
-                        in_game() &&
-                        game_difficulty() == diff_hard &&
                         (p1_char() == characters["Sub-Zero"] || p1_char() == characters["Scorpion"]) &&
                         (p2_char() == characters["Sub-Zero"] || p2_char() == characters["Scorpion"]) &&
-                        check_event_update(0x49, 0x06)
+                        game_beaten()
             )
 
 achiev_event("ajniN deR", "Defeat Ermac.", 0x6c, 0x5e, 10, 0)
 achiev_event("Shang Tsung's Flesh", "Defeat Mileena.", 0x84, 0x48, 10, 0)
 achiev_event("Kano Is Transforming", "Defeat Kano.", 0x48, 0x06, 10, 0)
 
+// Hard difficulty
+achievement("Champion of Mortal Kombat (Shaolin Monks)", "Defeat Shao Kahn and beat the game on Hard difficulty as Liu Kang and Kung Lao.", 25,
+            trigger =   is_koop() && 
+                        game_difficulty() == diff_hard &&
+                        (p1_char() == characters["Liu Kang"] || p1_char() == characters["Kung Lao"]) &&
+                        (p2_char() == characters["Liu Kang"] || p2_char() == characters["Kung Lao"]) &&
+                        game_beaten()
+            )
+
+achievement("Champion of Mortal Kombat (Ninjas)", "Defeat Shao Kahn and beat the game on Hard difficulty as Sub-Zero and Scorpion.", 25,
+            trigger =   is_koop() && 
+                        game_difficulty() == diff_hard &&
+                        (p1_char() == characters["Sub-Zero"] || p1_char() == characters["Scorpion"]) &&
+                        (p2_char() == characters["Sub-Zero"] || p2_char() == characters["Scorpion"]) &&
+                        game_beaten()
+            )
+
 // =========================================
 //                Unlockables              
 // =========================================
 
 achievement("Only Smoke Knows How To Play MK2", "Unlock MKII.", 10,
-            trigger =   is_koop() && 
+            trigger =   is_main_game() &&
                         in_game() &&
-                        unlockables_mk2() == 1 &&
+                        unlockables_mk2() == 1  &&
                         prev(unlockables_mk2()) == 0
             )
 
 achievement("Can You See the Invisible Penguin?", "Unlock Scorpion for Story Mode.", 5,
-            trigger =   is_koop() && 
-                        in_game() &&
-                        unlockables_scorpion() == 1 &&
+            trigger =   in_game() &&
+                        is_main_game() &&
+                        unlockables_scorpion() == 1  &&
                         prev(unlockables_scorpion()) == 0
             )
 
 achievement("Sometimes Your Enemy Is Your Friend", "Unlock Sub-Zero for Story Mode.", 5,
-            trigger =   is_koop() && 
-                        in_game() &&
-                        unlockables_subzero() == 1 &&
+            trigger =   in_game() &&
+                        is_main_game() &&
+                        unlockables_subzero() == 1  &&
                         prev(unlockables_subzero()) == 0
             )
 
@@ -261,37 +303,51 @@ achievement("Healthy Monk", "Obtain all health upgrades.", 10,
                         prev(player_life_upgrades()) == 3
             )
 
+
+
+
+
 // probably good
-achievement("Koins Kollector I", "Obtain 25% of the obtainable Red Koins.", 5,
-            trigger =   is_koop() && 
+achievement("Koins Kollector I", "Obtain 25% of the obtainable Red Koin items.", 5,
+            trigger =   is_main_game() &&
                         in_game() &&
-                        all_single_player_red_koins() + all_coop_red_koins() == 65 &&
-                        prev(all_single_player_red_koins()) + prev(all_coop_red_koins()) == 64
+                        measured(all_single_player_red_koins() + all_coop_red_koins() >= 65) &&
+                        all_single_player_red_koins() + all_coop_red_koins() > prev(all_single_player_red_koins()) + prev(all_coop_red_koins())
+                        // prev(all_single_player_red_koins()) + prev(all_coop_red_koins()) == 64
             )
 
-achievement("Koins Kollector II", "Obtain 50% of the obtainable Red Koins.", 5,
-            trigger =   is_koop() && 
+achievement("Koins Kollector II", "Obtain 50% of the obtainable Red Koin items.", 5,
+            trigger =   is_main_game() &&
                         in_game() &&
-                        all_single_player_red_koins() + all_coop_red_koins() == 130 &&
-                        prev(all_single_player_red_koins()) + prev(all_coop_red_koins()) == 129
+                        measured(all_single_player_red_koins() + all_coop_red_koins() >= 130) &&
+                        all_single_player_red_koins() + all_coop_red_koins() > prev(all_single_player_red_koins()) + prev(all_coop_red_koins())
+                        // prev(all_single_player_red_koins()) + prev(all_coop_red_koins()) == 129
             )
 
-achievement("Koins Kollector III", "Obtain 75% of the obtainable Red Koins.", 5,
-            trigger =   is_koop() && 
+achievement("Koins Kollector III", "Obtain 75% of the obtainable Red Koin items.", 10,
+            trigger =   is_main_game() &&
                         in_game() &&
-                        all_single_player_red_koins() + all_coop_red_koins() == 194 &&
-                        prev(all_single_player_red_koins()) + prev(all_coop_red_koins()) == 193
+                        measured(all_single_player_red_koins() + all_coop_red_koins() >= 194) &&
+                        all_single_player_red_koins() + all_coop_red_koins() > prev(all_single_player_red_koins()) + prev(all_coop_red_koins())
+                        // prev(all_single_player_red_koins()) + prev(all_coop_red_koins()) == 193
             )
 
-achievement("Koins Kollector IV", "Obtain 100% of the obtainable Red Koins.", 5,
-            trigger =   is_koop() && 
+achievement("Koins Kollector IV", "Obtain 100% of the obtainable Red Koin items.", 10,
+            trigger =   is_main_game() &&
                         in_game() &&
-                        all_single_player_red_koins() + all_coop_red_koins() == 259 &&
-                        prev(all_single_player_red_koins()) + prev(all_coop_red_koins()) == 258
+                        measured(all_single_player_red_koins() + all_coop_red_koins() == 257)
+                        // all_single_player_red_koins() + all_coop_red_koins() > prev(all_single_player_red_koins()) + prev(all_coop_red_koins())
+                        // prev(all_single_player_red_koins()) + prev(all_coop_red_koins()) == 258
             )
+
+
+
+
+
+            
 
 function achiev_all_moves_char(title, char, upgrades_amount, cheevo_id) {
-    achievement(title, format("Unlock all move upgrades for {0}", char), 10,
+    achievement(title, format("Unlock all move upgrades for {0}.", char), 10,
                 trigger =   is_koop() && 
                             in_game() &&
                             (
@@ -318,16 +374,34 @@ achiev_all_moves_char("Shirai Ryu Master", "Scorpion", 17, 0)
 //                 Challenges              
 // =========================================
 
-achievement("Lethal Monks", "Liu Kang and Kung Lao: Perform 25 fatalities.", 10,
+achievement("Shaolin Spin", "Perform Shaolin Spin.", 3,
             trigger =   is_koop() && 
                         in_game() &&
-                        (p1_char() == characters["Liu Kang"] || p1_char() == characters["Kung Lao"]) &&
-                        (p2_char() == characters["Liu Kang"] || p2_char() == characters["Kung Lao"]) &&
+                        prev(p1_animation()) != p1_animation() &&
+                        (
+                            p1_animation() == 0x15e ||
+                            p1_animation() == 0x15f
+                        ) 
+            )
+
+achievement("Blade Inferno", "Perform Blade Inferno.", 3,
+            trigger =   is_koop() && 
+                        in_game() &&
+                        prev(p1_animation()) != p1_animation() &&
+                        (
+                            p1_animation() == 0x205 ||
+                            p1_animation() == 0x206
+                        ) 
+            )
+
+achievement("Lethal Warriors", "Perform 25 fatalities.", 10,
+            trigger =   is_koop() && 
+                        in_game() &&
                         game_fatalities_count() == 25 &&
                         prev(game_fatalities_count()) == 24
             )
 
-achievement("Lethal Ninjas", "Sub-Zero and Scorpion: Perform 25 fatalities.", 10,
+achievement("Lethal Ninjas [VOID]", "Sub-Zero and Scorpion: Perform 25 fatalities [VOID].", 10,
             trigger =   is_koop() && 
                         in_game() &&
                         (p1_char() == characters["Sub-Zero"] || p1_char() == characters["Scorpion"]) &&
@@ -341,25 +415,31 @@ achievement("Proof of Survival", "Finish Survival Mode.", 50,
             trigger =   is_koop() && 
                         in_game() &&
                         never(game_current_area() != 0xbe) &&
-                        tally(4, totalkills_p1_and_p2_sum())
+                        game_is_running() &&
+                        entity1_health() == 666 &&
+                        entity2_health() == 666 &&
+                        entity3_health() == 666 &&
+                        entity4_health() == 666 &&
+                        (
+                            entity1_health() != prev(entity1_health()) ||
+                            entity2_health() != prev(entity2_health()) ||
+                            entity3_health() != prev(entity3_health()) ||
+                            entity4_health() != prev(entity4_health())
+                        )
             )
 
 achievement("Proof of Warrior", "Beat the game without obtaining more than one health upgrade, and no ability upgrades.", 25,
             trigger =   is_koop() && 
-                        game_state() != 0x08 &&
                         p1_total_upgrades() <= 5 &&
                         p2_total_upgrades() <= 5 &&
                         player_life_upgrades() <= 1 &&
-                        trigger_when(game_current_fmv() == fmv_final_ending) &&
-                        prev(game_current_fmv()) != fmv_final_ending
+                        trigger_when(game_beaten())
             )
 
 achievement("Proof of Speed", "Beat the game within 1h45m in-game time.", 50,
             trigger =   is_koop() && 
-                        game_state() != 0x08 &&
                         game_time() <= 378000 &&
-                        trigger_when(game_current_fmv() == fmv_final_ending) &&
-                        prev(game_current_fmv()) != fmv_final_ending
+                        trigger_when(game_beaten())
             )
 
 
@@ -388,3 +468,22 @@ achievement("Proof of Speed", "Beat the game within 1h45m in-game time.", 50,
 //                         mk2_p1_only() &&
 //                         mk2_p1_flawless() == 1 && prev(mk2_p1_flawless()) == 0
 //             )
+
+
+// =========================================
+//                Leaderboards              
+// =========================================
+
+leaderboard("Speedrun - Normal", "Best in-game time on Normal difficulty.",
+           start = is_koop() && game_beaten() && game_difficulty() == diff_normal,
+           cancel = is_singleplayer(),
+           submit = is_koop() && game_beaten() && game_difficulty() == diff_normal,
+           value = prior(game_time()),
+           format = "FRAMES", lower_is_better=true)
+
+leaderboard("Speedrun - Hard", "Best in-game time on Hard difficulty.",
+           start = is_koop() && game_beaten() && game_difficulty() == diff_hard,
+           cancel = is_singleplayer(),
+           submit = is_koop() && game_beaten() && game_difficulty() == diff_hard,
+           value = prior(game_time()),
+           format = "FRAMES", lower_is_better=true)

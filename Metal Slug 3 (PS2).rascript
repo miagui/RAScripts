@@ -49,10 +49,10 @@ function is_60hz() => game_display_mode() == 0
 function is_arcade() => game_mode() == 0x00 && p1_only()
 function is_ufo_game() => game_mode() == 0x01 && p1_only()
 
-function mission_has_been_started() => mission_started() == true && prev(mission_started()) == false && mission_section() == 0
-function mission_has_been_finished() => mission_finished() == true && prev(mission_finished()) == false
+function mission_has_been_started() => mission_started() == 1 && prev(mission_started()) == 0 && mission_section() == 0
+function mission_has_been_finished() => mission_finished() == 1 && prev(mission_finished()) == 0
 
-function ufo_has_been_finished() => ufo_finished() == true && prev(ufo_finished()) == false
+function ufo_has_been_finished() => ufo_finished() == 1 && prev(ufo_finished()) == 0
 
 function game_beaten() => game_mission() == 4 && mission_has_been_finished()
 
@@ -65,6 +65,7 @@ function achiev_finish_mission_route(title, description, mission_id, section_rou
                 trigger =   is_arcade() &&
                             never(game_mission() != mission_id) &&
                             once(mission_section() == section_route) &&
+                            settings_difficulty_default() &&
                             mission_has_been_finished()
                 )
 }
@@ -75,6 +76,7 @@ function achiev_finish_mission_no_route(title, description, mission_id, section_
                             never(game_mission() != mission_id) &&
                             never(mission_section() >= section_route_reset) && // reset if value is higher than the default route
                             once(mission_has_been_started()) &&
+                            settings_difficulty_default() &&
                             mission_has_been_finished()
                 )
 }
@@ -119,11 +121,30 @@ achiev_finish_mission_route("Metamorphosis", "Beat the game (Normal difficulty).
 function achiev_finish_mission_route_deathless(title, description, mission_id, section_route, points) {
     achievement(title + " Challenge", description, points,
                 trigger =   is_arcade() &&
+                            is_60hz() &&
                             never(game_mission() != mission_id) &&
                             once(mission_has_been_started()) &&
                             once(mission_section() == section_route) &&
                             never(p1_lives() < prev(p1_lives())) && // lose a live
                             never(p1_active_state() == 2) && // lose a continue
+                            never(p1_active_state() == 0 && p2_active_state() == 0) &&
+                            settings_difficulty_default() &&
+                            trigger_when(mission_has_been_finished())
+                )
+}
+
+function achiev_finish_mission_route_3deathes(title, description, mission_id, section_route, points) {
+    achievement(title + " Challenge", description, points,
+                trigger =   is_arcade() &&
+                            is_60hz() &&
+                            never(game_mission() != mission_id) &&
+                            once(mission_has_been_started()) &&
+                            once(mission_section() == section_route) &&
+                             never(tally(3, p1_lives() < prev(p1_lives()), // lose a live
+                                           p1_active_state() == 2 && prev(p1_active_state()) == 1 // lose a continue
+                                  )) && 
+                            never(p1_active_state() == 0 && p2_active_state() == 0) &&
+                            settings_difficulty_default() &&
                             trigger_when(mission_has_been_finished())
                 )
 }
@@ -131,27 +152,47 @@ function achiev_finish_mission_route_deathless(title, description, mission_id, s
 function achiev_finish_mission_no_route_deathless(title, description, mission_id, section_route_reset, points) {
     achievement(title + " Challenge", description, points,
                 trigger =   is_arcade() &&
+                            is_60hz() &&
                             never(game_mission() != mission_id) &&
                             once(mission_has_been_started()) &&
                             never(mission_section() >= section_route_reset) && // reset if value is higher than the default route
                             never(p1_lives() < prev(p1_lives())) && // lose a live
                             never(p1_active_state() == 2) && // lose a continue
+                            never(p1_active_state() == 0 && p2_active_state() == 0) &&
+                            settings_difficulty_default() &&
                             trigger_when(mission_has_been_finished())
                 )
 }
 
+// function achiev_finish_mission_no_route_3deathes(title, description, mission_id, section_route_reset, points) {
+//     achievement(title + " Challenge", description, points,
+//                 trigger =   is_arcade() &&
+//                             never(game_mission() != mission_id) &&
+//                             once(mission_has_been_started()) &&
+//                             never(mission_section() >= section_route_reset) && // reset if value is higher than the default route
+//                             never(tally(3, p1_lives() < prev(p1_lives()), // lose a live
+//                                            p1_active_state() == 2 && prev(p1_active_state()) == 1 // lose a continue
+//                                   )) && 
+//                             trigger_when(mission_has_been_finished())
+//                 )
+// }
+
 achiev_finish_mission_no_route_deathless("The Island of Dr. Moreau", "Finish Mission 1 without dying and without taking any detours (Normal difficulty, 60hz).", 0, 1, 25)
 achiev_finish_mission_route_deathless("Marine Diver", "Finish Mission 1 without dying by going through the ocean depths detour (Normal difficulty, 60hz).", 0, 1, 25)
 achiev_finish_mission_route_deathless("The Unknown World", "Finish Mission 1 without dying by going through the core facility detour (Normal difficulty, 60hz).", 0, 3, 25)
+
 achiev_finish_mission_no_route_deathless("The Midnight Wandering", "Finish Mission 2 without dying and without taking any detours (Normal difficulty, 60hz).", 1, 1, 25)
 achiev_finish_mission_route_deathless("Devil's Snow Cave", "Finish Mission 2 without dying by going through ice cave detour (Normal difficulty, 60hz).", 1, 3, 25)
+
 achiev_finish_mission_no_route_deathless("The Shallow Sea", "Finish Mission 3 without dying and without taking detours (Normal difficulty, 60hz).", 2, 4, 25)
 achiev_finish_mission_route_deathless("Hard Water", "Finish Mission 3 without dying by going through the underground channel detour (Normal difficulty, 60hz).", 2, 4, 25)
 achiev_finish_mission_route_deathless("Bridge Assault", "Finish Mission 3 without dying by going through the bridge detour (Normal difficulty, 60hz).", 2, 6, 25)
-achiev_finish_mission_route_deathless("Desert", "Finish Mission 4 without dying by going through the top detour (Normal difficulty, 60hz).", 3, 2, 25)
-achiev_finish_mission_route_deathless("The Japanese Army", "Finish Mission 4 without dying by going through the ex-military hideout detour (Normal difficulty, 60hz).", 3, 5, 25)
-achiev_finish_mission_route_deathless("The Cenotaph", "Finish Mission 4 without dying by going through the underground detour (Normal difficulty, 60hz).", 3, 7, 25)
-achiev_finish_mission_route_deathless("Pyramid", "Finish Mission 4 without dying by going through the pyramid detour (Normal difficulty, 60hz).", 3, 1, 25)
+
+achiev_finish_mission_route_3deathes("Desert", "Finish Mission 4 without dying 3 times by going through the top detour (Normal difficulty, 60hz).", 3, 2, 25)
+achiev_finish_mission_route_3deathes("The Japanese Army", "Finish Mission 4 without dying 3 times by going through the ex-military hideout detour (Normal difficulty, 60hz).", 3, 5, 25)
+achiev_finish_mission_route_3deathes("The Cenotaph", "Finish Mission 4 without dying 3 times by going through the underground detour (Normal difficulty, 60hz).", 3, 7, 25)
+achiev_finish_mission_route_3deathes("Pyramid", "Finish Mission 4 without dying by 3 times going through the pyramid detour (Normal difficulty, 60hz).", 3, 10, 25)
+
 achiev_finish_mission_route_deathless("Metamorphosis", "Finish Mission 5 without dying (Normal difficulty, 60hz).", 4, 0, 50)
 
 // =========================================
@@ -165,15 +206,16 @@ function achiev_finish_mission_speedrun(title, description, mission_id, time_fra
                             never(game_mission() != mission_id) &&
                             never( repeated(time_frames, once(mission_has_been_started()) && always_true()) ) &&
                             once(mission_has_been_started()) &&
+                            settings_difficulty_default() &&
                             trigger_when(mission_has_been_finished())
                 )
 }
 
-achiev_finish_mission_speedrun("Island Speedrun", "Finish Mission 1 within 2m00s (Normal Difficulty, 60hz).", 0, 7200, 25)
-achiev_finish_mission_speedrun("Midnight Speedrun", "Finish Mission 2 within 2m10s (Normal Difficulty, 60hz).", 1, 7800
+achiev_finish_mission_speedrun("Island Speedrun", "Finish Mission 1 within 2m10s (Normal Difficulty, 60hz).", 0, 7800, 25)
+achiev_finish_mission_speedrun("Midnight Speedrun", "Finish Mission 2 within 2m30s (Normal Difficulty, 60hz).", 1, 9000
 , 25)
-achiev_finish_mission_speedrun("Sea Speedrun", "Finish Mission 3 within 2m10s (Normal Difficulty, 60hz).", 2, 7800, 25)
-achiev_finish_mission_speedrun("Desert Speedrun", "Finish Mission 4 within 3m00s (Normal Difficulty, 60hz).", 3, 10800
+achiev_finish_mission_speedrun("Sea Speedrun", "Finish Mission 3 within 2m30s (Normal Difficulty, 60hz).", 2, 9000, 25)
+achiev_finish_mission_speedrun("Desert Speedrun", "Finish Mission 4 within 3m40s (Normal Difficulty, 60hz).", 3, 12600 + 600
 , 25)
 achiev_finish_mission_speedrun("UFO Speedrun", "Finish Final Mission within 21m0s (Normal Difficulty, 60hz).", 4, 75600, 50)
 
@@ -190,10 +232,11 @@ achievement("Into The Cosmos", "Beat the game on Very Hard difficulty (60hz).", 
                             game_beaten()
             )
 
-achievement("The Military System III", "Beat the game with over 3 million score (60hz).", 25,
+achievement("The Military System III", "Beat the game with over 3 million score (Normal difficulty, 60hz).", 10,
                 trigger =   is_arcade() &&
                             is_60hz() &&
                             p1_score_BE() >= 0x03000000 &&
+                            settings_difficulty_default() &&
                             game_beaten()
             )
 
@@ -202,6 +245,7 @@ achievement("Bioinformatics", "Beat the game without using a continue on Normal 
                             is_60hz() &&
                             once(mission_has_been_started() && game_mission() == 0) &&
                             never(p1_continues_used() == 1) &&
+                            never(p1_active_state() == 0 && p2_active_state() == 0) &&
                             settings_hero_default() &&
                             settings_difficulty_default() &&
                             trigger_when(game_beaten())
@@ -237,7 +281,7 @@ achievement("Shield vs. Aliens", "Finish Storming the UFO Mothership as Shield S
 //             Vehicles and Forms            
 // =========================================
 
-achievement("Metal Slug I", "Finish Mission 1 with a Metal Slug (Normal difficulty, 60hz).", 4,
+achievement("Metal Slug I", "Finish Mission 1 with a Metal Slug (Normal difficulty, 60hz).", 5,
             trigger =   is_arcade() &&
                         is_60hz() &&
                         game_mission() == 0 &&
@@ -246,7 +290,7 @@ achievement("Metal Slug I", "Finish Mission 1 with a Metal Slug (Normal difficul
             id = 259560
             )
 
-achievement("Slugnoid", "Finish Mission 1 with a Slugnoid (Normal difficulty, 60hz).", 4,
+achievement("Slugnoid", "Finish Mission 1 with a Slugnoid (Normal difficulty, 60hz).", 5,
             trigger =   is_arcade() &&
                         is_60hz() &&
                         game_mission() == 0 &&
@@ -255,7 +299,7 @@ achievement("Slugnoid", "Finish Mission 1 with a Slugnoid (Normal difficulty, 60
             id = 259723
             )
 
-achievement("LV Armor", "Finish Mission 3 with a LV Armor (Normal difficulty, 60hz).", 4,
+achievement("LV Armor", "Finish Mission 3 with a LV Armor (Normal difficulty, 60hz).", 5,
             trigger =   is_arcade() &&
                         is_60hz() &&
                         game_mission() == 2 &&
@@ -273,7 +317,7 @@ achievement("Metal Slug II", "Finish Final Mission with a Metal Slug (Normal dif
             id = 259562
             )
 
-achievement("Heavy Soldier", "Finish Mission 1 while being fat (Normal difficulty, 60hz).", 3,
+achievement("Heavy Soldier", "Finish Mission 1 while being fat (Normal difficulty, 60hz).", 5,
             trigger =   is_arcade() &&
                         is_60hz() &&
                         game_mission() == 0 &&
@@ -281,7 +325,7 @@ achievement("Heavy Soldier", "Finish Mission 1 while being fat (Normal difficult
                         mission_has_been_finished()
             )
 
-achievement("Vomit Bomb", "Finish Mission 2 while transformed into a zombie (Normal difficulty, 60hz).", 5,
+achievement("Vomit Bomb", "Finish Mission 2 while transformed into a zombie (Normal difficulty, 60hz).", 10,
             trigger =   is_arcade() &&
                         is_60hz() &&
                         game_mission() == 1 &&
@@ -330,6 +374,7 @@ function achiev_collect_pows_route(title, description, mission_id, pows_amount, 
     achievement(title, description, points,
                 trigger =   is_arcade() &&
                             never(game_mission() != mission_id) &&
+                            never(p1_active_state() == 0 && p2_active_state() == 0) &&
                             once(mission_section() == section_to_go) &&
                             measured(tally(pows_amount, logic_pows_collected_p1_and_p2_sum()), once(mission_section() == section_to_go))
                 )
@@ -339,6 +384,7 @@ function achiev_collect_pows_no_route(title, description, mission_id, pows_amoun
     achievement(title, description, points,
                 trigger =   is_arcade() &&
                             never(game_mission() != mission_id) &&
+                            never(p1_active_state() == 0 && p2_active_state() == 0) &&
                             never(mission_section() >= section_reset) && // reset if value is higher than the default route
                             once(mission_has_been_started()) &&
                             measured(tally(pows_amount, logic_pows_collected_p1_and_p2_sum()), once(mission_section() == 0x00))
@@ -346,12 +392,12 @@ function achiev_collect_pows_no_route(title, description, mission_id, pows_amoun
 }
 
 achiev_collect_pows_no_route("The Island of Dr. Prisoner", "Collect 22 POWs in Mission 1 without taking detours (Normal difficulty).", 0, 22, 1, 10, 0)
-achiev_collect_pows_route("Prisoner Diver", "Collect 18 POWs in Mission 1 by going thorugh ocean depths detour (Normal difficulty).", 0, 18, 1, 10, 0)
-achiev_collect_pows_route("The Unknown Prisoner", "Collect 16 POWs in Mission 1 by going thorugh core facility detour (Normal difficulty).", 0, 16, 3, 10, 0)
+achiev_collect_pows_route("Prisoner Diver", "Collect 18 POWs in Mission 1 by going through ocean depths detour (Normal difficulty).", 0, 18, 1, 10, 0)
+achiev_collect_pows_route("The Unknown Prisoner", "Collect 16 POWs in Mission 1 by going through core facility detour (Normal difficulty).", 0, 16, 3, 10, 0)
 achiev_collect_pows_no_route("The Midnight Prisoner", "Collect 12 POWs in Mission 2 without taking the detours (Normal difficulty).", 1, 12, 1, 10, 0)
 achiev_collect_pows_route("Prisoner's Snow Cave", "Collect 23 POWs in Mission 2 by going through the ice cave detour (Normal difficulty).", 1, 23, 3, 10, 0)
 achiev_collect_pows_no_route("The Shallow Prisoner", "Collect 13 POWs in Mission 3 without taking any detours (Normal difficulty).", 2, 13, 4, 10, 0)
-achiev_collect_pows_route("Hard Prisoner", "Collect 11 POWs in Mission 3 by going thorugh underground channel detour (Normal difficulty).", 2, 11, 4, 10, 0)
+achiev_collect_pows_route("Hard Prisoner", "Collect 11 POWs in Mission 3 by going through underground channel detour (Normal difficulty).", 2, 11, 4, 10, 0)
 achiev_collect_pows_route("Assault Prisoner", "Collect 13 POWs in Mission 3 by going through the bridge detour (Normal difficulty).", 2, 13, 6, 10, 0)
 achiev_collect_pows_route("Desert Prisoner", "Collect 18 POWs in Mission 4 by going through the top route (Normal difficulty).", 3, 18, 2, 10, 0)
 achiev_collect_pows_route("The Japanese Prisoner", "Collect 18 POWs in Mission 4 by going through the ex-military hideout detour (Normal difficulty).", 3, 18, 5, 10, 0)
@@ -383,7 +429,7 @@ leaderboard("Metal Slug 3 - Normal Speedrun", "Finish Arcade Mission the fastest
            start = is_arcade() && game_mission() == 0 && mission_has_been_started() && settings_difficulty() == 2 && is_60hz(),
            cancel = p1_active_state() == 0 || p2_active_state() > 0,
            submit = game_mission() == 4 && mission_has_been_finished(),
-           value = measured(game_arcade_timer() > prev(game_arcade_timer())),
+           value = measured(tally(0, game_arcade_timer() > prev(game_arcade_timer()))),
            format = "FRAMES", lower_is_better=true
            )
 
@@ -391,7 +437,7 @@ leaderboard("Metal Slug 3 - Very Hard Speedrun", "Finish Arcade Mission the fast
            start = is_arcade() && game_mission() == 0 && mission_has_been_started() && settings_difficulty_veryhard() && is_60hz(),
            cancel = p1_active_state() == 0 || p2_active_state() > 0,
            submit = game_mission() == 4 && mission_has_been_finished(),
-           value = measured(game_arcade_timer() > prev(game_arcade_timer())),
+           value = measured(tally(0, game_arcade_timer() > prev(game_arcade_timer()))),
            format = "FRAMES", lower_is_better=true
            )
 
@@ -415,7 +461,7 @@ leaderboard("Coin Saver - Normal", "Finish Arcade Mission with the lowest amount
            start = is_arcade() && game_mission() == 0 && mission_has_been_started() && settings_difficulty() == 2 && settings_hero_default() && is_60hz(),
            cancel = p1_active_state() == 0 || p2_active_state() > 0,
            submit = game_mission() == 4 && mission_has_been_finished(),
-           value = measured(p1_continues_used() > prev(p1_continues_used())),
+           value = measured(tally(0, p1_continues_used() > prev(p1_continues_used()))),
            format = "VALUE", lower_is_better=true
            )
 
@@ -423,7 +469,7 @@ leaderboard("Coin Saver - Very Hard", "Finish Arcade Mission with the lowest amo
            start = is_arcade() && game_mission() == 0 && mission_has_been_started() && settings_difficulty_veryhard() && settings_hero_default() && is_60hz(),
            cancel = p1_active_state() == 0 || p2_active_state() > 0,
            submit = game_mission() == 4 && mission_has_been_finished(),
-           value = measured(p1_continues_used() > prev(p1_continues_used())),
+           value = measured(tally(0, p1_continues_used() > prev(p1_continues_used()))),
            format = "VALUE", lower_is_better=true
            )
 
@@ -444,21 +490,21 @@ dict_ufo_game_characters = {
     2: "Shield Soldier",
 }
 
-rich_presence_conditional_display(game_mode() == 0 && (p1_active_state() > 0 || p2_active_state() > 0) && game_arcade_timer() != 0xFFFFFFFF, "Arcade Mission - Mission {0} on {1} difficulty, ⏰ {2}", 
-                                  rich_presence_macro("Number", game_mission() + 1), 
-                                  rich_presence_lookup("Difficulty", settings_difficulty(), dict_difficulty),
-                                  rich_presence_macro("Centisecs", game_arcade_timer())
-                                  )
+// rich_presence_conditional_display(game_mode() == 0 && (p1_active_state() > 0 || p2_active_state() > 0) && game_arcade_timer() != 0xFFFFFFFF, "Arcade Mission - Mission {0} on {1} difficulty, ⏰ {2}", 
+//                                   rich_presence_macro("Number", game_mission() + 1), 
+//                                   rich_presence_lookup("Difficulty", settings_difficulty(), dict_difficulty),
+//                                   rich_presence_macro("Centisecs", game_arcade_timer())
+//                                   )
 
-rich_presence_conditional_display(game_mode() == 0 && (p1_active_state() > 0 || p2_active_state() > 0), "Arcade Mission - Mission {0} on {1} difficulty", 
-                                  rich_presence_macro("Number", game_mission() + 1), 
-                                  rich_presence_lookup("Difficulty", settings_difficulty(), dict_difficulty)
-                                  )
+// rich_presence_conditional_display(game_mode() == 0 && (p1_active_state() > 0 || p2_active_state() > 0), "Arcade Mission - Mission {0} on {1} difficulty", 
+//                                   rich_presence_macro("Number", game_mission() + 1), 
+//                                   rich_presence_lookup("Difficulty", settings_difficulty(), dict_difficulty)
+//                                   )
 
-rich_presence_conditional_display(game_mode() == 1, "Storming the Mother Ship - Playing as {0}", 
-                                  rich_presence_lookup("UFOCharacters", ufo_current_soldier(), dict_ufo_game_characters)
-                                  )
+// rich_presence_conditional_display(game_mode() == 1, "Storming the Mother Ship - Playing as {0}", 
+//                                   rich_presence_lookup("UFOCharacters", ufo_current_soldier(), dict_ufo_game_characters)
+//                                   )
 
-rich_presence_conditional_display(game_mode() == 2, "Chubby Island Paradise")
+// rich_presence_conditional_display(game_mode() == 2, "Chubby Island Paradise")
 
-rich_presence_display("Adventuring Into the Cosmos")
+// rich_presence_display("Adventuring Into the Cosmos")

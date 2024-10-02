@@ -774,11 +774,25 @@ achievement("[MMZ4] Minecraft [m]", "Craft all recipes", 10,
             trigger = playing_mmz4() && measured(all_recipes() == 28, playing_mmz4()) && prev(all_recipes()) == 27)
 
 achievement("[MMZ4] Energy Drink", "Collect all Sub Tanks", 10,
-            trigger = playing_mmz4() && 
-                    (mmz4_sub_total_one() ||
-                    mmz4_sub_total_two() ||
-                    mmz4_sub_total_three() ||
-                    mmz4_sub_total_four()), id = 201271)
+            trigger =   playing_mmz4() && 
+                        mmz4_game_context() == mmz4_ctx_playing &&
+                        mmz4_sub_tank_one()   != 0xFF &&
+                        mmz4_sub_tank_two()   != 0xFF &&
+                        mmz4_sub_tank_three() != 0xFF &&
+                        mmz4_sub_tank_four()  != 0xFF &&
+                        (
+                            prev(mmz4_sub_tank_one()) == 0xFF ||
+                            prev(mmz4_sub_tank_two()) == 0xFF ||
+                            prev(mmz4_sub_tank_three()) == 0xFF ||
+                            prev(mmz4_sub_tank_four()) == 0xFF
+                        ), id = 201271)
+
+// achievement("[MMZ4] Energy Drink", "Collect all Sub Tanks", 10,
+//             trigger = playing_mmz4() && 
+//                     (mmz4_sub_total_one() ||
+//                     mmz4_sub_total_two() ||
+//                     mmz4_sub_total_three() ||
+//                     mmz4_sub_total_four()), id = 201271)
 
 // achievement("[MMZ4] I've Been Through So Many Weathers Now...", "Obtain all EX Skills", 25,
 //             trigger = playing_mmz4() &&
@@ -884,35 +898,35 @@ achievement("[Z Collection] I Only Care About the Story, Okay!?", "Finish Easy S
 //=======================================
 
 leaderboard("[MMZ4] Speedrun - Normal", "Fastest in game time - Normal", 
-            playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == norm_mode,
+            playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == norm_mode && mmz4_igt() > prev(mmz4_igt()),
             (playing_mmz4() && mmz4_game_context() == mmz4_ctx_title_screen) || (game_sel() != sel_mmz4), 
             playing_mmz4() && mmz4_cleared(mmz4_missions["Ragnarok Core"]), 
             mmz4_igt(), 
-            format="FRAMES", lower_is_better=true, id=41
+            format="FRAMES", lower_is_better=true, id=31192
             )
 
 leaderboard("[MMZ4] Speedrun - Hard", "Fastest in game time - Hard", 
-            playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == hard_mode,
+            playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == hard_mode && mmz4_igt() > prev(mmz4_igt()),
             (playing_mmz4() && mmz4_game_context() == mmz4_ctx_title_screen) || (game_sel() != sel_mmz4), 
             playing_mmz4() && mmz4_cleared(mmz4_missions["Ragnarok Core"]), 
             mmz4_igt(), 
-            format="FRAMES", lower_is_better=true, id=42
+            format="FRAMES", lower_is_better=true, id=31193
             )
 
 leaderboard("[MMZ4] Speedrun - Ultimate", "Fastest in game time - Ultimate", 
-            playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == ulti_mode,
+            playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == ulti_mode && mmz4_igt() > prev(mmz4_igt()),
             (playing_mmz4() && mmz4_game_context() == mmz4_ctx_title_screen) || (game_sel() != sel_mmz4), 
             playing_mmz4() && mmz4_cleared(mmz4_missions["Ragnarok Core"]), 
             mmz4_igt(), 
-            format="FRAMES", lower_is_better=true, id=43
+            format="FRAMES", lower_is_better=true, id=31194
             )
 
 leaderboard("[MMZ4] Speedrun - Easy", "Fastest in game time - Easy", 
-            playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == easy_mode,
+            playing_mmz4() && mmz4_game_context() == mmz4_ctx_playing && mmz4_state() == mmz4_state_playing && mmz4_diff() == easy_mode && mmz4_igt() > prev(mmz4_igt()),
             (playing_mmz4() && mmz4_game_context() == mmz4_ctx_title_screen) || (game_sel() != sel_mmz4), 
             playing_mmz4() && mmz4_cleared(mmz4_missions["Ragnarok Core"]), 
             mmz4_igt(), 
-            format="FRAMES", lower_is_better=true, id=44
+            format="FRAMES", lower_is_better=true, id=31195
             )
 
 leaderboard("[MMZ4] Mini Game - Plant Panic", "Finish Plant Panic mini game with the highest score", 

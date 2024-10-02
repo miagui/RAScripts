@@ -6,6 +6,7 @@
 // =========================================
 
 function bios_current_executable() => dword(0x015510)
+function game_code_executable() => dword(0x00100010)
 
 // MK2
 function mk2_game_state() => byte(0x51A03A)
@@ -76,6 +77,8 @@ function p1_combo3_unlocked() => byte(0xC29853)
 function p1_combo4_unlocked() => byte(0xC29854)
 function p1_combo5_unlocked() => byte(0xC29855)
 
+function game_is_running() => dword(0xc29680) > prev(dword(0xc29680))
+
 characters = {
     "Baraka": 0x53,
     "Reptile": 0x54,
@@ -87,22 +90,26 @@ characters = {
 //             Utility Functions              
 // =========================================
 
-function is_main_game() => never(bios_current_executable() != 0x53554c53) 
-function is_mk2() => never(bios_current_executable() != 0x5652414a) 
+function is_main_game() => never(game_code_executable() != 0xae000004) 
+function is_mk2() => never(game_code_executable() != 0x70001c28)
 
 function is_koop() => is_main_game() && game_save_data_ascii() == 0x6f2d6f4b
 function is_singleplayer() => is_main_game() && game_save_data_ascii() != 0x6f2d6f4b
 
 function in_game() => game_state() == gs_gameplay
+function outside_main_menu() => game_state() != gs_main_menu
+
+function game_beaten() => game_state() == 0x13 && prev(game_state()) == gs_gameplay
 
 function mk2_p1_only() => mk2_p1_state() > 0 && mk2_p2_state() == 0
 
 
 // 13 + 56 + 7 + 72 + 5 + 3 + 80 + 6 + 2 = 244, checked already and ok
+// edit: reworked, it's 242 now.
 function all_single_player_red_koins() =>   sum_of(range(2, 4), b => bit(b,0x5d828a))+
                                             sum_of(range(0, 2), b => bit(b,0x5d828b))+
                                             sum_of(range(6, 7), b => bit(b,0x5d828b))+
-                                            sum_of(range(0, 1), b => bit(b,0x5d828c))+
+
                                             sum_of(range(5, 7), b => bit(b,0x5d828c))+
                                             sum_of(range(0, 31), b => bit(b,0x5d828d))+
                                             sum_of(range(0, 23), b => bit(b,0x5d8291))+
@@ -147,6 +154,13 @@ function p2_total_upgrades() {
             byte(0xc2986d) + byte(0xc2986e) + byte(0xc2986f) + byte(0xc29870) + byte(0xc29871)
 }
 
+function check_animation_players(animation_id) {
+    return (
+        (p1_animation() == animation_id && prev(p1_animation()) != animation_id) ||
+        (p2_animation() == animation_id && prev(p2_animation()) != animation_id)
+    )
+}
+
 // =========================================
 //            Events Achievements            
 // =========================================
@@ -174,28 +188,63 @@ function achiev_event(title, description, area_id, event_id, points, cheevo_id) 
                 )
 }
 
-function achiev_event_character(title, description, area_id, event_id, points, cheevo_id) {
+function achiev_animation_event_character(title, description, area_id, animation_id, points, cheevo_id) {
     
     for char_name in characters {
-        achievement(format(title + " ({0})", char_name), format("{0}: " + description, char_name), points,
+        achievement(format(title + " ({0})", char_name), format(description, char_name), points,
                     trigger =   is_singleplayer() && 
                                 in_game() &&
                                 p1_char() == characters[char_name] &&
-                                check_event_update(area_id, event_id)
+                                game_current_area() == area_id &&
+                                p1_animation() == animation_id &&
+                                prev(p1_animation()) != animation_id
+                   )   
+    }
+}
+
+function achiev_medallion_character(title, description, medallion_address, points, cheevo_id) {
+    
+    for char_name in characters {
+        achievement(format(title + " ({0})", char_name), format(description, char_name), points,
+                    trigger =   is_singleplayer() && 
+                                in_game() &&
+                                p1_char() == characters[char_name] &&
+                                medallion_address == 1 &&
+                                prev(medallion_address) == 0
                    )   
     }
 }
 
 
 // save protection and triggers good
-achiev_event_character("Tsung's Island Escape", "Defeat Oni Warlord for the first time.", 0x65, 0x11, 5, 0)
-achiev_event_character("The Portal", "Enter The Portal for the first time.", 0xc0, 0x58, 10, 0)
-achiev_event_character("Evil Monastery", "Defeat Kitana, Jade and Mileena.", 0xc3, 0x3a, 10, 0)
-achiev_event_character("Living Forest", "Defeat Reptile.", 0x90, 0x0e, 10, 0)
-achiev_event_character("Soul Tombs", "Defeat Baraka.", 0x0f, 0x37, 10, 0)
-achiev_event_character("The Wasteland", "Defeat Goro.", 0x2f, 0x05, 10, 0)
-achiev_event_character("Netherrealm", "Defeat Scorpion.", 0xa0, 0x8a, 5, 0)
-achiev_event_character("Kahn's Arena", "Defeat Shao Kahn and beat the game.", 0x49, 0x06, 10, 0)
+// OLD
+// achiev_event_character("Tsung's Island Escape", "Defeat Oni Warlord for the first time as {0}.", 0x65, 0x11, 5, 0)
+// achiev_event_character("The Portal", "Enter The Portal for the first time as {0}.", 0xc0, 0x58, 10, 0)
+// achiev_event_character("Evil Monastery", "Defeat Kitana, Jade and Mileena as {0}.", 0xc3, 0x3a, 10, 0)
+// achiev_event_character("Living Forest", "Defeat Reptile as {0}.", 0x90, 0x0e, 10, 0)
+// achiev_event_character("Soul Tombs", "Defeat Baraka as {0}.", 0x0f, 0x37, 10, 0)
+// achiev_event_character("The Wasteland", "Defeat Goro as {0}.", 0x2f, 0x05, 10, 0)
+// achiev_event_character("Netherrealm", "Defeat Scorpion as {0}.", 0xa0, 0x8a, 5, 0)
+// achiev_event_character("Kahn's Arena", "Defeat Shao Kahn and beat the game as {0}.", 0x49, 0x06, 10, 0)
+
+// NEW
+achiev_medallion_character("Tsung's Island Escape", "Defeat Oni Warlord and obtain Long Jump as {0}.", bit0(0xc2984c), 5, 0)
+achiev_medallion_character("The Portal", "Enter The Portal for the first time as {0}.", bit7(0xc29743), 10, 0)
+achiev_medallion_character("Evil Monastery", "Defeat Kitana, Jade and Mileena and obtain Fists of Ruins as {0}.", bit0(0xc2984e), 10, 0)
+achiev_medallion_character("Living Forest", "Defeat Reptile and obtain Wall Climb as {0}.", bit0(0xc29848), 10, 0)
+achiev_medallion_character("Soul Tombs", "Defeat Baraka and obtain Wall Jump as {0}.", bit0(0xc2984a), 10, 0)
+achiev_medallion_character("The Wasteland", "Defeat Goro and obtain Double Jump as {0}.", bit0(0xc2984b), 10, 0)
+achiev_animation_event_character("Netherrealm", "Defeat Scorpion as {0}.", 0xa0, 0xbb9, 5, 0)
+
+for char_name in characters {
+        achievement(format("Kahn's Arena ({0})", char_name), format("Defeat Shao Kahn and beat the game as {0}", char_name), 10,
+                    trigger =   is_singleplayer() && 
+                                p1_char() == characters[char_name] &&
+                                game_beaten()
+                   )   
+    }
+
+
 
 achiev_event("sterceS rof txeT esreveR oT ekiL I ,seY", "Defeat Ermac.", 0x6c, 0x5e, 10, 0)
 achiev_event("Tarkatan Clone", "Defeat Mileena.", 0x84, 0x48, 10, 0)
@@ -203,9 +252,8 @@ achiev_event("Kano Has Transformed", "Defeat Kano.", 0x48, 0x06, 10, 0)
 
 achievement("Champion of Mortal Kombat", "Defeat Shao Kahn and beat the game on Hard difficulty.", 25,
             trigger =   is_singleplayer() && 
-                        in_game() &&
                         game_difficulty() == diff_hard &&
-                        check_event_update(0x49, 0x06)
+                        game_beaten()
             )
 
 // =========================================
@@ -227,32 +275,36 @@ achievement("Healthy Monk", "Obtain all health upgrades.", 10,
             )
 
 // probably good
-achievement("Koins Kollector I", "Obtain 25% of the obtainable Red Koins from Single Player.", 5,
+achievement("Koins Kollector I", "Obtain 25% of the obtainable Red Koin items from Single Player.", 5,
             trigger =   is_singleplayer() && 
                         in_game() &&
-                        all_single_player_red_koins() == 61 &&
-                        prev(all_single_player_red_koins()) == 60
+                        measured(all_single_player_red_koins() >= 61) &&
+                        all_single_player_red_koins() > prev(all_single_player_red_koins())
+                        // prev(all_single_player_red_koins()) < 61
             )
 
-achievement("Koins Kollector II", "Obtain 50% of the obtainable Red Koins from Single Player.", 5,
+achievement("Koins Kollector II", "Obtain 50% of the obtainable Red Koin items from Single Player.", 5,
             trigger =   is_singleplayer() && 
                         in_game() &&
-                        all_single_player_red_koins() == 122 &&
-                        prev(all_single_player_red_koins()) == 121
+                        measured(all_single_player_red_koins() >= 122) &&
+                        all_single_player_red_koins() > prev(all_single_player_red_koins())
+                        // prev(all_single_player_red_koins()) == 121
             )
 
-achievement("Koins Kollector III", "Obtain 75% of the obtainable Red Koins from Single Player.", 10,
+achievement("Koins Kollector III", "Obtain 75% of the obtainable Red Koin items from Single Player.", 10,
             trigger =   is_singleplayer() && 
                         in_game() &&
-                        all_single_player_red_koins() == 183 &&
-                        prev(all_single_player_red_koins()) == 182
+                        measured(all_single_player_red_koins() >= 183) &&
+                        all_single_player_red_koins() > prev(all_single_player_red_koins())
+                        // prev(all_single_player_red_koins()) == 182
             )
 
-achievement("Koins Kollector IV", "Obtain 100% of the obtainable Red Koins from Single Player.", 10,
+achievement("Koins Kollector IV", "Obtain 100% of the obtainable Red Koin items from Single Player.", 10,
             trigger =   is_singleplayer() && 
                         in_game() &&
-                        all_single_player_red_koins() == 244 &&
-                        prev(all_single_player_red_koins()) == 243
+                        measured(all_single_player_red_koins() == 242) &&
+                        all_single_player_red_koins() > prev(all_single_player_red_koins())
+                        // prev(all_single_player_red_koins()) == 243
             )
 
 // =========================================
@@ -277,9 +329,11 @@ achiev_fatality_char("Kitana", "Head Chop", 0xb0d)
 
 achiev_fatality_char("Reptile", "Head Eat", 0x97e)
 achiev_fatality_char("Reptile", "Hidden Chomp", 0x980)
+achiev_fatality_char("Reptile", "Face Claw", 0x97c)
 
 achiev_fatality_char("Johnny Cage", "Torso Rip", 0xb9e)
 achiev_fatality_char("Johnny Cage", "Head Decaptation", 0xba0)
+achiev_fatality_char("Johnny Cage", "Nut Buster", 0xb9b)
 
 achievement("Fatal Monk", "Perform 25 Fatalities.", 10,
             trigger =   is_singleplayer() && 
@@ -300,31 +354,37 @@ achievement("Proof of Survival", "Finish Survival Mode using Baraka, Kitana, Rep
                         (
                             p1_char() == characters["Baraka"] || p1_char() == characters["Kitana"] || p1_char() == characters["Reptile"] || p1_char() == characters["Johnny Cage"]
                         ) &&
-                        tally(4, totalkills_p1_and_p2_sum())
+                        game_is_running() &&
+                        entity1_health() == 666 &&
+                        entity2_health() == 666 &&
+                        entity3_health() == 666 &&
+                        entity4_health() == 666 &&
+                        (
+                            entity1_health() != prev(entity1_health()) ||
+                            entity2_health() != prev(entity2_health()) ||
+                            entity3_health() != prev(entity3_health()) ||
+                            entity4_health() != prev(entity4_health())
+                        )
             )
 
 achievement("Proof of Warrior", "Beat the game without obtaining more than one health upgrade and no ability upgrades, using Baraka, Kitana, Reptile or Cage.", 25,
             trigger =   is_singleplayer() && 
-                        game_state() != 0x08 &&
                         p1_total_upgrades() <= 5 &&
                         p2_total_upgrades() <= 5 &&
                         player_life_upgrades() <= 1 &&
                         (
                             p1_char() == characters["Baraka"] || p1_char() == characters["Kitana"] || p1_char() == characters["Reptile"] || p1_char() == characters["Johnny Cage"]
                         ) &&
-                        trigger_when(game_current_fmv() == fmv_final_ending) &&
-                        prev(game_current_fmv()) != fmv_final_ending
+                        trigger_when(game_beaten())
             )
 
 achievement("Proof of Speed", "Beat the game within 1h45m in-game time using Baraka, Kitana, Reptile or Cage.", 50,
             trigger =   is_singleplayer() && 
-                        game_state() != 0x08 &&
                         game_time() <= 378000 &&
                         (
                             p1_char() == characters["Baraka"] || p1_char() == characters["Kitana"] || p1_char() == characters["Reptile"] || p1_char() == characters["Johnny Cage"]
                         ) &&
-                        trigger_when(game_current_fmv() == fmv_final_ending) &&
-                        prev(game_current_fmv()) != fmv_final_ending
+                        trigger_when(game_beaten())
             )
 
 
@@ -353,3 +413,21 @@ achievement("Proof of Speed", "Beat the game within 1h45m in-game time using Bar
 //                         mk2_p1_only() &&
 //                         mk2_p1_flawless() == 1 && prev(mk2_p1_flawless()) == 0
 //             )
+
+// =========================================
+//                Leaderboards              
+// =========================================
+
+leaderboard("Speedrun - Normal", "Best in-game time on Normal difficulty.",
+           start = is_singleplayer() && game_beaten() && game_difficulty() == diff_normal,
+           cancel = is_koop(),
+           submit = is_singleplayer() && game_beaten() && game_difficulty() == diff_normal,
+           value = prior(game_time()),
+           format = "FRAMES", lower_is_better=true)
+
+leaderboard("Speedrun - Hard", "Best in-game time on Hard difficulty.",
+           start = is_singleplayer() && game_beaten() && game_difficulty() == diff_hard,
+           cancel = is_koop(),
+           submit = is_singleplayer() && game_beaten() && game_difficulty() == diff_hard,
+           value = prior(game_time()),
+           format = "FRAMES", lower_is_better=true)

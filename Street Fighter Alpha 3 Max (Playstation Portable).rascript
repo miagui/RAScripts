@@ -242,7 +242,7 @@ function protect_button_shortcuts_p2() {
 achievement("Arcade Mode", "Finish Arcade Mode (4 stars difficulty, 3 rounds).", 10,
             trigger =   game_mode_playing() == gm_arcade &&
                         game_state() == gs_playing &&
-                        trigger_when(game_current_match() == 0x09) &&
+                        trigger_when(game_current_match() == 0x09 && game_stage() != 0x1e) &&
                         (trigger_when(p1_has_won_match()) || trigger_when(p2_has_won_match())) &&
                         settings_4stars_3rounds())
 
@@ -293,7 +293,7 @@ achievement("Dramatic Survival Mode", "Finish Survival Mode -  Dramatic (4 stars
 achievement("Super Street Fighter Alpha 3 Turbo", "Finish Arcade Mode with Turbo 7 speed (4 stars difficulty, 3 rounds).", 10,
             trigger =   game_mode_playing() == gm_arcade &&
                         game_state() == gs_playing &&
-                        trigger_when(game_current_match() == 0x09) &&
+                        trigger_when(game_current_match() == 0x09 && game_stage() != 0x1e) &&
                         (trigger_when(p1_has_won_match()) || trigger_when(p2_has_won_match())) &&
                         settings_speed() == 7 &&
                         settings_4stars_3rounds())
@@ -301,7 +301,7 @@ achievement("Super Street Fighter Alpha 3 Turbo", "Finish Arcade Mode with Turbo
 achievement("Time to Get Serious", "Finish Arcade Mode as Ingrid on Mazi Mode (4 stars difficulty, 3 rounds).", 10,
             trigger =   game_mode_playing() == gm_arcade &&
                         once(game_current_match() == 0) &&
-                        trigger_when(game_current_match() == 0x09) &&
+                        trigger_when(game_current_match() == 0x09 && game_stage() != 0x1e) &&
                         (trigger_when(p1_has_won_match()) || trigger_when(p2_has_won_match())) &&
                         (
                             (p1_active() && slot1_character() == characters["Ingrid"] && slot1_mode() == mode_mazi && never(p1_active() && slot1_mode() != mode_mazi && game_matches_won() > prev(game_matches_won()))) ||
@@ -312,7 +312,7 @@ achievement("Time to Get Serious", "Finish Arcade Mode as Ingrid on Mazi Mode (4
 achievement("Saikyou Master", "Finish Arcade Mode as Dan on Saikyou Mode (4 stars difficulty, 3 rounds).", 10,
             trigger =   game_mode_playing() == gm_arcade &&
                         once(game_current_match() == 0) &&
-                        trigger_when(game_current_match() == 0x09) &&
+                        trigger_when(game_current_match() == 0x09 && game_stage() != 0x1e) &&
                         (trigger_when(p1_has_won_match()) || trigger_when(p2_has_won_match())) &&
                         (
                             (p1_active() && slot1_character() == characters["Dan"] && slot1_mode() == mode_saikyou && never(p1_active() && slot1_mode() != mode_saikyou && game_matches_won() > prev(game_matches_won()))) ||
@@ -323,7 +323,7 @@ achievement("Saikyou Master", "Finish Arcade Mode as Dan on Saikyou Mode (4 star
 achievement("Street Fighter II: Alpha Edition", "Finish Arcade Mode as Classic Chun-Li on Classic Mode (4 stars difficulty, 3 rounds).", 10,
             trigger =   game_mode_playing() == gm_arcade &&
                         once(game_current_match() == 0) &&
-                        trigger_when(game_current_match() == 0x09) &&
+                        trigger_when(game_current_match() == 0x09 && game_stage() != 0x1e) &&
                         (trigger_when(p1_has_won_match()) || trigger_when(p2_has_won_match())) &&
                         (
                             (p1_active() && slot1_character() == characters["Classic Chun-Li"] && slot1_mode() == mode_classic && never(p1_active() && slot1_mode() != mode_classic && p1_has_won_match())) ||

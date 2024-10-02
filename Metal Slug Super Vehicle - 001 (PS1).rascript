@@ -9,8 +9,8 @@
 function pointer_another_story() => tbyte(tbyte(0x0075D0) + 0x2c)
 function as_scene() => byte(0x0ad9c0)
 function as_current_story() => byte(0x01f7ff)
-function is_another_story_1() => bit7(0x01f7ff) == false
-function is_another_story_2() => bit7(0x01f7ff) == true
+function is_another_story_1() => bit7(0x01f7ff) == 0
+function is_another_story_2() => bit7(0x01f7ff) == 1
 
 function game_file1_loaded() => dword(0x00922C)
 function game_file2_loaded() => dword(0x009244)
@@ -169,7 +169,7 @@ function is_super_devil() {
                                     dword(cs_current_file + o_cs_file_pp6) <= 0x6036 &&
                                     sum_of(range(0, 5), b => bit(b,cs_current_file + o_cs_file_pp_finished)) == 6 &&
                                     word(cs_current_file + o_cs_file_surv) == 0x58e8 &&
-                                    bit7(cs_current_file + o_cs_file_surv_finished) == true
+                                    bit7(cs_current_file + o_cs_file_surv_finished) == 1
                                 )
     }
     return logic_is_super_devil
@@ -309,12 +309,22 @@ achievement("Hittin' It Hard", "Beat the game without using a continue on Normal
                         trigger_when(mission6_finished())
             )
 
+// OLD
+// achievement("Run and Gun, Literally", "Beat the game within 18 minutes on Hard difficulty.", 50,
+//             trigger =   in_arcade_mode() &&
+//                         settings_difficulty() >= 5 &&
+//                         once(mission1_has_started()) &&
+//                         never(tally(64800, tally(0, once(mission1_has_started()) && stage_timer() != prev(stage_timer())) ,
+//                                                     once(mission1_has_started()) && stage_timer() != prev(stage_timer())  )) &&
+//                         trigger_when(mission6_finished())
+//             )
+
 achievement("Run and Gun, Literally", "Beat the game within 18 minutes on Hard difficulty.", 50,
             trigger =   in_arcade_mode() &&
                         settings_difficulty() >= 5 &&
+                        never(game_screen() == 0) &&
                         once(mission1_has_started()) &&
-                        never(tally(64800, tally(0, once(mission1_has_started()) && stage_timer() != prev(stage_timer())),
-                                                    once(mission1_has_started()) && stage_timer() != prev(stage_timer())  )) &&
+                        never(tally(64800,  once(mission1_has_started()) && stage_timer() != prev(stage_timer()), once(mission1_has_started()) && stage_timer() != prev(stage_timer()))) &&
                         trigger_when(mission6_finished())
             )
 
@@ -493,7 +503,7 @@ function lb_pinpoint_mission(mission_id, lb_id) {
                         game_mission() == mission_id &&
                         cs_pin_point_timer() > 0 && 
                         prev(cs_pin_point_timer()) == 0,
-                cancel = game_screen() != screen_combat_school,
+                cancel = game_screen() != screen_combat_school || game_mode() != game_mode_pinpoint || game_mission() != mission_id || (p1_state() == 0 && p2_state() == 0) ,
                 submit = mission_finished(),
                 value = cs_pin_point_timer(),
                 format = "FRAMES", lower_is_better=true
@@ -510,7 +520,7 @@ leaderboard("Survival Attack Speedrun", "Finish Survival Attack the fastest as p
            start =  in_combat_school() &&
                     game_mode() == game_mode_survival &&
                     mission1_has_started(),
-           cancel = game_screen() != screen_combat_school || p1_lives() < prev(p1_lives()) || p2_lives() < prev(p2_lives()),
+           cancel = game_screen() != screen_combat_school || p1_lives() < prev(p1_lives()) || p2_lives() < prev(p2_lives()) || (p1_state() == 0 && p2_state() == 0),
            submit = mission6_finished(),
            value = lb_timer_logic(),
            format = "FRAMES", lower_is_better=true
