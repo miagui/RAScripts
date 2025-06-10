@@ -145,8 +145,9 @@ function reset_main_menu() => never(game_context() == 1)
 function game_beaten_team_play() {
     return(
         game_arcade_matches_won() == 6 &&
-        p1_rounds_won() == 3 &&
-        prev(p1_rounds_won()) != 3
+        game_state() == GS_FIGHTING &&
+        p1_rounds_won() > prev(p1_rounds_won()) &&
+        p2_rounds_won() < 3
     )
 }
 
@@ -161,7 +162,7 @@ function p1_dont_have_char(char_id) => p1_character_1() != char_id && p1_charact
 // =========================================
 
 function achiev_beat_game_team(title, char1, char2, char3, char4) {
-    achievement(title, format("Finish Team Play using only {0}, {1}, {2} and {3} (default settings).", char1, char2, char3, char4), 10, type="progression",
+    achievement(title, format("Finish Team Play using only {0}, {1}, {2} and {3} (default settings).", char1, char2, char3, char4), 10, type="win_condition",
                 trigger = p1_only() &&
                           game_mode() == GM_TEAM_PLAY &&
                           reset_main_menu() &&
@@ -245,7 +246,7 @@ achievement("Gatling Attack II", "Chain a Special Move into a Desperation Move t
                             p2_hp() < prev(p2_hp()) && p1_super_cancel_flag() == 2
                 )
 
-achievement("Straight Slicer", "Chain a Special Move into a Desperation Move through Super Cancel as Blue Mary (no strikers).", 3,
+achievement("Vertical Arrow", "Chain a Special Move into a Desperation Move through Super Cancel as Blue Mary (no strikers).", 3,
                 trigger =   p1_active_state() > 0 &&
                             p1_current_character() == chars["Blue Mary"] &&
                             p1_mode() == 1 &&
@@ -275,7 +276,7 @@ achiev_super_cancel_combo("Ko'oh Ken", "Takuma", 5)
 achiev_super_cancel_combo("Ground Saber", "Leona", 3)
 achiev_super_cancel_combo("Gatling Attack I", "Ralf", 3)
 // achiev_super_cancel_combo("Gatling Attack II", "Clark", 5)
-achiev_super_cancel_combo("Boomerang Shot \"CODE: SC\"", "Whip", 3)
+achiev_super_cancel_combo("Type A Code Superior", "Whip", 3)
 achiev_super_cancel_combo("Phoenix Arrow", "Athena", 3)
 achiev_super_cancel_combo("Ryu Gakusai", "Kensou", 3)
 achiev_super_cancel_combo("Hyotan Geki", "Chin", 3)

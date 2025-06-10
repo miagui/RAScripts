@@ -258,7 +258,7 @@ function all_chips_pallette() =>    sum_of(range(0x64c7eb, 0x64c7ed), address =>
 // =========================================
 
 function achievement_clear_mission(title, stage_name, stage_id, points, cheevo_id) {
-    achievement(title, format("Finish {0} stage.", stage_name), points,
+    achievement(title, format("Finish {0} stage.", stage_name), points, type="progression",
                 trigger =   game_stage() == stage_id &&
                             stage_intermission_flag() == 0 &&
                             stage_has_been_sucessfully_cleared()
@@ -266,7 +266,7 @@ function achievement_clear_mission(title, stage_name, stage_id, points, cheevo_i
 }
 
 function achievement_clear_mission_no_revisit(title, stage_name, stage_id, points, cheevo_id) {
-    achievement(title, format("Finish {0} stage.", stage_name), points,
+    achievement(title, format("Finish {0} stage.", stage_name), points, type="progression",
                 trigger =   game_stage() == stage_id &&
                             stage_intermission_flag() == 0 &&
                             stage_has_been_sucessfully_cleared() &&
@@ -275,7 +275,7 @@ function achievement_clear_mission_no_revisit(title, stage_name, stage_id, point
 }
 
 function achievement_exf_finish(title, boss_name, stage_id, points, cheevo_id) {
-    achievement(title, format("Defeat {0} with an EXF Double Attack.", boss_name), points,
+    achievement(title, format("Defeat {0} with an EXF Double Attack.", boss_name), points, type="missable",
                 trigger =   game_stage() == stage_id &&
                             stage_intermission_flag() == 0 &&
                             stage_exf_finish_flag() == 1 && prev(stage_exf_finish_flag()) == 0
@@ -283,7 +283,7 @@ function achievement_exf_finish(title, boss_name, stage_id, points, cheevo_id) {
 }
 
 function achievement_no_damage_clear(stage_name, stage_id, points, cheevo_id) {
-    achievement(format("{0} Damageless", stage_name), format("Finish {0} stage without taking damage (Normal difficulty).", stage_name), points,
+    achievement(format("{0} Damageless", stage_name), format("Reach the boss door of {0} stage without taking damage (Normal difficulty).", stage_name), points,
                 trigger =   game_stage() == stage_id &&
                             stage_intermission_flag() == 0 &&
                             trigger_when(stage_has_been_sucessfully_cleared()) &&
@@ -314,7 +314,7 @@ achievement_clear_mission_no_revisit("Rocket Ruins", "Booster Forest", st_booste
 achievement_clear_mission_no_revisit("Jacob's Ladder", "Jakob", st_jakob, 5, 0)
 achievement_clear_mission_no_revisit("Fake Mavericks", "Gateway", st_gateway, 5, 0)
 
-achievement("Disruption of the New World", "Beat the game on Normal difficulty.", 10,
+achievement("Disruption of the New World", "Beat the game on Normal difficulty.", 10, type="win_condition",
                 trigger =   game_stage() == st_sigma_palace &&
                             stage_has_been_sucessfully_cleared() &&
                             game_difficulty() >= diff_normal,
@@ -322,7 +322,7 @@ achievement("Disruption of the New World", "Beat the game on Normal difficulty."
             )
 
 
-achievement("Paradise Lost", "Beat the game on Hard difficulty.", 50,
+achievement("Paradise Lost", "Beat the game on Hard difficulty.", 50, type="win_condition",
                 trigger =   game_stage() == st_sigma_palace &&
                             stage_has_been_sucessfully_cleared() &&
                             game_difficulty() == diff_hard,
@@ -336,6 +336,9 @@ achievement("Chips!? What Are Chips?", "Beat the game without buying chips (Retr
                             tbyte(0x64c66a) == 0x000440 && // X Chips
                             tbyte(0x64c6b2) == 0x00000440 && // Zero Chips
                             tbyte(0x64c6fa) == 0x00000440 && // Axl Chips
+                            bit3(0x64c4d0) == 0 &&
+                            bit4(0x64c4d0) == 0 &&
+                            bit5(0x64c4d0) == 0 &&
                             byte(0x64c4d8) == 0x00 && // Armors
                             game_difficulty() >= diff_normal,
                 id = 0
@@ -385,7 +388,7 @@ achievement_rank_aaa_clear("Gateway", st_gateway, 25, 223561)
 //                   Misc              
 // =========================================
 
-achievement("Hover a Little More", "Obtain the Rare Metal in the river on the first playthrough at Noah's Park.", 3,
+achievement("Hover a Little More", "Obtain the Rare Metal in the river on the first playthrough at Noah's Park.", 3, type="missable",
             trigger = game_stage() == st_noahs_park &&
                       word(0x64c4ae) == 0 && // Stages Cleared Bitflags
                       bit5(0x64c5a4) == 1 &&
@@ -396,7 +399,7 @@ achievement("Forgot Something Here?", "Enter the secret room on Noah's Park.", 2
             trigger = game_stage() == st_noahs_park &&
                       stage_camera_x() >= 243 && stage_camera_x() <= 244 &&
                       stage_camera_y() == 12.0 &&
-                      stage_camera_z() <= -153.0
+                      stage_camera_z() >= -153.0
             )
 
 achievement("Sneaking", "Get through Pitch Black stage without activating any alarm and with lights off.", 4,
@@ -416,12 +419,12 @@ achievement("MAME-Q Destroyer", "Score 175 points or higher in the first room at
                         prev(stage_troia_base_mameq_eliminated()) < 175
             )
 
-achievement("Additional Mobility", "Obtain all items from Central White stage within a single visit.", 5,
+achievement("Additional Mobility", "Obtain all items from Central White stage within a single visit.", 5, type="missable",
             trigger =   tally(2, all_items_central_white() > prev(all_items_central_white())) &&
                         never(byte(0x64db40) != st_central_white)
             ) 
 
-achievement("Havoc Wrecker", "Encounter Vile 4 times before reaching Sigma Palace.", 10,
+achievement("Havoc Wrecker", "Encounter Vile 4 times before reaching Sigma Palace.", 10, type="missable",
             trigger =   inside_a_stage() &&
                         bit2(0x64c4af) == 0 &&
                         measured(sum_of(range(0, 3), b => bit(b,0x64c4d4)) == 4) &&
@@ -445,7 +448,7 @@ achievement("Unknown Data \"CM\"", "Defeat Cut Man.", 3,
                         stage_troia_base_room() == 9 && prev(stage_troia_base_room()) == 8
             )
 
-achievement("Cyclops", "Defeat Bamboo Pandamonium without leaving the Ride Armor.", 4,
+achievement("Cyclops", "Defeat Bamboo Pandamonium without leaving the Ride Armor.", 10,
             trigger =   never(game_stage() != st_booster_forest) &&
                         once(prev(stage_boss_hp()) < stage_max_boss_hp_display() &&
                              stage_boss_hp() == stage_max_boss_hp_display()) &&

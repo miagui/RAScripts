@@ -1,0 +1,17 @@
+{
+  "Background": "#1E1E1E",
+  "DiffAdded": "#208040",
+  "DiffRemoved": "#802020",
+  "EditorComment": "#6070A0",
+  "EditorFunctionCall": "#C0B8B8",
+  "EditorFunctionDefinition": "#80A090",
+  "EditorIntegerConstant": "#707080",
+  "EditorKeyword": "#C080C0",
+  "EditorLineNumbers": "#505050",
+  "EditorSelection": "#303030",
+  "EditorStringConstant": "#C0C080",
+  "EditorVariable": "#90A0C0",
+  "Foreground": "#AAAAAA",
+  "ScrollBarBackground": "#202020",
+  "ScrollBarForeground": "#383838"
+}

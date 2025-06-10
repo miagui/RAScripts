@@ -102,7 +102,7 @@ function settings_default_all() {
 // ==================
 
 achievement(
-    title = "Hayate-Maru - Meaning Squall Rounder", description = "Finish Story Mode using only Kaede (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Hayate-Maru - Meaning Squall Rounder", description = "Finish Story Mode using only Kaede (default settings)", points = 10, type="win_condition",
     id = 133073, badge = "147253", published = "25/11/2020 23:47:53", modified = "08/12/2020 04:01:16",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -117,7 +117,7 @@ achievement(
 )
 
 achievement(
-    title = "Katsura of the Moon - Tsuki no Katsura", description = "Finish Story Mode using only Moriya (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Katsura of the Moon - Tsuki no Katsura", description = "Finish Story Mode using only Moriya (default settings)", points = 10, type="win_condition",
     id = 133074, badge = "147254", published = "25/11/2020 23:47:57", modified = "08/12/2020 04:01:13",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -132,7 +132,7 @@ achievement(
 )
 
 achievement(
-    title = "Bodan - Meaning Peony", description = "Finish Story Mode using only Yuki (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Bodan - Meaning Peony", description = "Finish Story Mode using only Yuki (default settings)", points = 10, type="win_condition",
     id = 133082, badge = "147257", published = "25/11/2020 23:48:19", modified = "08/12/2020 04:01:11",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -147,7 +147,7 @@ achievement(
 )
 
 achievement(
-    title = "Guren - Crimson Lotus", description = "Finish Story Mode using only Lee (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Guren - Crimson Lotus", description = "Finish Story Mode using only Lee (default settings)", points = 10, type="win_condition",
     id = 133081, badge = "147255", published = "25/11/2020 23:48:15", modified = "08/12/2020 04:01:09",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -162,7 +162,7 @@ achievement(
 )
 
 achievement(
-    title = "Hihon - Which Holds Turtles", description = "Finish Story Mode using only Okina (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Hihon - Which Holds Turtles", description = "Finish Story Mode using only Okina (default settings)", points = 10, type="win_condition",
     id = 133080, badge = "147256", published = "25/11/2020 23:48:12", modified = "08/12/2020 04:01:06",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -177,7 +177,7 @@ achievement(
 )
 
 achievement(
-    title = "Kongo Rakan - Adamantine Arhat a Metal Club", description = "Finish Story Mode using only Juzoh (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Kongo Rakan - Adamantine Arhat a Metal Club", description = "Finish Story Mode using only Juzoh (default settings)", points = 10, type="win_condition",
     id = 133079, badge = "147258", published = "25/11/2020 23:48:10", modified = "08/12/2020 04:01:04",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -192,7 +192,7 @@ achievement(
 )
 
 achievement(
-    title = "Lunatic Blade - Vulture a Hagewashi", description = "Finish Story Mode using only Shikyoh (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Lunatic Blade - Vulture a Hagewashi", description = "Finish Story Mode using only Shikyoh (default settings)", points = 10, type="win_condition",
     id = 133078, badge = "147261", published = "25/11/2020 23:48:07", modified = "08/12/2020 04:01:00",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -207,7 +207,7 @@ achievement(
 )
 
 achievement(
-    title = "Otokomae - Handsome Man a Bokutou", description = "Finish Story Mode using only Amano (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Otokomae - Handsome Man a Bokutou", description = "Finish Story Mode using only Amano (default settings)", points = 10, type="win_condition",
     id = 133084, badge = "147262", published = "25/11/2020 23:48:33", modified = "08/12/2020 04:00:58",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -222,7 +222,7 @@ achievement(
 )
 
 achievement(
-    title = "Meian - Light and Darkness a Heihaku", description = "Finish Story Mode using only Akari (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Meian - Light and Darkness a Heihaku", description = "Finish Story Mode using only Akari (default settings)", points = 10, type="win_condition",
     id = 133083, badge = "147260", published = "25/11/2020 23:48:22", modified = "08/12/2020 04:00:56",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -237,7 +237,7 @@ achievement(
 )
 
 achievement(
-    title = "Hayabusa - Peregrine Falcon a Katana", description = "Finish Story Mode using only Washizuka (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Hayabusa - Peregrine Falcon a Katana", description = "Finish Story Mode using only Washizuka (default settings)", points = 10, type="win_condition",
     id = 133085, badge = "147259", published = "25/11/2020 23:48:36", modified = "08/12/2020 04:00:54",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -252,7 +252,7 @@ achievement(
 )
 
 achievement(
-    title = "Mantis Blade - Shadow and Mantis Blade a Stream", description = "Finish Story Mode using only Zantetsu (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Mantis Blade - Shadow and Mantis Blade a Stream", description = "Finish Story Mode using only Zantetsu (default settings)", points = 10, type="win_condition",
     id = 133086, badge = "147263", published = "25/11/2020 23:48:39", modified = "08/12/2020 04:00:52",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -267,7 +267,7 @@ achievement(
 )
 
 achievement(
-    title = "Byakko no Juzu Rosary of Byakko", description = "Finish Story Mode using only Shigen (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Byakko no Juzu Rosary of Byakko", description = "Finish Story Mode using only Shigen (default settings)", points = 10, type="win_condition",
     id = 133087, badge = "147264", published = "25/11/2020 23:48:42", modified = "08/12/2020 04:00:49",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -282,7 +282,7 @@ achievement(
 )
 
 achievement(
-    title = "An Unnamed Katana and Wakizashi", description = "Finish Story Mode using only Musahi (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "An Unnamed Katana and Wakizashi", description = "Finish Story Mode using only Musahi (default settings)", points = 10,
     id = 133088, badge = "147268", published = "25/11/2020 23:48:46", modified = "08/12/2020 04:00:47",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -297,7 +297,7 @@ achievement(
 )
 
 achievement(
-    title = "Fortunate Phoenix a Treasured Sword", description = "Finish Story Mode using only Kagami (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Fortunate Phoenix a Treasured Sword", description = "Finish Story Mode using only Kagami (default settings)", points = 10,
     id = 133077, badge = "147270", published = "25/11/2020 23:48:05", modified = "08/12/2020 04:00:45",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -316,7 +316,7 @@ achievement(
 // ==================
 
 achievement(
-    title = "TLB - Shining Soul", description = "Kaede (Normal): Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Shining Soul", description = "As Kaede (Normal), hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133056, badge = "147118", published = "25/11/2020 23:47:06", modified = "08/12/2020 04:04:27",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -335,7 +335,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Anxious White", description = "Yuki: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Anxious White", description = "As Yuki, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133057, badge = "147119", published = "25/11/2020 23:47:08", modified = "08/12/2020 04:04:22",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -354,7 +354,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Moon Destiny", description = "Moriya: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Moon Destiny", description = "As Moriya, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133058, badge = "147135", published = "25/11/2020 23:47:11", modified = "08/12/2020 04:04:20",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -373,7 +373,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Fighting Hermit", description = "Okina: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Fighting Hermit", description = "As Okina, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133059, badge = "147122", published = "25/11/2020 23:47:12", modified = "08/12/2020 04:04:18",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -392,7 +392,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Oriental Justice", description = "Lee: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Oriental Justice", description = "As Lee, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133060, badge = "147123", published = "25/11/2020 23:47:15", modified = "08/12/2020 04:04:16",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -411,7 +411,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Big Heart", description = "Juzoh: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Big Heart", description = "As Juzoh, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133061, badge = "147121", published = "25/11/2020 23:47:18", modified = "08/12/2020 04:04:13",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -430,7 +430,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Sword of the Wolf", description = "Washizuka: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Sword of the Wolf", description = "As Washizuka, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133062, badge = "147120", published = "25/11/2020 23:47:20", modified = "08/12/2020 04:04:11",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -449,7 +449,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Magical Little Girl", description = "Akari: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Magical Little Girl", description = "As Akari, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133063, badge = "147124", published = "25/11/2020 23:47:23", modified = "08/12/2020 04:04:09",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -468,7 +468,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Living Nightmare", description = "Shikyoh: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Living Nightmare", description = "As Shikyoh, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133064, badge = "147125", published = "25/11/2020 23:47:25", modified = "08/12/2020 04:04:05",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -487,7 +487,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Romancing Wanderer", description = "Amano: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Romancing Wanderer", description = "As Amano, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133065, badge = "147126", published = "25/11/2020 23:47:27", modified = "08/12/2020 03:38:02",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -515,7 +515,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Last Ninja", description = "Zantetsu: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Last Ninja", description = "As Zantetsu, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133066, badge = "147127", published = "25/11/2020 23:47:29", modified = "08/12/2020 04:04:03",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -534,7 +534,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Iron Tiger", description = "Shigen: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Iron Tiger", description = "As Shigen, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133068, badge = "147128", published = "25/11/2020 23:47:33", modified = "08/12/2020 04:04:01",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -550,7 +550,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Phantom Blade", description = "Musashi: Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Phantom Blade", description = "As Musashi, hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133067, badge = "147129", published = "25/11/2020 23:47:31", modified = "08/12/2020 04:03:59",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -569,7 +569,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Crisis Christ", description = "Kagami (Normal): Hit your opponent with all 2 Desperation Moves (Power Mode, no Training Mode)", points = 5,
+    title = "TLB - Crisis Christ", description = "As Kagami (Normal), hit your opponent with all 2 Desperation Moves against the CPU (Power Mode)", points = 5,
     id = 133069, badge = "147130", published = "25/11/2020 23:47:35", modified = "08/12/2020 04:03:57",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -588,7 +588,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Unknown Power", description = "Kaede (Awakening): Hit your opponent with all 4 Desperation Moves (Power Mode, no Training Mode)", points = 10,
+    title = "TLB - Unknown Power", description = "As Kaede (Awakening), hit your opponent with all 4 Desperation Moves against the CPU (Power Mode)", points = 10,
     id = 133070, badge = "147133", published = "25/11/2020 23:47:37", modified = "08/12/2020 04:03:54",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -614,7 +614,7 @@ achievement(
 )
 
 achievement(
-    title = "TLB - Blue Flames", description = "Kagami (Awakening): Hit your opponent with all 3 Desperation Moves (Power Mode, no Training Mode)", points = 10,
+    title = "TLB - Blue Flames", description = "As Kagami (Awakening), hit your opponent with all 3 Desperation Moves against the CPU (Power Mode)", points = 10,
     id = 133071, badge = "147132", published = "25/11/2020 23:47:40", modified = "08/12/2020 04:03:52",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -641,7 +641,7 @@ achievement(
 // ==================
 
 achievement(
-    title = "Caring Heart One-Sword Style", description = "Perform a 15 hit combo with Kaede (no Desperation Moves)", points = 5,
+    title = "Caring Heart One-Sword Style", description = "Perform a 15-hit combo as Kaede without using Desperation Moves", points = 5,
     id = 133105, badge = "147134", published = "26/11/2020 00:11:36", modified = "08/12/2020 04:05:36",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -655,7 +655,7 @@ achievement(
 )
 
 achievement(
-    title = "Life-or-Death Stray Sword Style", description = "Perform a 15 hit combo with Moriya (no Desperation Moves)", points = 5,
+    title = "Life-or-Death Stray Sword Style", description = "Perform a 15-hit combo as Moriya without using Desperation Moves", points = 5,
     id = 133106, badge = "147155", published = "26/11/2020 00:11:40", modified = "08/12/2020 04:19:36",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -666,7 +666,7 @@ achievement(
 )
 
 achievement(
-    title = "Sincere Style: One Long Sword", description = "Perform a 14 hit combo with Okina (no Desperation Moves)", points = 5,
+    title = "Sincere Style: One Long Sword", description = "Perform a 14-hit combo as Okina without using Desperation Moves", points = 5,
     id = 133107, badge = "147153", published = "26/11/2020 00:11:47", modified = "08/12/2020 04:19:38",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -677,7 +677,7 @@ achievement(
 )
 
 achievement(
-    title = "Caring Heart Naginata Art", description = "Perform a 14 hit combo with Yuki (no Desperation Moves)", points = 5,
+    title = "Caring Heart Naginata Art", description = "Perform a 14-hit combo as Yuki without using Desperation Moves", points = 5,
     id = 133108, badge = "147152", published = "26/11/2020 00:11:50", modified = "08/12/2020 04:19:40",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -688,7 +688,7 @@ achievement(
 )
 
 achievement(
-    title = "Hoku Ha Shorin-Ji to", description = "Perform a 20 hit combo with Lee (no Desperation Moves)", points = 5,
+    title = "Hoku Ha Shorin-Ji to", description = "Perform a 20-hit combo as Lee without using Desperation Moves", points = 5,
     id = 133109, badge = "147151", published = "26/11/2020 00:11:52", modified = "08/12/2020 04:19:43",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -699,7 +699,7 @@ achievement(
 )
 
 achievement(
-    title = "Ga-Ryu Club Fighting", description = "Perform a 12 hit combo with Juzoh (no Desperation Moves)", points = 5,
+    title = "Ga-Ryu Club Fighting", description = "Perform a 12-hit combo as Juzoh without using Desperation Moves", points = 5,
     id = 133110, badge = "147150", published = "26/11/2020 00:11:55", modified = "08/12/2020 04:19:45",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -710,7 +710,7 @@ achievement(
 )
 
 achievement(
-    title = "Spontaneous True Spirit Style: Falcon", description = "Perform a 15 hit combo with Washizuca (no Desperation Moves)", points = 5,
+    title = "Spontaneous True Spirit Style: Falcon", description = "Perform a 15-hit combo as Washizuca without using Desperation Moves", points = 5,
     id = 133111, badge = "147154", published = "26/11/2020 00:11:57", modified = "08/12/2020 04:19:47",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -721,7 +721,7 @@ achievement(
 )
 
 achievement(
-    title = "Ichijo-Ryu Onmyo Jutsu", description = "Perform a 12 hit combo with Akari (no Desperation Moves)", points = 5,
+    title = "Ichijo-Ryu Onmyo Jutsu", description = "Perform a 12-hit combo as Akari without using Desperation Moves", points = 5,
     id = 133112, badge = "147149", published = "26/11/2020 00:12:01", modified = "08/12/2020 04:19:49",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -732,7 +732,7 @@ achievement(
 )
 
 achievement(
-    title = "Clear Conscience: Medal of Slaughter", description = "Perform a 22 hit combo with Shikyoh (no Desperation Moves)", points = 5,
+    title = "Clear Conscience: Medal of Slaughter", description = "Perform a 22-hit combo as Shikyoh without using Desperation Moves", points = 5,
     id = 133113, badge = "147148", published = "26/11/2020 00:12:03", modified = "08/12/2020 04:19:51",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -743,7 +743,7 @@ achievement(
 )
 
 achievement(
-    title = "Ga-Ryu Kenka Yagura", description = "Perform a 17 hit combo with Amano (no Desperation Moves)", points = 5,
+    title = "Ga-Ryu Kenka Yagura", description = "Perform a 17-hit combo as Amano without using Desperation Moves", points = 5,
     id = 133114, badge = "147156", published = "26/11/2020 00:12:06", modified = "08/12/2020 04:19:54",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -755,7 +755,7 @@ achievement(
 )
 
 achievement(
-    title = "Kisaragi-Ryu Ninjutsu", description = "Perform a 14 hit combo with Zantetsu (no Desperation Moves)", points = 5,
+    title = "Kisaragi-Ryu Ninjutsu", description = "Perform a 14-hit combo as Zantetsu without using Desperation Moves", points = 5,
     id = 133115, badge = "147147", published = "26/11/2020 00:12:08", modified = "08/12/2020 04:19:56",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -766,7 +766,7 @@ achievement(
 )
 
 achievement(
-    title = "Kaiwan: Byakko no Tsume", description = "Perform a 17 Hit combos with Shigen (no Desperation Moves)", points = 5,
+    title = "Kaiwan: Byakko no Tsume", description = "Perform a 17-hit combos with Shigen without using Desperation Moves", points = 5,
     id = 133117, badge = "147158", published = "26/11/2020 00:12:13", modified = "08/12/2020 04:19:58",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -777,7 +777,7 @@ achievement(
 )
 
 achievement(
-    title = "Niten Ichi-Ryu Kai", description = "Perform a 12 hit combo with Musashi (no Desperation Moves)", points = 5,
+    title = "Niten Ichi-Ryu Kai", description = "Perform a 12-hit combo as Musashi without using Desperation Moves", points = 5,
     id = 133116, badge = "147157", published = "26/11/2020 00:12:10", modified = "08/12/2020 04:20:01",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -788,7 +788,7 @@ achievement(
 )
 
 achievement(
-    title = "Haste Sword - Phoenix Flame", description = "Perform a 15 hit combo with Kagami (no Desperation Moves)", points = 5,
+    title = "Haste Sword - Phoenix Flame", description = "Perform a 15-hit combo as Kagami without using Desperation Moves", points = 5,
     id = 133119, badge = "147145", published = "26/11/2020 00:15:11", modified = "08/12/2020 04:20:04",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -800,7 +800,7 @@ achievement(
 )
 
 achievement(
-    title = "Morning Star Wind Fang", description = "Perform a 15 hit combo with (Awakening) Kaede (no Desperation Moves)", points = 5,
+    title = "Morning Star Wind Fang", description = "Perform a 15-hit combo as (Awakening) Kaede without using Desperation Moves", points = 5,
     id = 133118, badge = "147144", published = "26/11/2020 00:15:08", modified = "08/12/2020 04:20:06",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -814,7 +814,7 @@ achievement(
 )
 
 achievement(
-    title = "Wings of the Afterlife", description = "Perform a 14 hit combo with (Awakening) Kagami (no Desperation Moves)", points = 5,
+    title = "Wings of the Afterlife", description = "Perform a 14-hit combo as (Awakening) Kagami without using Desperation Moves", points = 5,
     id = 133120, badge = "147143", published = "26/11/2020 00:15:52", modified = "08/12/2020 04:46:05",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -830,7 +830,7 @@ achievement(
 // ==================
 
 achievement(
-    title = "The Style of Wearing Specials", description = "Finish Story Mode using only Power Mode (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 5,
+    title = "The Style of Wearing Specials", description = "Finish Story Mode using only Power Mode (default settings)", points = 5,
     id = 133091, badge = "147275", published = "25/11/2020 23:48:57", modified = "25/11/2020 23:48:57",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -844,7 +844,7 @@ achievement(
 )
 
 achievement(
-    title = "The Style of Using Speed", description = "Finish Story Mode using only Speed Mode (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 5,
+    title = "The Style of Using Speed", description = "Finish Story Mode using only Speed Mode (default settings)", points = 5,
     id = 133092, badge = "147274", published = "25/11/2020 23:48:59", modified = "25/11/2020 23:48:59",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -878,7 +878,7 @@ achievement(
 )
 
 achievement(
-    title = "Micro-History to Tell", description = "Finish the game on Short Mode (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 10,
+    title = "Micro-History to Tell", description = "Finish the game on Short Mode (default settings)", points = 10,
     id = 133075, badge = "147232", published = "25/11/2020 23:47:59", modified = "25/11/2020 23:47:59",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -888,15 +888,16 @@ achievement(
               settings_default_all()
 )
 
-achievement(
-    title = "Victories in a Row, That's It...", description = "Win 12 fights on Time Attack Mode", points = 10,
-    id = 133089, badge = "147231", published = "25/11/2020 23:48:49", modified = "08/12/2020 04:30:21",
-    trigger = never(unibios_flag() != 0) && 
-              p1_only() &&
-              never(game_mode_l4() != 3) && 
-              never(game_timer() == 0) &&
-              measured(repeated(12, p1_rounds_wins() > prev(p1_rounds_wins())))
-)
+// NOTE: Don't update this, current logic is already good
+// achievement(
+//     title = "Victories in a Row, That's It...", description = "Win 12 fights on Time Attack Mode", points = 10,
+//     id = 133089, badge = "147231", published = "25/11/2020 23:48:49", modified = "08/12/2020 04:30:21",
+//     trigger = never(unibios_flag() != 0) && 
+//               p1_only() &&
+//               never(game_mode_l4() != 3) && 
+//               never(game_timer() == 0) &&
+//               measured(repeated(12, p1_rounds_wins() > prev(p1_rounds_wins())))
+// )
 
 achievement(
     title = "Be Quiet and Let Me Make Fun", description = "Tease your opponent 10 times without being hit", points = 5,
@@ -911,7 +912,7 @@ achievement(
 )
 
 achievement(
-    title = "Samurai Concentration", description = "Defeat your opponent using only the B button (Strong Slash) (Game Time Normal)", points = 3,
+    title = "Samurai Concentration", description = "Defeat your opponent using only the B button (Strong Slash) on \"Normal\" game time", points = 3,
     id = 133097, badge = "147212", published = "25/11/2020 23:49:12", modified = "08/12/2020 04:53:29",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -927,7 +928,7 @@ achievement(
 )
 
 achievement(
-    title = "Ni-poo, The Fast Slash", description = "Defeat your opponent using only the A button (Weak Slash) (Game Time Normal)", points = 3,
+    title = "Ni-poo, The Fast Slash", description = "Defeat your opponent using only the A button (Weak Slash) on \"Normal\" game time", points = 3,
     id = 133098, badge = "147213", published = "25/11/2020 23:49:24", modified = "08/12/2020 04:53:31",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -943,7 +944,7 @@ achievement(
 )
 
 achievement(
-    title = "I Don't Need to Use Swords, Right?", description = "Defeat your opponent using only the C button (Kick button) (Game Time Normal)", points = 3,
+    title = "I Don't Need to Use Swords, Right?", description = "Defeat your opponent using only the C button (Kick button) on \"Normal\" game time", points = 3,
     id = 133099, badge = "147214", published = "25/11/2020 23:49:26", modified = "08/12/2020 04:53:33",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -971,7 +972,7 @@ achievement(
 )
 
 achievement(
-    title = "I Need to Advance From Stage, Now !!!", description = "Defeat your opponent in 10 seconds on Story Mode (Game Time Normal)", points = 5,
+    title = "I Need to Advance From Stage, Now !!!", description = "Defeat your opponent in 10 seconds on Story Mode on \"Normal\" game time", points = 5,
     id = 133101, badge = "147224", published = "25/11/2020 23:49:32", modified = "08/12/2020 04:55:37",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -982,7 +983,7 @@ achievement(
 )
 
 achievement(
-    title = "What? Now That It Was Getting Good", description = "Win a round with a time out on Story Mode (Game Time Normal)", points = 1,
+    title = "What? Now That It Was Getting Good", description = "Win a round with a time out on Story Mode on \"Normal\" game time", points = 1,
     id = 133122, badge = "147221", published = "26/11/2020 00:17:49", modified = "08/12/2020 04:58:32",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -1029,7 +1030,7 @@ achievement(
 )
 
 achievement(
-    title = "Dazzle Electrical Power", description = "Finish Story Mode as Kaede by winning each match with Awakening mode enabled (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 25,
+    title = "Dazzle Electrical Power", description = "Finish Story Mode as Kaede by winning each match with Awakening mode enabled (default settings)", points = 25,
     id = 133103, badge = "147235", published = "26/11/2020 00:06:13", modified = "08/12/2020 05:26:24",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -1037,12 +1038,12 @@ achievement(
               ladder_progress() == 10 && 
               ladder_progress() > prev(ladder_progress()) && 
               unless(p1_char() != 0) &&
-              measured(repeated(10, p1_kaede_awakening() == 1 && p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1)) && 
+              measured(repeated(10, p1_kaede_awakening() == 14 && p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1)) && 
               settings_default_all()
 )
 
 achievement(
-    title = "The Ultimate Difficulty Katana", description = "Finish Story Mode on Level 8 difficulty (3 rounds, Game Time Normal)", points = 25,
+    title = "The Ultimate Difficulty Katana", description = "Finish Story Mode on Level 8 difficulty (default settings)", points = 25,
     id = 133093, badge = "147272", published = "25/11/2020 23:49:01", modified = "10/12/2020 03:08:07",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
@@ -1068,10 +1069,11 @@ achievement(
 )
 
 achievement(
-    title = "The One Who Got Here Like the Stars", description = "Finish Story Mode using only one credit (Level 3 difficulty, 3 rounds, Game Time Normal)", points = 25,
+    title = "The One Who Got Here Like the Stars", description = "Finish Story Mode using only one credit (default settings)", points = 25,
     id = 133094, badge = "147273", published = "25/11/2020 23:49:04", modified = "08/12/2020 05:28:31",
     trigger = never(unibios_flag() != 0) && 
               p1_only() &&
+              never(p1_state() == 0x02) &&
               unless(game_mode() != 0) && 
               once(ladder_progress() == 0) &&
               trigger_when(ladder_progress() == 10) && 

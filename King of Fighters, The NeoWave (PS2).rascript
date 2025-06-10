@@ -71,7 +71,9 @@ function p1_character_3() => byte(0x512206)
 function p1_orochi_flags_slot_1() => bit0(0x512202)
 function p1_orochi_flags_slot_2() => bit1(0x512202)
 function p1_orochi_flags_slot_3() => bit2(0x512202)
-function p1_rounds_won() => byte(0x5121D3)
+function p1_rounds_lost() => byte(0x512211)
+function p1_partners_lost() => byte(0x512203)
+
 function p1_mode() => byte(0x5135F0)
 
 function p1_current_character() => word(0x51E358)
@@ -101,7 +103,9 @@ function p1_push_distance_flags() => byte(0x51E414)
 function p2_character_1() => byte(0x5121D4)
 function p2_character_2() => byte(0x5121D5)
 function p2_character_3() => byte(0x5121D6)
-function p2_rounds_won() => byte(0x512203)
+function p2_rounds_lost() => byte(0x5121e1)
+function p2_partners_lost() => byte(0x5121d3)
+
 
 function p2_hp() => word(0x51E638)
 function p2_current_character() => word(0x51E570)
@@ -170,17 +174,25 @@ function in_main_menu() => game_state_big() == 0x3ea0d0
 
 function game_beaten_team_play() {
     return(
-        arcade_team_defeated() == 5 &&
-        p1_rounds_won() == 1 &&
-        prev(p1_rounds_won()) == 0
+        arcade_team_defeated() == 5 &&  
+        (
+            p2_rounds_lost() == 1 &&
+            prev(p2_rounds_lost()) == 0 &&
+            p1_rounds_lost() < 3
+        ) ||
+        (__ornext(game_bgm() == 0x171b || game_bgm() == 0x1f5d) && game_bgm() != prev(game_bgm()))
     )
 }
 
 function game_beaten_single_play() { 
     return(
         arcade_team_defeated() == 5 &&
-        p1_rounds_won() == 2 &&
-        prev(p1_rounds_won()) == 1
+        (
+            p2_rounds_lost() == 2 &&
+            prev(p2_rounds_lost()) == 1 &&
+            p1_rounds_lost() < 2
+        ) ||
+        (__ornext(game_bgm() == 0x171b || game_bgm() == 0x1f5d) && game_bgm() != prev(game_bgm()))
     )
 }
 
@@ -193,15 +205,15 @@ function p1_dont_have_char(char_id) => p1_character_1() != char_id && p1_charact
 //                Arcade Mode               
 // =========================================
 
-function achiev_beat_game_team(title, char1, char2, char3) {
-    achievement(title, format("Finish Team Play using only {0}, {1} and {2} in any difficulty (default settings).", char1, char2, char3), 10,
+function achiev_beat_game_team(title, char1, char2, char3, cheevo_type) {
+    achievement(title, format("Finish Team Play using only {0}, {1} and {2} in any difficulty (default settings).", char1, char2, char3), 10, type=cheevo_type,
                 trigger = p1_only() &&
                           game_mode() == MODE_TEAM_PLAY &&
                           reset_main_menu() &&
                           once(arcade_team_defeated() == 0 && in_char_select()) &&
-                          never(p1_dont_have_char(chars[char1]) && p1_rounds_won() > prev(p1_rounds_won())) &&
-                          never(p1_dont_have_char(chars[char2]) && p1_rounds_won() > prev(p1_rounds_won())) &&
-                          never(p1_dont_have_char(chars[char3]) && p1_rounds_won() > prev(p1_rounds_won())) &&
+                          never(p1_dont_have_char(chars[char1]) && p2_rounds_lost() > prev(p2_rounds_lost())) &&
+                          never(p1_dont_have_char(chars[char2]) && p2_rounds_lost() > prev(p2_rounds_lost())) &&
+                          never(p1_dont_have_char(chars[char3]) && p2_rounds_lost() > prev(p2_rounds_lost())) &&
                           p1_team_has_char(chars[char1]) &&
                           p1_team_has_char(chars[char2]) &&
                           p1_team_has_char(chars[char3]) &&
@@ -213,37 +225,37 @@ function achiev_beat_game_team(title, char1, char2, char3) {
                 )
 }
 
-achiev_beat_game_team("Japan Team", "Kyo", "Benimaru", "Daimon")
-achiev_beat_game_team("Fatal Fury Team", "Terry", "Andy", "Joe")
-achiev_beat_game_team("Art of Fighting Team", "Ryo", "Robert", "Takuma")
-achiev_beat_game_team("Ikari Warriors Team", "Leona", "Ralf", "Clark")
-achiev_beat_game_team("Psycho Soldiers Team", "Athena", "Kensou", "Chin")
-achiev_beat_game_team("Women Fighters Team", "King", "Mai", "Yuri")
-achiev_beat_game_team("Korea Justice Team", "Jhun", "Chang", "Choi")
-achiev_beat_game_team("Yagami Team", "Iori", "Mature", "Vice")
-achiev_beat_game_team("Outlaw Team", "Yamazaki", "Blue Mary", "Billy")
-achiev_beat_game_team("'97 New Faces Team", "Yashiro", "Shermie", "Chris")
-achiev_beat_game_team("K' Team", "K'", "Maxima", "Whip")
-achiev_beat_game_team("Dream Team", "Saisyu", "Kula", "Shingo")
-achiev_beat_game_team("Agents Team", "Vanessa", "Seth", "Ramon")
-achiev_beat_game_team("Taekwondo Team", "Kim", "Jhun", "May Lee")
-achiev_beat_game_team("Flirtatious Team", "Angel", "Shermie", "Mai")
-achiev_beat_game_team("NeoWave Boss Team", "Geese", "Rugal", "Kusanagi")
+achiev_beat_game_team("Japan Team", "Kyo", "Benimaru", "Daimon", "progression")
+achiev_beat_game_team("Fatal Fury Team", "Terry", "Andy", "Joe", "progression")
+achiev_beat_game_team("Art of Fighting Team", "Ryo", "Robert", "Takuma", "progression")
+achiev_beat_game_team("Ikari Warriors Team", "Leona", "Ralf", "Clark", "progression")
+achiev_beat_game_team("Psycho Soldiers Team", "Athena", "Kensou", "Chin", "progression")
+achiev_beat_game_team("Women Fighters Team", "King", "Mai", "Yuri", "progression")
+achiev_beat_game_team("Korea Justice Team", "Jhun", "Chang", "Choi", "progression")
+achiev_beat_game_team("Yagami Team", "Iori", "Mature", "Vice", "progression")
+achiev_beat_game_team("Outlaw Team", "Yamazaki", "Blue Mary", "Billy", "progression")
+achiev_beat_game_team("'97 New Faces Team", "Yashiro", "Shermie", "Chris", "progression")
+achiev_beat_game_team("K' Team", "K'", "Maxima", "Whip", "progression")
+achiev_beat_game_team("Dream Team", "Saisyu", "Kula", "Shingo", "progression")
+achiev_beat_game_team("Agents Team", "Vanessa", "Seth", "Ramon", "")
+achiev_beat_game_team("Taekwondo Team", "Kim", "Jhun", "May Lee", "")
+achiev_beat_game_team("Flirtatious Team", "Angel", "Shermie", "Mai", "")
+achiev_beat_game_team("NeoWave Boss Team", "Geese", "Rugal", "Kusanagi", "")
 
-achievement("Orochi Team", "Finish Team Play using only Orochi Yashiro, Orochi Shermie and Orochi Chris in any difficulty (default settings).", 10,
+achievement("Orochi Team", "Finish Team Play using only Orochi Yashiro, Orochi Shermie and Orochi Chris in any difficulty (default settings).", 10, type="progression",
                 trigger = p1_only() &&
                           game_mode() == MODE_TEAM_PLAY &&
                           reset_main_menu() &&
                           once(arcade_team_defeated() == 0 && in_char_select()) &&
-                          never(p1_dont_have_char(chars["Yashiro"]) && p1_rounds_won() > prev(p1_rounds_won())) &&
-                          never(p1_dont_have_char(chars["Shermie"]) && p1_rounds_won() > prev(p1_rounds_won())) &&
-                          never(p1_dont_have_char(chars["Chris"]) && p1_rounds_won() > prev(p1_rounds_won())) &&
+                          never(p1_dont_have_char(chars["Yashiro"]) && p2_rounds_lost() > prev(p2_rounds_lost())) &&
+                          never(p1_dont_have_char(chars["Shermie"]) && p2_rounds_lost() > prev(p2_rounds_lost())) &&
+                          never(p1_dont_have_char(chars["Chris"]) && p2_rounds_lost() > prev(p2_rounds_lost())) &&
                           p1_team_has_char(chars["Yashiro"]) &&
                           p1_team_has_char(chars["Shermie"]) &&
                           p1_team_has_char(chars["Chris"]) &&
-                          never(p1_orochi_flags_slot_1() == 0 && p1_rounds_won() > prev(p1_rounds_won())) &&
-                          never(p1_orochi_flags_slot_2() == 0 && p1_rounds_won() > prev(p1_rounds_won())) &&
-                          never(p1_orochi_flags_slot_3() == 0 && p1_rounds_won() > prev(p1_rounds_won())) &&
+                          never(p1_orochi_flags_slot_1() == 0 && p2_rounds_lost() > prev(p2_rounds_lost())) &&
+                          never(p1_orochi_flags_slot_2() == 0 && p2_rounds_lost() > prev(p2_rounds_lost())) &&
+                          never(p1_orochi_flags_slot_3() == 0 && p2_rounds_lost() > prev(p2_rounds_lost())) &&
                           p1_orochi_flags_slot_1() == 1 &&
                           p1_orochi_flags_slot_2() == 1 &&
                           p1_orochi_flags_slot_3() == 1 &&
@@ -256,7 +268,7 @@ achievement("Cool Killers", "Finish Team Play without using a continue (default 
                           game_mode() == MODE_TEAM_PLAY &&
                           reset_main_menu() &&
                           once(arcade_team_defeated() == 0 && in_char_select()) &&
-                          never(p2_rounds_won() == 3) &&
+                          never(p1_rounds_lost() == 3) &&
                           trigger_when(game_beaten_team_play()) &&
                           default_settings()
             )
@@ -271,12 +283,12 @@ achievement("The Sun God", "Finish Team Play without using continue services on 
                           default_settings_lv8()
             )
 
-achievement("Techno Runner", "Finish Single Play within 12 minutes (default settings)", 25,
+achievement("Techno Runner", "Finish Single Play within 10 minutes (default settings)", 25,
                 trigger = p1_only() &&
                           game_mode() == MODE_SINGLE_PLAY &&
                           reset_main_menu() &&
                           once(arcade_team_defeated() == 0 && in_char_select()) &&
-                          never(tally(43200, once(match_timer_frames() < prev(match_timer_frames()) && arcade_team_defeated() == 0 && match_round() == 0) && always_true())) &&
+                          never(tally(36000, once(match_timer_frames() < prev(match_timer_frames()) && arcade_team_defeated() == 0 && match_round() == 0) && always_true())) &&
                           trigger_when(game_beaten_single_play()) &&
                           default_settings()
             )
@@ -320,7 +332,7 @@ achievement("MAX2 Mode", "Finish Team Play using only the MAX2 mode in any diffi
 // =========================================
 
 function achiev_any_sc_combo(title, char, points) {
-    achievement(title, format("{0}: Perform a Super Cancel during a combo.", char), points,
+    achievement(title, format("Perform a Super Cancel during a combo as {0}.", char), points,
                 trigger =   p1_is_active() == 1 &&
                             p1_current_character() == chars[char] &&
                             p1_is_orochi() == 0 &&
@@ -331,7 +343,7 @@ function achiev_any_sc_combo(title, char, points) {
 }
 
 function achiev_double_sc(title, char, points) {
-    achievement(title, format("{0}: Perform two Super Cancels during a combo.", char), points,
+    achievement(title, format("Perform two Super Cancels during a combo as {0}.", char), points,
                 trigger =   p1_is_active() == 1 &&
                             p1_current_character() == chars[char] &&
                             p1_is_orochi() == 0 &&
@@ -342,7 +354,7 @@ function achiev_double_sc(title, char, points) {
 }
 
 function achiev_sc_only(title, char, points) {
-    achievement(title, format("{0}: Perform a Super Cancel.", char), points,
+    achievement(title, format("Perform a Super Cancel as {0}.", char), points,
                 trigger =   p1_is_active() == 1 &&
                             p1_current_character() == chars[char] &&
                             p1_is_orochi() == 0 &&
@@ -351,7 +363,7 @@ function achiev_sc_only(title, char, points) {
 }
 
 function achiev_double_sc_ryo(title, char, points) { // ryo exception
-    achievement(title, format("{0}: Perform two Super Cancels during a combo.", char), points,
+    achievement(title, format("Perform two Super Cancels during a combo as {0}.", char), points,
                 trigger =   p1_is_active() == 1 &&
                             p1_current_character() == chars[char] &&
                             p1_is_orochi() == 0 &&
@@ -360,7 +372,7 @@ function achiev_double_sc_ryo(title, char, points) { // ryo exception
 }
 
 function achiev_special_into_sc(title, char, points) {
-    achievement(title, format("{0}: Perform a Special Move Cancel and a Super Cancel during a combo.", char), points,
+    achievement(title, format("Perform a Special Move Cancel and a Super Cancel during a combo as {0}.", char), points,
                 trigger =   p1_is_active() == 1 &&
                             p1_current_character() == chars[char] &&
                             p1_is_orochi() == 0 &&
@@ -372,7 +384,7 @@ function achiev_special_into_sc(title, char, points) {
 
 // orochi exception
 function achiev_sc_only_orochi(title, char, points) {
-    achievement(title, format("Orochi {0}: Perform a Super Cancel.", char), points,
+    achievement(title, format("Perform a Super Cancel as Orochi {0}.", char), points,
                 trigger =   p1_is_active() == 1 &&
                             p1_current_character() == chars[char] &&
                             p1_is_orochi() == 1 &&
@@ -382,7 +394,7 @@ function achiev_sc_only_orochi(title, char, points) {
 
 
 function achiev_special_into_sc_orochi(title, char, points) {
-    achievement(title, format("Orochi {0}: Perform a Special Move Cancel and a Super Combo Cancel during a combo.", char), points,
+    achievement(title, format("Perform a Special Move Cancel and a Super Combo Cancel during a combo as Orochi {0}.", char), points,
                 trigger =   p1_is_active() == 1 &&
                             p1_current_character() == chars[char] &&
                             p1_is_orochi() == 1 &&
@@ -398,7 +410,7 @@ achiev_any_sc_combo("Death Row", "Mature", 3)
 achiev_any_sc_combo("Double Bomber", "Maxima", 3)
 achiev_any_sc_combo("Drag Up", "Ramon", 3)
 achiev_any_sc_combo("Emperor Kick", "Chang", 3)
-achiev_any_sc_combo("Genoside Cutter", "Rugal", 3)
+achiev_any_sc_combo("Genocide Cutter", "Rugal", 3)
 achiev_any_sc_combo("Girding Buster", "Leona", 3)
 achiev_any_sc_combo("Punishment", "Yamazaki", 3)
 achiev_any_sc_combo("Ray Spin", "Kula", 3)
@@ -432,7 +444,7 @@ achiev_special_into_sc_orochi("Lion Fire", "Chris", 5)
 achiev_special_into_sc("Machine Gun Puncher", "Vanessa", 5)
 achiev_special_into_sc("Phoenix Arrow", "Athena", 5)
 achiev_special_into_sc("Sky Breaking Bullet", "Andy", 5)
-achiev_special_into_sc("Super Bullet", "Kensou", 5)
+achiev_special_into_sc("Dragon Claws", "Kensou", 5)
 achiev_special_into_sc("Violent Finish", "Joe", 5)
 achiev_special_into_sc("Whip Kick", "Benimaru", 5)
 

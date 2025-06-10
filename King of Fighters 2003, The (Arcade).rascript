@@ -1,13 +1,18 @@
 // King of Fighters 2003, The
 // #ID = 11754
 
-function settings_difficulty_aes() => byte(0x00785D)
-function soft_dip_setup_level_difficulty() => byte(0x00FD8C)
+// Settings
 
+function settings_difficulty_aes() => byte(0x00785D)
+function settings_power_gauge_1p() => byte(0x785f)
+function settings_time() => byte(0x785c)
+
+function soft_dip_setup_level_difficulty() => byte(0x00FD8C)
 function soft_dip_setup_time() => byte(0x00FD8B)
 function soft_dip_setup_continue_service() => byte(0x00FD8E)
 function soft_dip_setup_versus_limit() => byte(0x00FD8F)
 
+// Game
 function mvs_mode_flag() => bit7(0x00FD83)
 function is_aes() => mvs_mode_flag() == 0
 function is_mvs() => mvs_mode_flag() == 1
@@ -220,17 +225,25 @@ characters = {
 //                  Utility              
 // =========================================
 
-function difficulty_level3() {
+function default_settings_level3() {
     return (
-                settings_difficulty_aes() >= 2 && is_aes() || 
-                soft_dip_setup_level_difficulty() >= 2 && is_mvs()
+                settings_power_gauge_1p() == 0 &&
+                settings_time() == 2 &&
+                (
+                    settings_difficulty_aes() >= 2 && is_aes() || 
+                    soft_dip_setup_level_difficulty() >= 2 && is_mvs()
+                )
     )
 }
 
-function difficulty_level8() {
+function default_settings_level8() {
     return (
-                settings_difficulty_aes() == 7 && is_aes() || 
-                soft_dip_setup_level_difficulty() == 7 && is_mvs()
+                settings_power_gauge_1p() == 0 &&
+                settings_time() == 2 &&
+                (
+                    settings_difficulty_aes() == 7 && is_aes() || 
+                    soft_dip_setup_level_difficulty() == 7 && is_mvs()
+                )
     )
 }
 
@@ -249,8 +262,8 @@ function adel_ending() => game_bgm() == BGM_ENDING_ADEL && prev(game_bgm()) != B
 //               Beat the game             
 // =========================================
 
-function beat_game_team(title, char1, char2, char3) {
-    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (Level-3 difficulty).", char1, char2, char3), 10,
+function beat_game_team_progression(title, char1, char2, char3) {
+    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (default settings).", char1, char2, char3), 10, type="progression",
                 trigger =   is_arcade() &&
                             p1_only() &&
                             once(game_arcade_match() == 0 && game_bgm() == BGM_CHAR_SELECT && p1_active_state() > 0) &&
@@ -261,69 +274,87 @@ function beat_game_team(title, char1, char2, char3) {
                             p1_team_has_char(characters[char1]) &&
                             p1_team_has_char(characters[char2]) &&
                             p1_team_has_char(characters[char3]) &&
-                            difficulty_level3() &&
+                            default_settings_level3() &&
                             trigger_when(mukai_ending())
                 
                 )
 }
 
-beat_game_team("Hero Team", "Ash", "Duo Lon", "Shen Woo")
-beat_game_team("Fatal Fury Team", "Terry", "Joe", "Tizoc")
-beat_game_team("Art of Fighting Team", "Ryo", "Robert", "Yuri")
-beat_game_team("Ikari Warriors Team", "Leona", "Ralf", "Clark")
-beat_game_team("Women Fighters Team", "King", "Mai", "Blue Mary")
-beat_game_team("Korea Justice Team", "Kim", "Chang", "Jhun")
-beat_game_team("Outlaw Team", "Yamazaki", "Billy", "Gato")
-beat_game_team("Japan Team", "Benimaru", "Daimon", "Shingo")
-beat_game_team("High School Girls Team", "Athena", "Hinako", "Malin")
-beat_game_team("K' Team", "K'", "Maxima", "Whip")
-beat_game_team("Three Sacred Treasures Team", "Kyo", "Iori", "Chizuru")
+function beat_game_team(title, char1, char2, char3) {
+    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (default settings).", char1, char2, char3), 10,
+                trigger =   is_arcade() &&
+                            p1_only() &&
+                            once(game_arcade_match() == 0 && game_bgm() == BGM_CHAR_SELECT && p1_active_state() > 0) &&
+                            never(p2_character_slot_1() == characters["Adel"]) && // reset if find Adel to remove the challenge indicator
+                            never(p1_dont_have_char(characters[char1]) && game_bgm() == BGM_FIGHT_INTRO) &&
+                            never(p1_dont_have_char(characters[char2]) && game_bgm() == BGM_FIGHT_INTRO) &&
+                            never(p1_dont_have_char(characters[char3]) && game_bgm() == BGM_FIGHT_INTRO) &&
+                            p1_team_has_char(characters[char1]) &&
+                            p1_team_has_char(characters[char2]) &&
+                            p1_team_has_char(characters[char3]) &&
+                            default_settings_level3() &&
+                            trigger_when(mukai_ending())
+                
+                )
+}
+
+beat_game_team_progression("Hero Team", "Ash", "Duo Lon", "Shen Woo")
+beat_game_team_progression("Fatal Fury Team", "Terry", "Joe", "Tizoc")
+beat_game_team_progression("Art of Fighting Team", "Ryo", "Robert", "Yuri")
+beat_game_team_progression("Ikari Warriors Team", "Leona", "Ralf", "Clark")
+beat_game_team_progression("Women Fighters Team", "King", "Mai", "Blue Mary")
+beat_game_team_progression("Korea Justice Team", "Kim", "Chang", "Jhun")
+beat_game_team_progression("Outlaw Team", "Yamazaki", "Billy", "Gato")
+beat_game_team_progression("Japan Team", "Benimaru", "Daimon", "Shingo")
+beat_game_team_progression("High School Girls Team", "Athena", "Hinako", "Malin")
+beat_game_team_progression("K' Team", "K'", "Maxima", "Whip")
+beat_game_team_progression("Three Sacred Treasures Team", "Kyo", "Iori", "Chizuru")
 beat_game_team("Original Japan Team", "Kyo", "Benimaru", "Daimon")
 beat_game_team("KOF '94 Women Fighters Team", "King", "Mai", "Yuri")
 beat_game_team("Pyrokinesis Team", "Kyo", "K'", "Kusanagi")
 beat_game_team("The Giants Team", "Tizoc", "Maxima", "Chang")
 beat_game_team("Heavy Lifting Team", "Hinako", "Clark", "Daimon")
 
-achievement("Unbounded", "Beat the game on Single Play (Level-3 difficulty).", 10,
+achievement("Unbounded", "Beat the game on Single Play (default settings).", 10,
                 trigger =   game_mode() == MODE_SINGLE_ARCADE &&
                             p1_only() &&
-                            difficulty_level3() &&
+                            default_settings_level3() &&
                             (mukai_ending() || adel_ending())
             )
             
-achievement("Melody of Sorrow", "Defeat Adelheid Bernstein and beat the game on Team Play (Level-3 difficulty).", 10,
+achievement("Melody of Sorrow", "Defeat Adelheid Bernstein and beat the game on Team Play (default settings).", 10,
                 trigger =   game_mode() == MODE_TEAM_ARCADE &&
                             p1_only() &&
-                            difficulty_level3() &&
+                            default_settings_level3() &&
                             adel_ending()
             )
             
-achievement("Son of Evil", "Defeat Adel Bernstein without using continue services (Level-8 difficulty).", 25,
+achievement("Son of Evil", "Defeat Adel Bernstein without using continue services on the hardest difficulty (default settings).", 25,
                 trigger =   is_arcade() &&
                             p1_only() &&
-                            difficulty_level8() &&
+                            default_settings_level8() &&
                             once(game_bgm() == BGM_FIGHT_INTRO_ADEL) &&
                             never(game_bgm() == BGM_CHAR_SELECT) &&
                             never(game_continue_service() != 0) &&
                             trigger_when(adel_ending())
             )
 
-achievement("Those from the Past", "Defeat Mukai without using continue services (Level-8 difficulty).", 25,
+achievement("Those from the Past", "Defeat Mukai without using continue services on the hardest difficulty (default settings).", 25,
                 trigger =   is_arcade() &&
                             p1_only() &&
-                            difficulty_level8() &&
+                            default_settings_level8() &&
                             once(game_bgm() == BGM_FIGHT_INTRO_MUKAI) &&
                             never(game_bgm() == BGM_CHAR_SELECT) &&
                             never(game_continue_service() != 0) &&
                             trigger_when(mukai_ending())
             )
 
-achievement("Tales of Ash I", "Beat the game without using a continue (Level-3 difficulty).", 10,
+achievement("Tales of Ash I", "Beat the game without using a continue (default settings).", 10,
                 trigger =   is_arcade() &&
                             p1_only() &&
                             once(game_arcade_match() == 0 && game_bgm() == BGM_CHAR_SELECT && p1_active_state() > 0) &&
                             never(p1_active_state() == 2) &&
-                            difficulty_level3() &&
+                            default_settings_level3() &&
                             trigger_when(mukai_ending() || adel_ending())
             )
 
@@ -333,9 +364,10 @@ achievement("Tales of Ash I", "Beat the game without using a continue (Level-3 d
 // =========================================
 
 function hit_leader_dm(char, title) {
-    achievement(title, format("{0}: Hit your opponent with Leader Super Desperation Move on Arcade Mode.", char), 3,
+    achievement(title, format("{0}: Hit your opponent with Leader Super Desperation Move on Arcade Mode.", char), 5,
                 trigger =   is_arcade() &&
                             p1_only() &&
+                            settings_power_gauge_1p() == 0 &&
                             p1_leader_dm() == 1 && __ornext(p1_target_damaged() == 1 || p1_target_grabbed() == 1 || (p2_player_hit() == 1 && p2_player_hit_2() == 1)) &&
                             (
                                 (p1_current_character_slot() == 0 && p1_order_select_slot_1() == characters[char]) ||
@@ -361,7 +393,7 @@ hit_leader_dm("Jhun", "Jhun's Phoenix Talon Tear")
 hit_leader_dm("Leona", "Aerial V Slasher")
 hit_leader_dm("Ralf", "Galactica Phantom")
 hit_leader_dm("Clark", "Ultra Argentine Backbreaker")
-hit_leader_dm("Gato", "Tenryu Retsu Kiba")
+// hit_leader_dm("Gato", "Tenryu Retsu Kiba") // needs an exception for the 3rd part of his DM
 hit_leader_dm("Billy", "Senkuu Sakkon")
 hit_leader_dm("Yamazaki", "Kyouken")
 hit_leader_dm("King", "Phantom Strike")
@@ -384,6 +416,7 @@ hit_leader_dm("Kusanagi", "Ura 108 Shiki • Orochi Nagi")
 achievement("Kissy, Kissy Psycho Bomber", "Athena: Hit your opponent with a Leader Super Desperation Move and finish it with Kissy, Kissy Psycho Bomber on Arcade Mode.", 5,
                 trigger =   is_arcade() &&
                             p1_only() &&
+                            settings_power_gauge_1p() == 0 &&
                             p1_leader_dm() == 1 && p1_current_move() == 0x00e1 && prev(p1_current_move()) != 0x00e1 &&
                             (
                                 (p1_current_character_slot() == 0 && p1_order_select_slot_1() == characters["Athena"]) ||
@@ -393,17 +426,31 @@ achievement("Kissy, Kissy Psycho Bomber", "Athena: Hit your opponent with a Lead
                 
                 )
 
-achievement("Desperation Finish", "Finish a match with a Desperation Move.", 3,
+achievement("Tenryu Retsu Kiba", "Gato: Hit your opponent with Leader Super Desperation Move on Arcade Mode.", 5,
+                trigger =   is_arcade() &&
+                            p1_only() &&
+                            settings_power_gauge_1p() == 0 &&
+                            p1_leader_dm() == 1 && p1_current_move() == 0x00cb && 
+                            __ornext(p1_target_damaged() == 1 || p1_target_grabbed() == 1 || (p2_player_hit() == 1 && p2_player_hit_2() == 1)) &&
+                            (
+                                (p1_current_character_slot() == 0 && p1_order_select_slot_1() == characters["Gato"]) ||
+                                (p1_current_character_slot() == 1 && p1_order_select_slot_2() == characters["Gato"]) ||
+                                (p1_current_character_slot() == 2 && p1_order_select_slot_3() == characters["Gato"])
+                            )
+                
+                )
+
+achievement("Desperation Finish", "Finish a match with a Desperation Move.", 2,
                 trigger =   is_arcade() &&
                             p1_only() &&
                             p1_shift() == 1 && p1_special() == 1 && game_bgm() == BGM_FIGHT_ENDED && prev(game_bgm()) != BGM_FIGHT_ENDED
                 
                 )
 
-achievement("Great Man", "Reach 36000 score on Team Play (Level-3 difficulty).", 10,
+achievement("Great Man", "Reach 36000 score on Team Play (default settings).", 10,
             trigger = game_mode() == MODE_TEAM_ARCADE &&
                       p1_only() &&
-                      difficulty_level3() &&
+                      default_settings_level3() &&
                       game_score_bcd_xxxx_0000() == 0x0003 &&
                       prev(game_score_bcd_xxxx_0000()) == 0x0003 &&
                       game_score_bcd_0000_xxxx() == 0x6000 &&
@@ -414,14 +461,14 @@ achievement("Great Man", "Reach 36000 score on Team Play (Level-3 difficulty).",
 //               Leaderboards              
 // =========================================
 
-leaderboard("KOF 2003 - Team Play Best Score", "Best score on Team Play (Level-3 difficulty).",
-           start = game_mode() == MODE_TEAM_ARCADE && p1_only() && difficulty_level3() && 
+leaderboard("KOF 2003 - Team Play Best Score", "Best score on Team Play (default settings).",
+           start = game_mode() == MODE_TEAM_ARCADE && p1_only() && default_settings_level3() && 
                    (
                         mukai_ending() ||
                         adel_ending() 
                    ),
            cancel = p2_active_state() > 0,
-           submit =  game_mode() == MODE_TEAM_ARCADE && p1_only() && difficulty_level3() && 
+           submit =  game_mode() == MODE_TEAM_ARCADE && p1_only() && default_settings_level3() && 
                      (
                         mukai_ending() ||
                         adel_ending() 
@@ -429,14 +476,14 @@ leaderboard("KOF 2003 - Team Play Best Score", "Best score on Team Play (Level-3
            value = bcd(game_score_bcd_xxxx_0000()) * 10000 + bcd(game_score_bcd_0000_xxxx()) * 1,
            format = "SCORE", lower_is_better=false
            )
-leaderboard("KOF 2003 - Single Play Best Score", "Best score on Single Play (Level-3 difficulty).",
-           start = game_mode() == MODE_SINGLE_ARCADE && p1_only() && difficulty_level3() && 
+leaderboard("KOF 2003 - Single Play Best Score", "Best score on Single Play (default settings).",
+           start = game_mode() == MODE_SINGLE_ARCADE && p1_only() && default_settings_level3() && 
                    (
                         mukai_ending() ||
                         adel_ending() 
                    ),
            cancel = p2_active_state() > 0,
-           submit =  game_mode() == MODE_SINGLE_ARCADE && p1_only() && difficulty_level3() && 
+           submit =  game_mode() == MODE_SINGLE_ARCADE && p1_only() && default_settings_level3() && 
                      (
                         mukai_ending() ||
                         adel_ending() 

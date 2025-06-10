@@ -23,6 +23,7 @@ function cash_ptr_node() => dword(dword(0x43C8E0) + 0x04)
 function current_screen_ui() => dword(0xB6159C)
          screen_loading_mem_card = 0x8b4c3f7b
          screen_loading_mem_card_2 = 0xed9cd43f
+         screen_main_menu = 0x59c7e444
          screen_cheats = 0x6fb6b5d8
          screen_cheats_inserting = 0xbf576c0c
          screen_store = 0xdbb81588
@@ -310,7 +311,7 @@ function is_on_store() {
 }
 
 function save_protection() =>   never(current_screen_ui() == screen_loading_mem_card) &&
-                                never(current_screen_ui() == screen_loading_mem_card_2) && 
+                                never(current_screen_ui() == screen_loading_mem_card_2) &&  
                                 never(current_screen_ui() == screen_cheats) &&
                                 never(current_screen_ui() == screen_cheats_inserting)
 
@@ -422,11 +423,13 @@ function item_array_has_been_unlocked_1node(node_array, size) {
 
     for node in node_array {
         array_push(logic_array_current, once(item_node_data_type(node) == data_type_unlocked &&
-                                    item_node_unlock_flag(node) == 1))
+                                             item_node_unlock_flag(node) == 1))
 
         logic_array_previous = logic_array_previous ||
-                                (prev(item_node_data_type(node)) == data_type_unlocked &&
-                                prev(item_node_unlock_flag(node)) == 0)
+                                (
+                                    item_node_data_type(node) == data_type_unlocked &&
+                                    item_node_unlock_flag(node) > prev(item_node_unlock_flag(node))
+                                )
     }
 
     return measured(tally(size, logic_array_current)) && logic_array_previous
@@ -692,38 +695,38 @@ screen_rp_list = {
 
 function difficulty_read() => rich_presence_lookup("Difficulty", difficulty(), difficulty)
 
-rich_presence_conditional_display(dword(0x2616dc) == 0x224, "Playing Guitar Hero with the Debug Menu. Booo!!!!")
+// rich_presence_conditional_display(dword(0x2616dc) == 0x224, "Playing Guitar Hero with the Debug Menu. Booo!!!!")
 
-// Boss Battle
-rich_presence_conditional_display(guitar_battle_check() && game_state() == in_game, "Battling {0} on {1}",
-                                  rich_presence_lookup("Boss", secondsongID(), guitar_bosses_rp),
-                                  difficulty_read()   
-)
+// // Boss Battle
+// rich_presence_conditional_display(guitar_battle_check() && game_state() == in_game, "Battling {0} on {1}",
+//                                   rich_presence_lookup("Boss", secondsongID(), guitar_bosses_rp),
+//                                   difficulty_read()   
+// )
 
-// Exceptions
-rich_presence_conditional_display(song_exception_check(0x626c6163, 0x6b6d6167) && game_state() == in_game, "Rockin' out to Black Magic Woman on {0}. Score: {1}", //Black Magic Woman
-                                 difficulty_read(),
-                                 rich_presence_macro("Number", current_score())
-)
-rich_presence_conditional_display(song_exception_check(0x6d697373, 0x69737369) && game_state() == in_game, "Rockin' out to Mississippi Queen on {0}. Score: {1}", //Mississippi Queen
-                                 difficulty_read(),
-                                 rich_presence_macro("Number", current_score())
-)
-rich_presence_conditional_display(song_exception_check(0x726f636b, 0x6e726f6c) && game_state() == in_game, "Rockin' out to Rock and Roll All Nite on {0}. Score: {1}",
-                                 difficulty_read(),
-                                 rich_presence_macro("Number", current_score())
-)
+// // Exceptions
+// rich_presence_conditional_display(song_exception_check(0x626c6163, 0x6b6d6167) && game_state() == in_game, "Rockin' out to Black Magic Woman on {0}. Score: {1}", //Black Magic Woman
+//                                  difficulty_read(),
+//                                  rich_presence_macro("Number", current_score())
+// )
+// rich_presence_conditional_display(song_exception_check(0x6d697373, 0x69737369) && game_state() == in_game, "Rockin' out to Mississippi Queen on {0}. Score: {1}", //Mississippi Queen
+//                                  difficulty_read(),
+//                                  rich_presence_macro("Number", current_score())
+// )
+// rich_presence_conditional_display(song_exception_check(0x726f636b, 0x6e726f6c) && game_state() == in_game, "Rockin' out to Rock and Roll All Nite on {0}. Score: {1}",
+//                                  difficulty_read(),
+//                                  rich_presence_macro("Number", current_score())
+// )
 
-// Normal
-rich_presence_conditional_display(game_state() == in_game, "Rockin' out to {0} on {1}. Score: {2}",
-                                  rich_presence_lookup("Song", firstsongID(), song_rp_list),
-                                  difficulty_read(),
-                                  rich_presence_macro("Number", current_score())
-)
+// // Normal
+// rich_presence_conditional_display(game_state() == in_game, "Rockin' out to {0} on {1}. Score: {2}",
+//                                   rich_presence_lookup("Song", firstsongID(), song_rp_list),
+//                                   difficulty_read(),
+//                                   rich_presence_macro("Number", current_score())
+// )
 
-// Screens
-for screen in screen_rp_list {
-    rich_presence_conditional_display(dword(0xB6159C) == screen_rp_list[screen], screen)
-}
+// // Screens
+// for screen in screen_rp_list {
+//     rich_presence_conditional_display(dword(0xB6159C) == screen_rp_list[screen], screen)
+// }
 
-rich_presence_display("In Menu")
+// rich_presence_display("In Menu")

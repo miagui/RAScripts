@@ -273,17 +273,24 @@ achievement("Fighting is My Nature", "[New Gen] Finish Arcade Mode on max. diffi
                           g1_no_extra_settings()
                 )
 
-achievement("New Generation", "[New Gen] Win a round with a Perfect (no Extra Settings).", 2,
-            trigger =   is_newgen() &&
-                        g1_p1_only() &&
-                        g1_is_arcade() &&
-                        g1_is_ingame() &&
-                        g1_p1_rounds_won() > prev(g1_p1_rounds_won()) &&
-                        g1_p1_hp() == 0xa0 &&
-                        g1_no_extra_settings()
-            )
+// achievement("New Generation", "[New Gen] Win a round with a Perfect (no Extra Settings).", 2,
+//             trigger =   is_newgen() &&
+//                         g1_p1_only() &&
+//                         g1_is_arcade() &&
+//                         g1_is_ingame() &&
+//                         g1_p1_rounds_won() > prev(g1_p1_rounds_won()) &&
+//                         g1_p1_hp() == 0xa0 &&
+//                         g1_no_extra_settings()
+//             )
 
-
+achievement("New Generation", "[New Gen] Finish Arcade Mode (no Extra Settings).", 5,
+                trigger = is_newgen() &&
+                          g1_p1_only() &&
+                          g1_is_arcade() &&
+                          g1_is_ingame() &&
+                          g1_game_beaten() &&
+                          g1_no_extra_settings()
+                )
 
 // =========================================
 //             [2ND] Arcade Mode             
@@ -392,15 +399,24 @@ achievement("Behold the True Power of My Fist!", "[2nd Impact] Defeat Shin Akuma
                         g2_no_extra_settings()
             )
 
-achievement("Fist is the Soul!", "[2nd Impact] Win a round with a Perfect (no Extra Settings).", 2,
-            trigger =   is_secondimpact() &&
-                        g2_p1_only() &&
-                        g2_is_arcade() &&
-                        g2_is_ingame() &&
-                        g2_p1_hp() == 0xa0 &&
-                        g2_p1_rounds_won() > prev(g2_p1_rounds_won()) &&
-                        g2_no_extra_settings()
-            )
+// achievement("Fist is the Soul!", "[2nd Impact] Win a round with a Perfect (no Extra Settings).", 2,
+//             trigger =   is_secondimpact() &&
+//                         g2_p1_only() &&
+//                         g2_is_arcade() &&
+//                         g2_is_ingame() &&
+//                         g2_p1_hp() == 0xa0 &&
+//                         g2_p1_rounds_won() > prev(g2_p1_rounds_won()) &&
+//                         g2_no_extra_settings()
+//             )
+
+achievement("Fist is the Soul!", "[2nd Impact] Finish Arcade Mode (no Extra Settings).", 5,
+                trigger = is_secondimpact() &&
+                          g2_p1_only() &&
+                          g2_is_arcade() &&
+                          g2_is_ingame() &&
+                          g2_game_beaten() &&
+                          g2_no_extra_settings()
+                )
 
 // =========================================
 //                  Rivals              

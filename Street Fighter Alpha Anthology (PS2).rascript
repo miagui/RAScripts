@@ -329,7 +329,6 @@ function sfa3_upper_default_settings_type2() {
     return(
         sfa3_upper_settings_damage_level() == 1 &&
         sfa3_upper_settings_timer_speed() == 1 &&
-        sfa3_upper_settings_max_round_1p() == 1 &&
         sfa3_upper_extra_option_vitality_1p_recover() == 0 &&
         sfa3_upper_extra_option_vitality_2p_recover() == 0
     )
@@ -596,7 +595,7 @@ function sfa2_achievement_finish_arcade_char_altversion2(title, char1, char2, ch
 
 
 achievement("Street Fighter Alpha 2", "[Alpha 2] Finish Arcade mode (default settings).", 10, type="progression",
-                trigger = never(general_current_game() != GAME_SFA2 && general_current_game() != GAME_SFA2GOLD) &&
+                trigger = never(general_current_game() != GAME_SFA2) &&
                           never(general_in_game() == 0) &&
                           never(sfa2_game_players_active_connected_p1() != 1) &&
                           never(sfa2_game_players_active_connected_p2() != 0) &&
@@ -755,17 +754,6 @@ achievement("Street Fighter Alpha 3", "[Alpha 3] Finish Arcade mode (default set
                             prior(sfa3_game_opponents_defeated_ladder()) != 0  &&
                             sfa3_game_arcade_match() == 9 && sfa3_game_ending_trigger() > prev(sfa3_game_ending_trigger()) && sfa3_round_winner() == 1 &&
                             sfa3_default_settings()
-                          ) ||
-                          (
-                            general_current_game() == GAME_SFA3UPPER &&
-                            sfa3_upper_game_players_active_connected_p1() == 1 &&
-                            sfa3_upper_game_players_active_connected_p2() == 0 &&
-                            sfa3_upper_game_mode() == GM_ARCADE &&
-                            sfa3_upper_game_survival_mode_flag_0xff() == 0x00 &&
-                            sfa3_upper_p1_dramatic_mode() == 0x00 &&
-                            prior(sfa3_upper_game_opponents_defeated_ladder()) != 0  &&
-                            sfa3_upper_game_arcade_match() == 9 && sfa3_upper_game_ending_trigger() > prev(sfa3_upper_game_ending_trigger()) && sfa3_upper_round_winner() == 1 &&
-                            sfa3_upper_default_settings()
                           )
             )
 

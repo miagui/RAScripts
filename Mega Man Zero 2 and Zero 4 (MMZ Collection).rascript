@@ -1,6 +1,7 @@
 // Mega Man Zero Collection
 // #ID = 8376
 
+// bad
 function game_sel() => byte(0x04d083)
          sel_scenario = 0x00
          sel_mmz = 0x01
@@ -14,15 +15,17 @@ function current_game() => byte(0x40525)
          game_mmz3 = 0x03
          game_mmz4 = 0x04
 
+function playing_flag() => byte(0x40524)
+
 function screen_artwork() => byte(0x03d400)
 
 function playing_mmz2() {
-    return  game_sel() == sel_mmz2 &&
+    return  playing_flag() != 0x1b &&
             never(current_game() != game_mmz2)
 }
 
 function playing_mmz4() {
-    return  game_sel() == sel_mmz4 &&
+    return  playing_flag() != 0x1b &&
             never(current_game() != game_mmz4)
 }
 
@@ -324,7 +327,7 @@ function mmz2_all_sub_tanks() => byte(0x14c434) + byte(0x14c435)
 function mmz2_all_ex_skills() => sum_of(range(0,9), b => bit(b, 0x14c444))
 function mmz2_all_forms() => sum_of(range(0,9), b => bit(b, 0x14c430))
 
-achievement("[MMZ2] Lack of Meaning [m]", "This isn't fun anymore...", 2,
+achievement("[MMZ2] Lack of Meaning", "This isn't fun anymore...", 2,
             trigger =   playing_mmz2() && dword(mmz2_text_pointer() + 0x00) == 0x2c1e08f3 && mmz2_mission() == mmz2_missions["Sand Wilderness"])
 
 achievement("[MMZ2] Gunman", "Reach the max level with Buster Shot", 5,
@@ -356,7 +359,7 @@ achievement("[MMZ2] Armed to the Teeth", "Obtain all EX Skills", 25,
 achievement("[MMZ2] What Will I Dress Up for Today?", "Obtain all forms", 25, 
             trigger =   playing_mmz2() && measured(mmz2_all_forms() == 10, playing_mmz2()) && prev(mmz2_all_forms()) == 9)
 
-achievement("[MMZ2] Elf Hunt [m]", "Collect all Cyber-elves", 25, 
+achievement("[MMZ2] Elf Hunt", "Collect all Cyber-elves", 25, type="missable",
             trigger =   playing_mmz2() && measured(mmz2_all_cyber_elves() == 81, playing_mmz2()) && prev(mmz2_all_cyber_elves()) == 80)
 
 
@@ -743,7 +746,7 @@ function mmz4_sub_total_four() => mmz4_sub_tank_four() == 00 && prev(mmz4_sub_ta
 
 function mmz4_all_ex_skills() => bitcount(0x14cade)
 
-achievement("[MMZ4] I'm Not a Believer [m]", "Name your elf to anything else that isn't Croire", 3,
+achievement("[MMZ4] I'm Not a Believer", "Name your elf to anything else that isn't Croire", 3, type="missable",
 trigger =   playing_mmz4() &&
             mmz4_game_context() == mmz4_ctx_playing &&
             prev(mmz4_elf_name()) == mmz4_elf_unnamed &&
@@ -770,7 +773,7 @@ achievement ("[MMZ4] Body Crafter", "Craft all body chips", 10,
 achievement("[MMZ4] Foot Crafter", "Craft all foot chips", 10,
             trigger = playing_mmz4() && measured(all_foot() == 7, playing_mmz4()) && prev(all_foot()) == 6)
 
-achievement("[MMZ4] Minecraft [m]", "Craft all recipes", 10,
+achievement("[MMZ4] Minecraft", "Craft all recipes", 10, type="missable",
             trigger = playing_mmz4() && measured(all_recipes() == 28, playing_mmz4()) && prev(all_recipes()) == 27)
 
 achievement("[MMZ4] Energy Drink", "Collect all Sub Tanks", 10,
@@ -807,12 +810,12 @@ function mmz4_achiev_unlock_stuff(title, desc, points, minigame_mem, minigame_va
                 )
 }
 
-mmz4_achiev_unlock_stuff("[MMZ4] Upgraded Collector [m]", "Unlock Ultimate Mode", 25, mmz4_unlocked_ultimate_mode, 0x38)
+mmz4_achiev_unlock_stuff("[MMZ4] Upgraded Collector", "Unlock Ultimate Mode", 25, mmz4_unlocked_ultimate_mode, 0x38)
 mmz4_achiev_unlock_stuff("[MMZ4] Minimalist Cyber Elf", "Unlock the Plant Panic mini game", 25, mmz4_unlocked_plant_panic, 0x3e)
 mmz4_achiev_unlock_stuff("[MMZ4] Hard Mode", "Unlock the Busy Basket mini game", 25, mmz4_unlocked_busy_basket, 0x44)
 mmz4_achiev_unlock_stuff("[MMZ4] Rank S Reploid", "Unlock the Lumberjack mini game", 50, mmz4_unlocked_lumberjack, 0x4a)
-mmz4_achiev_unlock_stuff("[MMZ4] Knowledge for the Life Time [m]", "Unlock the Lava Surf mini game", 10, mmz4_unlocked_lava_surf, 0x50)
-mmz4_achiev_unlock_stuff("[MMZ4] What Are Recipes? [m]", "Unlock the Elf Chase mini game", 25, mmz4_unlocked_elf_chase, 0x56)
+mmz4_achiev_unlock_stuff("[MMZ4] Knowledge for the Life Time", "Unlock the Lava Surf mini game", 10, mmz4_unlocked_lava_surf, 0x50)
+mmz4_achiev_unlock_stuff("[MMZ4] What Are Recipes?", "Unlock the Elf Chase mini game", 25, mmz4_unlocked_elf_chase, 0x56)
 mmz4_achiev_unlock_stuff("[MMZ4] Running to Save the Humanity", "Unlock the Slam Harvest mini game", 25, mmz4_unlocked_slam_harvest, 0x5c)
 mmz4_achiev_unlock_stuff("[MMZ4] Mini Games Enjoyer", "Unlock the Energy Lab mini game", 10, mmz4_unlocked_energy_lab, 0x61)
 
@@ -889,7 +892,7 @@ achievement("[MMZ4] Nothing Beats", "Beat the game without dying (One Session, E
             )
 
 achievement("[Z Collection] I Only Care About the Story, Okay!?", "Finish Easy Scenario", 50, 
-            trigger =   game_sel() == sel_scenario &&
+            trigger =   playing_flag() == 0x1b &&
                         current_game() == game_mmz4 &&
                         mmz4_cleared(mmz4_missions["Ragnarok Core"]))
 

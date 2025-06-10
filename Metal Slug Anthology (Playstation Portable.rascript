@@ -12,6 +12,7 @@ function pointer_game_block() => tbyte(0x93bf44)
 
 // MS6 Stuff
 function playing_ms6() => dword(0x3fdf7c) == 0x01
+function playing_ms1_ms5() => dword(0x3fdf7c) == 0x03
 function ms6_mission() => byte(0xdc2c76)
 function ms6_active_players() => byte(0xd85bf8) > 0
 
@@ -20,9 +21,9 @@ function finish_mission(title, game_text, game_id, mission_p_offset, mission_id)
         title = title, description = format("{0}: Finish Mission {1}.", game_text, mission_id + 1), points = 5,
         trigger =   prev(byte(mission_p_offset + pointer_game_block())) == mission_id &&
                     byte(mission_p_offset + pointer_game_block()) == mission_id + 1 && 
-                    never((dword(0x3FDF7C) == 3 && dword(0xB3E38C) != game_id)) &&
-                    never((dword(0x3FDF7C) == 3 && dword(0x1FFF09C) != 4294967295)) && 
-                    never((dword(0x3FDF7C) == 3 && dword(0x1FFF09C) == 4294967295 && dword(0x1FFEC64) == 1))
+                    never((playing_ms1_ms5() && dword(0xB3E38C) != game_id)) &&
+                    never((playing_ms1_ms5() && dword(0x1FFF09C) != 4294967295)) && 
+                    never((playing_ms1_ms5() && dword(0x1FFF09C) == 4294967295 && dword(0x1FFEC64) == 1))
                 )
 }
 

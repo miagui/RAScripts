@@ -188,7 +188,20 @@ vehicles = {
 //            Utility Functions            
 // =========================================
 
-function cheat_protection() => sum_of(range(7, 22), b => bit(b,0x4244f4)) == 0 // block all cheats except Unlockables and Drunken Driving.
+// function cheat_protection() => sum_of(range(7, 22), b => bit(b,0x4244f4)) == 0 // block all cheats except Unlockables and Drunken Driving.
+
+function cheat_protection() { // block all cheats except drunken driving and alternate end credits
+    return(
+        bit7(0x4244f4) == 0 && // fast cars
+        bitcount(0x4244f5) == 0 && //very fast cards, horn jump and one hit
+        bit0(0x4244f6) == 0 && // more camera angles
+        bit3(0x4244f6) == 0 && // speedometer
+        bit4(0x4244f6) == 0 && // unlock red brick
+        bit5(0x4244f6) == 0 && // invincible cars
+        bit6(0x4244f6) == 0 // grid view
+    )
+}
+
 function in_game() => game_context() >= ctx_normal_game_playing
 
 // =========================================
@@ -210,7 +223,7 @@ function achiev_finish_mission(mission_name, level_start_address, mission_offset
     achievement(mission_name, format("Finish {0}.", mission_name), points,
                 trigger =   in_game() &&
                             cheat_protection() &&
-                            bit0(level_start_address + mission_offset) == true && prev(bit0(level_start_address + mission_offset)) == false
+                            bit0(level_start_address + mission_offset) == 1 && prev(bit0(level_start_address + mission_offset)) == 0
                )
 }
 
@@ -238,7 +251,6 @@ function achiev_unlock_all_vehicles(title, level_start_address, vehicle_address,
 function achiev_unlock_all_clothings(title, clothing_address, level_number, points, cheevo_id) {
     achievement(title, format("Buy all clothings from Level {0}.", level_number), points,
                 trigger =   in_game() &&
-                            cheat_protection() &&
                             measured(dword(clothing_address) == 3) &&
                             prev(dword(clothing_address)) == 2,
                     id = cheevo_id
@@ -284,78 +296,78 @@ function achiev_beat_wager_times(title, level_number, time_text, time_seconds, w
                )
 }
 
-// Level 1
-achiev_finish_mission("The Cola Caper", 0x5e5c9c, -0x20, 2, 0)
-achiev_finish_mission("S-M-R-T", 0x5e5c9c, 0x00, 3, 0)
-achiev_finish_mission("Petty Theft Homer", 0x5e5c9c, 0x20, 3, 0)
-achiev_finish_mission("Office Spaced", 0x5e5c9c, 0x40, 3, 0)
-achiev_finish_mission("Blind Big Brother", 0x5e5c9c, 0x60, 3, 0)
-achiev_finish_mission("Flower by Irene", 0x5e5c9c, 0x80, 3, 0)
-achiev_finish_mission("Bonestorm Storm", 0x5e5c9c, 0xa0, 3, 0)
-achiev_finish_mission("The Fat and Furious", 0x5e5c9c, 0xc0, 4, 0)
+// // Level 1
+// achiev_finish_mission("The Cola Caper", 0x5e5c9c, -0x20, 2, 0)
+// achiev_finish_mission("S-M-R-T", 0x5e5c9c, 0x00, 3, 0)
+// achiev_finish_mission("Petty Theft Homer", 0x5e5c9c, 0x20, 3, 0)
+// achiev_finish_mission("Office Spaced", 0x5e5c9c, 0x40, 3, 0)
+// achiev_finish_mission("Blind Big Brother", 0x5e5c9c, 0x60, 3, 0)
+// achiev_finish_mission("Flower by Irene", 0x5e5c9c, 0x80, 3, 0)
+// achiev_finish_mission("Bonestorm Storm", 0x5e5c9c, 0xa0, 3, 0)
+// achiev_finish_mission("The Fat and Furious", 0x5e5c9c, 0xc0, 4, 0)
 
-// Level 2
-achiev_finish_mission("Detention Deficit Disorder", 0x5e5ee8, 0x00, 4, 0)
-achiev_finish_mission("Weapons of Mass Deliquency", 0x5e5ee8, 0x20, 4, 0)
-achiev_finish_mission("Vox Nerduli", 0x5e5ee8, 0x40, 4, 0)
-achiev_finish_mission("Bart 'n' Frink", 0x5e5ee8, 0x60, 4, 0)
-achiev_finish_mission("Better Than Beef", 0x5e5ee8, 0x80, 4, 0)
-achiev_finish_mission("Monkey See Monkey D'oh", 0x5e5ee8, 0xa0, 4, 0)
-achiev_finish_mission("Cell-Outs", 0x5e5ee8, 0xc0, 4, 0)
+// // Level 2
+// achiev_finish_mission("Detention Deficit Disorder", 0x5e5ee8, 0x00, 4, 0)
+// achiev_finish_mission("Weapons of Mass Deliquency", 0x5e5ee8, 0x20, 4, 0)
+// achiev_finish_mission("Vox Nerduli", 0x5e5ee8, 0x40, 4, 0)
+// achiev_finish_mission("Bart 'n' Frink", 0x5e5ee8, 0x60, 4, 0)
+// achiev_finish_mission("Better Than Beef", 0x5e5ee8, 0x80, 4, 0)
+// achiev_finish_mission("Monkey See Monkey D'oh", 0x5e5ee8, 0xa0, 4, 0)
+// achiev_finish_mission("Cell-Outs", 0x5e5ee8, 0xc0, 4, 0)
 
-// Level 3
-achiev_finish_mission("Nerd Race Queen", 0x5e6154, 0x00, 4, 0)
-achiev_finish_mission("Clueless", 0x5e6154, 0x20, 4, 0)
-achiev_finish_mission("Bonfire of the Manatees", 0x5e6154, 0x40, 4, 0)
-achiev_finish_mission("Operation Hellfish", 0x5e6154, 0x60, 4, 0)
-achiev_finish_mission("Slithery Sleuthing", 0x5e6154, 0x80, 4, 0)
-achiev_finish_mission("Fishy Deals", 0x5e6154, 0xa0, 4, 0)
-achiev_finish_mission("The Old Pirate and the Sea", 0x5e6154, 0xc0, 5, 0)
+// // Level 3
+// achiev_finish_mission("Nerd Race Queen", 0x5e6154, 0x00, 4, 0)
+// achiev_finish_mission("Clueless", 0x5e6154, 0x20, 4, 0)
+// achiev_finish_mission("Bonfire of the Manatees", 0x5e6154, 0x40, 4, 0)
+// achiev_finish_mission("Operation Hellfish", 0x5e6154, 0x60, 4, 0)
+// achiev_finish_mission("Slithery Sleuthing", 0x5e6154, 0x80, 4, 0)
+// achiev_finish_mission("Fishy Deals", 0x5e6154, 0xa0, 4, 0)
+// achiev_finish_mission("The Old Pirate and the Sea", 0x5e6154, 0xc0, 5, 0)
 
-// Level 4
-achiev_finish_mission("For a Few Donuts More", 0x5e63c0, 0x00, 5, 0)
-achiev_finish_mission("Redneck Roundup", 0x5e63c0, 0x20, 5, 0)
-achiev_finish_mission("Ketchup Logic", 0x5e63c0, 0x40, 5, 0)
-achiev_finish_mission("Return of the Nearly Dead", 0x5e63c0, 0x60, 5, 0)
-achiev_finish_mission("Wolves Stole My Pills", 0x5e63c0, 0x80, 5, 0)
-achiev_finish_mission("The Cola Wars", 0x5e63c0, 0xa0, 5, 0)
-achiev_finish_mission("From Outer Space", 0x5e63c0, 0xc0, 5, 0)
+// // Level 4
+// achiev_finish_mission("For a Few Donuts More", 0x5e63c0, 0x00, 5, 0)
+// achiev_finish_mission("Redneck Roundup", 0x5e63c0, 0x20, 5, 0)
+// achiev_finish_mission("Ketchup Logic", 0x5e63c0, 0x40, 5, 0)
+// achiev_finish_mission("Return of the Nearly Dead", 0x5e63c0, 0x60, 5, 0)
+// achiev_finish_mission("Wolves Stole My Pills", 0x5e63c0, 0x80, 5, 0)
+// achiev_finish_mission("The Cola Wars", 0x5e63c0, 0xa0, 5, 0)
+// achiev_finish_mission("From Outer Space", 0x5e63c0, 0xc0, 5, 0)
 
-// Level 5
-achiev_finish_mission("Incriminating Caffeine", 0x5e662c, 0x00, 5, 0)
-achiev_finish_mission("...And Baby Makes 8", 0x5e662c, 0x20, 5, 0)
-achiev_finish_mission("Eight is Too Much", 0x5e662c, 0x40, 5, 0)
-achiev_finish_mission("This Little Piggy", 0x5e662c, 0x60, 5, 0)
-achiev_finish_mission("Never Trust a Snake", 0x5e662c, 0x80, 5, 0)
-achiev_finish_mission("Kwik Cash", 0x5e662c, 0xa0, 5, 0)
-achiev_finish_mission("Curious Curator", 0x5e662c, 0xc0, 5, 0)
+// // Level 5
+// achiev_finish_mission("Incriminating Caffeine", 0x5e662c, 0x00, 5, 0)
+// achiev_finish_mission("...And Baby Makes 8", 0x5e662c, 0x20, 5, 0)
+// achiev_finish_mission("Eight is Too Much", 0x5e662c, 0x40, 5, 0)
+// achiev_finish_mission("This Little Piggy", 0x5e662c, 0x60, 5, 0)
+// achiev_finish_mission("Never Trust a Snake", 0x5e662c, 0x80, 5, 0)
+// achiev_finish_mission("Kwik Cash", 0x5e662c, 0xa0, 5, 0)
+// achiev_finish_mission("Curious Curator", 0x5e662c, 0xc0, 5, 0)
 
-// Level 6
-achiev_finish_mission("Going to the Lu'", 0x5e6898, 0x00, 5, 0)
-achiev_finish_mission("Getting Down with the Clown", 0x5e6898, 0x20, 5, 0)
-achiev_finish_mission("Lab Coat Caper", 0x5e6898, 0x40, 5, 0)
-achiev_finish_mission("Duff for Me, Duff for You", 0x5e6898, 0x60, 5, 0)
-achiev_finish_mission("Full Metal Jackass", 0x5e6898, 0x80, 5, 0)
-achiev_finish_mission("Set to Kill", 0x5e6898, 0xa0, 5, 0)
-achiev_finish_mission("Kang and Kodos Strike Back", 0x5e6898, 0xc0, 5, 0)
+// // Level 6
+// achiev_finish_mission("Going to the Lu'", 0x5e6898, 0x00, 5, 0)
+// achiev_finish_mission("Getting Down with the Clown", 0x5e6898, 0x20, 5, 0)
+// achiev_finish_mission("Lab Coat Caper", 0x5e6898, 0x40, 5, 0)
+// achiev_finish_mission("Duff for Me, Duff for You", 0x5e6898, 0x60, 5, 0)
+// achiev_finish_mission("Full Metal Jackass", 0x5e6898, 0x80, 5, 0)
+// achiev_finish_mission("Set to Kill", 0x5e6898, 0xa0, 5, 0)
+// achiev_finish_mission("Kang and Kodos Strike Back", 0x5e6898, 0xc0, 5, 0)
 
-// Level 7
-achiev_finish_mission("Rigor Motors", 0x5e6b04, 0x00, 5, 0)
-achiev_finish_mission("Long Black Probes", 0x5e6b04, 0x20, 5, 0)
-achiev_finish_mission("Pocket Protector", 0x5e6b04, 0x40, 5, 0)
-achiev_finish_mission("There's Something About Monty", 0x5e6b04, 0x60, 5, 0)
-achiev_finish_mission("Alien \"Auto\"topsy Part I", 0x5e6b04, 0x80, 5, 0)
-achiev_finish_mission("Alien \"Auto\"topsy Part II", 0x5e6b04, 0xa0, 5, 0)
-achiev_finish_mission("Alien \"Auto\"topsy Part III", 0x5e6b04, 0xc0, 5, 0)
+// // Level 7
+// achiev_finish_mission("Rigor Motors", 0x5e6b04, 0x00, 5, 0)
+// achiev_finish_mission("Long Black Probes", 0x5e6b04, 0x20, 5, 0)
+// achiev_finish_mission("Pocket Protector", 0x5e6b04, 0x40, 5, 0)
+// achiev_finish_mission("There's Something About Monty", 0x5e6b04, 0x60, 5, 0)
+// achiev_finish_mission("Alien \"Auto\"topsy Part I", 0x5e6b04, 0x80, 5, 0)
+// achiev_finish_mission("Alien \"Auto\"topsy Part II", 0x5e6b04, 0xa0, 5, 0)
+// achiev_finish_mission("Alien \"Auto\"topsy Part III", 0x5e6b04, 0xc0, 5, 0)
 
-// Bonus
-achiev_finish_mission("This Old Shanty", 0x5e5c9c, missionbonus_offset, 5, 0)
-achiev_finish_mission("Dial B for Blood", 0x5e5ee8, missionbonus2_offset, 5, 0)
-achiev_finish_mission("Princi-Pal", 0x5e6154, missionbonus2_offset, 5, 0)
-achiev_finish_mission("Beached Love", 0x5e63c0, missionbonus2_offset, 5, 0)
-achiev_finish_mission("Kinky Frinky", 0x5e662c, missionbonus2_offset, 5, 0)
-achiev_finish_mission("Milking the Pigs", 0x5e6898, missionbonus2_offset, 5, 0)
-achiev_finish_mission("Flaming Tires", 0x5e6b04, missionbonus2_offset, 5, 0)
+// // Bonus
+// achiev_finish_mission("This Old Shanty", 0x5e5c9c, missionbonus_offset, 5, 0)
+// achiev_finish_mission("Dial B for Blood", 0x5e5ee8, missionbonus2_offset, 5, 0)
+// achiev_finish_mission("Princi-Pal", 0x5e6154, missionbonus2_offset, 5, 0)
+// achiev_finish_mission("Beached Love", 0x5e63c0, missionbonus2_offset, 5, 0)
+// achiev_finish_mission("Kinky Frinky", 0x5e662c, missionbonus2_offset, 5, 0)
+// achiev_finish_mission("Milking the Pigs", 0x5e6898, missionbonus2_offset, 5, 0)
+// achiev_finish_mission("Flaming Tires", 0x5e6b04, missionbonus2_offset, 5, 0)
 
 // Street Races
 achiev_finish_all_street_races("Daytime Suburb Racing", 0x5e5c9c, 1, 10, 0)
@@ -400,7 +412,7 @@ achiev_find_all_gags("Three Men and a Comic Book", 0x5e6304, 3, 11, 10, 0)
 achiev_find_all_gags("The Old Man and the Key", 0x5e6570, 4, 15, 10, 0)
 achiev_find_all_gags("Flaming Moe's", 0x5e67dc, 5, 6, 10, 0)
 achiev_find_all_gags("Krusty Gets Busted", 0x5e6a48, 6, 11, 10, 0)
-achiev_find_all_gags("Treehouse of Herror", 0x5e6cb4, 7, 15, 10, 0)
+achiev_find_all_gags("Treehouse of Horror", 0x5e6cb4, 7, 15, 10, 0)
 
 // Find all cards
 achiev_find_all_cards("Mr. Sparkle Box", 1, 10, 0)
@@ -411,14 +423,14 @@ achiev_find_all_cards("Ganesh Costume", 5, 10, 0)
 achiev_find_all_cards("Radioactive Man #1", 6, 10, 0)
 achiev_find_all_cards("Soul Donut", 7, 10, 0)
 
-// Beat Wager times
-achiev_beat_wager_times("Wager Racing I", 1, "3:15", 195, 0x5e5e08, 3, 0)
-achiev_beat_wager_times("Wager Racing II", 2, "2:10", 130, 0x5e6074, 3, 0)
-achiev_beat_wager_times("Wager Racing III", 3, "2:20", 140, 0x5e62e0, 3, 0)
-achiev_beat_wager_times("Wager Racing IV", 4, "2:30", 150, 0x5e654c, 3, 0)
-achiev_beat_wager_times("Wager Racing V", 5, "2:05", 125, 0x5e67b8, 3, 0)
-achiev_beat_wager_times("Wager Racing VI", 6, "1:55", 115, 0x5e6a24, 3, 0)
-achiev_beat_wager_times("Wager Racing VII", 7, "1:30", 90, 0x5e6c90, 3, 0)
+// Beat Wager times (DEPRECATED)
+// achiev_beat_wager_times("Wager Racing I", 1, "3:15", 195, 0x5e5e08, 3, 0)
+// achiev_beat_wager_times("Wager Racing II", 2, "2:10", 130, 0x5e6074, 3, 0)
+// achiev_beat_wager_times("Wager Racing III", 3, "2:20", 140, 0x5e62e0, 3, 0)
+// achiev_beat_wager_times("Wager Racing IV", 4, "2:30", 150, 0x5e654c, 3, 0)
+// achiev_beat_wager_times("Wager Racing V", 5, "2:05", 125, 0x5e67b8, 3, 0)
+// achiev_beat_wager_times("Wager Racing VI", 6, "1:55", 115, 0x5e6a24, 3, 0)
+// achiev_beat_wager_times("Wager Racing VII", 7, "1:30", 90, 0x5e6c90, 3, 0)
 
 // =========================================
 //                Bonus Game              
@@ -452,7 +464,7 @@ achiev_win_3_bonus_game("Halloween Super Sprint", 7, 3, 0)
 min_vel_required_to_surf = 7.0
 achievement("Car Surfing", "Keep surfing on a vehicle for at least 5 seconds.", 2,
             trigger =   game_context() == ctx_normal_game_playing &&
-                        tally(300, player_surfing_on_vehicle() == true && always_true()) &&
+                        tally(300, player_surfing_on_vehicle() == 1 && always_true()) &&
                         never(player_velocity_x() < 7.0 && player_velocity_x() > -7.0 && player_velocity_z() < 7.0 && player_velocity_z() > -7.0)
            )
 
@@ -471,7 +483,7 @@ function trig_marge_at_kwik_mart()
         char_pos_x = float(character_ptr_address + offset_char_position_x)
         char_pos_z = float(character_ptr_address + offset_char_position_z)
         trigger =       trigger || 
-                        character_loaded == true &&
+                        character_loaded == 1 &&
                         char_pos_x > 189.0 && char_pos_x < 234.0 && 
                         char_pos_z > -315.0 && char_pos_z < -284.0 &&
                         character_model_name == 0x6772616d // "Marg" 32 bits ASCII
@@ -503,7 +515,7 @@ function trig_push_milhouse_at_cliff()
         char_pos_z = float(character_ptr_address + offset_char_position_z)
 
         trigger =       trigger || 
-                        character_loaded == true &&
+                        character_loaded == 1 &&
                         char_pos_y < -75.0 &&
                         char_pos_x > -141.0 && char_pos_x < -43.0 && // ok
                         char_pos_z > 260.0 && char_pos_z < 323.0 && // ok
@@ -517,7 +529,7 @@ achievement("The Simp", "Push Milhouse to the cliff at the end of Clueless.", 2,
             trigger =   game_context() == ctx_normal_game_playing &&
                         current_level() == 2 && // Lisa level
                         current_mission() == 1 && // Clueless
-                        mission_outside_mission() == false &&
+                        mission_outside_mission() == 0 &&
                         mission_stage() == 10 &&
                         trig_push_milhouse_at_cliff()
            )
@@ -528,14 +540,14 @@ achievement("The Simp", "Push Milhouse to the cliff at the end of Clueless.", 2,
 //                         current_mission() == 1 && // Clueless
 //                         once(mission_state() == m_state_waiting) &&
 //                         trigger_when(mission_state() == m_state_success && prev(mission_state()) == m_state_inprogress) &&
-//                         never(player_inside_vehicle() == true && mission_stage() > 1)
+//                         never(player_inside_vehicle() == 1 && mission_stage() > 1)
 //            )
 
 
 achievement("500-Yard Gash", "Unlock the bonus movie.", 5,
             trigger =   in_game() &&
-                        bit0(0x5e62e4) == true &&
-                        prev(bit0(0x5e62e4)) == false
+                        bit0(0x5e62e4) == 1 &&
+                        prev(bit0(0x5e62e4)) == 0
             )
 
 // =========================================
@@ -551,11 +563,11 @@ function finish_mission_with_car(title, mission_name, level, mission, car, point
                             never(mission_name_2bytes() == m_name_wager) && // mission type is identified through mission name
                             never(mission_name_2bytes() == m_name_race) &&
                             never(is_bonus_mission()) &&
-                            never(tally(60, mission_outside_mission() == true))  &&
+                            never(tally(60, mission_outside_mission() == 1))  &&
                             once(mission_super_state() == 2) &&
                             trigger_when(mission_state() == m_state_success && prev(mission_state()) == m_state_inprogress) &&
                             current_vehicle_id() == vehicles[car] &&
-                            never(player_inside_vehicle() == true && current_vehicle_id() != vehicles[car])
+                            never(player_inside_vehicle() == 1 && current_vehicle_id() != vehicles[car])
                 )
 }
 
@@ -585,8 +597,8 @@ achievement("I Can't See Anything", "Finish Alien \"Auto\"topsy Part III with th
                             never(mission_name_2bytes() == m_name_wager) && // mission type is identified through mission name
                             never(mission_name_2bytes() == m_name_race) &&
                             never(is_bonus_mission()) &&
-                            never(mission_outside_mission() == true) &&
+                            never(mission_outside_mission() == 1) &&
                             once(mission_super_state() == 2) &&
                             trigger_when(mission_state() == m_state_success && prev(mission_state()) == m_state_inprogress) &&
-                            never(bit7(0x4244f6) == false)
+                            never(bit7(0x4244f6) == 0)
                 )

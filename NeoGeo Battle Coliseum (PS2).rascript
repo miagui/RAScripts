@@ -51,7 +51,7 @@ function game_bgm() => byte(0x38578C)
 function game_mode() => byte(0x385984)
 
 function game_battle_bonus() => byte(0x385c98)
-function game_continue_services() => byte(0x385c94)
+function game_continue_services() => byte(0x385c9c)
 
 function match_timer() => word(0x385CD8)
 
@@ -148,10 +148,13 @@ function is_survival() => game_mode() == 3
 function p1_won_match_hp() => __ornext(p2_slot1_hp() == 0xFFFF && p2_slot1_hp() != prev(p2_slot1_hp()) || p2_slot2_hp() == 0xFFFF && p2_slot2_hp() != prev(p2_slot2_hp()))
 
 function is_boss() {
-    __ornext(p2_slot1_character() == characters["Neo-Dio"] ||
+    return(
+        __ornext(p2_slot1_character() == characters["Neo-Dio"] ||
             p2_slot1_character() == characters["Mizuchi"] ||
             p2_slot1_character() == characters["Goodman"] ||
             p2_slot1_character() == characters["King Lion"])
+    )
+    
 }
 
 function game_beaten() {
@@ -175,7 +178,7 @@ function p1_dont_have_char(char_id) => p1_slot1_character() != char_id && p1_slo
 // =========================================
 
 function achiev_beat_game_team(title, char1, char2) {
-    achievement(title, format("Beat the game using only {0} and {1} on any difficulty (default settings).", char1, char2), 10,
+    achievement(title, format("Beat the game using only {0} and {1} (default settings).", char1, char2), 5,
                 trigger = p1_only() &&
                           is_any_arcade() &&
                           in_game() &&
@@ -185,7 +188,7 @@ function achiev_beat_game_team(title, char1, char2) {
                           p1_team_has_char(characters[char1]) &&
                           p1_team_has_char(characters[char2]) &&
                           trigger_when(game_beaten()) &&
-                          settings_default_any_diff()
+                          settings_default_lv4()
                 )
 }
 
@@ -211,7 +214,7 @@ achiev_beat_game_team("Justice Bringers", "Kim", "Washizuka")
 achiev_beat_game_team("Proud Crime Lords", "King Lion", "Geese")
 achiev_beat_game_team("Evil Experiments", "Mizuchi", "Neo-Dio")
 
-achievement("Ambitious Man", "Beat the game using only Goodman on any difficulty (default settings).", 10,
+achievement("Ambitious Man", "Beat the game using only Goodman on any difficulty (default settings).", 5,
                 trigger = p1_only() &&
                           is_any_arcade() &&
                           in_game() &&
@@ -230,7 +233,7 @@ achievement("King Is Falling", "Beat the game on Level-7 difficulty (default set
                           settings_default_lv7()
                 )
 
-achievement("Maniac Sense", "Defeat Mizuchi (default settings).", 10,
+achievement("Maniac Sense", "Defeat Mizuchi (default settings).", 10, type="win_condition",
                 trigger = p1_only() &&
                           is_any_arcade() &&
                           in_game() &&
@@ -239,7 +242,7 @@ achievement("Maniac Sense", "Defeat Mizuchi (default settings).", 10,
                           settings_default_lv4()
                 )
 
-achievement("Murder D", "Defeat Neo-Dio (default settings).", 25,
+achievement("Murder D", "Defeat Neo-Dio (default settings).", 25, type="win_condition",
                 trigger = p1_only() &&
                           is_any_arcade() &&
                           in_game() &&
@@ -248,7 +251,7 @@ achievement("Murder D", "Defeat Neo-Dio (default settings).", 25,
                           settings_default_lv4()
                 )
 
-achievement("Don't Make Me Angry", "Defeat King Leo (default settings).", 25,
+achievement("Don't Make Me Angry", "Defeat King Leo (default settings).", 25, type="win_condition",
                 trigger = p1_only() &&
                           is_any_arcade() &&
                           in_game() &&
@@ -257,7 +260,7 @@ achievement("Don't Make Me Angry", "Defeat King Leo (default settings).", 25,
                           settings_default_lv4()
                 )
 
-achievement("Spirit of the Gorilla King", "Defeat Goodman (default settings).", 25,
+achievement("Spirit of the Gorilla King", "Defeat Goodman (default settings).", 25, type="win_condition",
                 trigger = p1_only() &&
                           is_any_arcade() &&
                           in_game() &&
@@ -394,7 +397,7 @@ achiev_super_cancel_combo("Power Charge", "Terry", 5, 5)
 achiev_super_cancel_combo("Hard Edge", "Rock", 10, 5)
 achiev_super_cancel_combo("Kohou Shippuu Ken", "Mr. Karate", 17, 5)
 achiev_super_cancel_combo("Ryu-Geki Ken", "Robert", 16, 5)
-achiev_super_cancel_combo("Shinmei Hayate", "Kaede", 5, 5)
+achiev_super_cancel_combo("Shinmei Renjin Zan", "Kaede", 5, 5)
 achiev_super_cancel_combo("Ittou Tsukikage", "Moriya", 15, 5)
 achiev_super_cancel_combo("Ougi Kogetsu Zan", "Haohmaru", 12, 5)
 achiev_super_cancel_combo("Ouka Zan", "Genjyuro", 4, 5)
@@ -405,13 +408,13 @@ achiev_super_cancel_combo("Axle Spinning Kick", "Shermie", 2, 5)
 achiev_super_cancel_combo("Ryu Enbu", "Mai", 9, 5)
 achiev_super_cancel_combo("Hangetsu Zan", "Kim", 14, 5)
 achiev_super_cancel_combo("100 Ren Ashi", "Lee", 7, 5)
-achiev_super_cancel_combo("Ressen Kyaku", "Tung Fu Rue", 6, 5)
+achiev_super_cancel_combo("Ressen Kyaku", "Tung Fu Rue", 6, 10)
 achiev_super_cancel_combo("Tenmon Hoshi No Meguri", "Akari", 8, 5)
 achiev_super_cancel_combo("Rouga", "Washizuka", 18, 5)
 achiev_super_cancel_combo("Rojeref", "Asura", 14, 5)
 achiev_super_cancel_combo("Tsuyubarai", "Shiki", 14, 5)
 achiev_super_cancel_no_hit("Mijin Komoru no Subi", "Hanzo", 3)
-achiev_super_cancel_combo("Densosetsuka no Jotsu Kiri Mai", "Fuuma", 4, 10)
+achiev_super_cancel_combo("Densosetsuka no Jotsu Kiri Mai", "Fuuma", 4, 5)
 achiev_super_cancel_combo("Raging Storm", "Geese", 2 , 10)
 achiev_super_cancel_combo("Californian Romance", "Mr. Big", 27, 5)
 achiev_super_cancel_combo("Teiou Jinsoku Ken", "Chonrei", 2, 10)
@@ -431,7 +434,7 @@ achiev_super_cancel_combo("Seiyaku", "Mizuchi", 10, 5)
 //                Leaderboards              
 // =========================================
 
-leaderboard("NGBC Winner - Normal", "Highest wins before reaching the boss on Level-4 difficulty.",
+leaderboard("NGBC Winner - Normal", "Highest wins before reaching the boss on Level-4 difficulty (default settings).",
            start = is_arcade_play() && p1_survival_wins() == 0 && p1_active_state() > 0 && is_fighting() && settings_default_lv4(),
            cancel = p1_active_state() == 0 || p2_active_state() > 0,
            submit = is_boss(),
@@ -439,7 +442,7 @@ leaderboard("NGBC Winner - Normal", "Highest wins before reaching the boss on Le
            format = "VALUE", lower_is_better=false
            )
 
-leaderboard("NGBC Winner - Hard", "Highest wins before reaching the boss on Level-7 difficulty.",
+leaderboard("NGBC Winner - Hard", "Highest wins before reaching the boss on Level-7 difficulty (default settings).",
            start = is_arcade_play() && p1_survival_wins() == 0 && p1_active_state() > 0 && is_fighting() && settings_default_lv7(),
            cancel = p1_active_state() == 0 || p2_active_state() > 0,
            submit = is_boss(),
@@ -447,7 +450,7 @@ leaderboard("NGBC Winner - Hard", "Highest wins before reaching the boss on Leve
            format = "VALUE", lower_is_better=false
            )
 
-leaderboard("NGBC Runner - Normal", "Reach 10 wins with the least amount of time remaining on Level-4 difficulty.",
+leaderboard("NGBC Runner - Normal", "Reach 10 wins with the least amount of time remaining on Level-4 difficulty (default settings).",
            start = is_arcade_play() && p1_survival_wins() == 10 && p1_survival_wins() > prev(p1_survival_wins()) && p1_only() && settings_default_lv4(),
            cancel = p1_active_state() == 0 || p2_active_state() > 0,
            submit = p1_survival_wins() == 10 && p1_survival_wins() > prev(p1_survival_wins()) && p1_only(),
@@ -455,7 +458,7 @@ leaderboard("NGBC Runner - Normal", "Reach 10 wins with the least amount of time
            format = "VALUE", lower_is_better=true
            )
 
-leaderboard("NGBC Runner - Hard", "Reach 10 wins with the least amount of time remaining on Level-7 difficulty.",
+leaderboard("NGBC Runner - Hard", "Reach 10 wins with the least amount of time remaining on Level-7 difficulty (default settings).",
            start = is_arcade_play() && p1_survival_wins() == 10 && p1_survival_wins() > prev(p1_survival_wins()) && p1_only() && settings_default_lv7(),
            cancel = p1_active_state() == 0 || p2_active_state() > 0,
            submit = p1_survival_wins() == 10 && p1_survival_wins() > prev(p1_survival_wins()) && p1_only(),

@@ -129,7 +129,7 @@ function p1_dont_have_char(char_id) => p1_character_1() != char_id && p1_charact
 // =========================================
 
 function achiev_beat_game_team(title, char1, char2, char3) {
-    achievement(title, format("Beat the game using only {0}, {1} and {2} in any difficulty (default settings).", char1, char2, char3), 10,
+    achievement(title, format("Beat the game using only {0}, {1} and {2} in any difficulty (default settings).", char1, char2, char3), 10, type="win_condition",
                 trigger = p1_only() &&
                           in_game() &&
                           is_any_team_play() &&
@@ -199,7 +199,7 @@ achievement("Original '94", "Beat the game on Neo-Geo mode.", 10,
 //                    Misc              
 // =========================================
 
-achievement("Maximum Power", "Fill the gauge to the MAX during Arcade mode (default settings).", 2,
+achievement("Maximum Power", "Fill the gauge to the MAX during Arcade mode (default settings).", 3,
             trigger = p1_only() &&
                       in_game() &&
                       is_any_arcade_or_neogeo() &&
@@ -209,7 +209,7 @@ achievement("Maximum Power", "Fill the gauge to the MAX during Arcade mode (defa
                       settings_default_any_diff()
             )
 
-achievement("Choice of Death or Humilliation", "Finish a round with a Desperation Move in any difficulty (default settings).", 4,
+achievement("Choice of Death or Humilliation", "Finish a round with a Desperation Move in any difficulty (default settings).", 5,
             trigger = p1_only() &&
                       in_game() &&
                       is_any_arcade_or_neogeo() &&
@@ -218,7 +218,7 @@ achievement("Choice of Death or Humilliation", "Finish a round with a Desperatio
                       settings_default_any_diff()
             )
 
-achievement("Perfect Rebout", "Win a round with a perfect in any difficulty (default settings).", 4,
+achievement("Perfect Rebout", "Win a round with a perfect in any difficulty (default settings).", 2,
             trigger = p1_only() &&
                       in_game() &&
                       is_any_arcade_or_neogeo() &&
@@ -278,6 +278,17 @@ function achiev_desp_move_char_grab(char_name, title) {
             )
 }
 
+achievement("God Press", "Hit your opponent with a Desperation Move as Rugal during Arcade mode.", 5,
+            trigger = p1_only() &&
+                      in_game() &&
+                      is_any_arcade_or_neogeo() &&
+                      p1_current_char() == characters["Rugal"] &&
+                      (
+                        (prev(p1_move_type_action()) == 0x25 && p1_has_won_round()) || 
+                        (prev(p1_move_type_action()) == 0x25 && prev(p2_hp()) - p2_hp() > 5 )
+                      )
+            )
+
 achiev_desp_move_char_grab("Heidern", "Final Bringer")
 achiev_desp_move_char("Ralf", "Bari Bari Vulcan Punch")
 achiev_desp_move_char_grab("Clark", "Ultra Argentine Back Breaker")
@@ -302,5 +313,5 @@ achiev_desp_move_char("Takuma", "Ryuko Ranbu III")
 achiev_desp_move_char("Yuri", "Hien Houou Kyaku")
 achiev_desp_move_char("Mai", "Cho Hissatsu Shinobibachi")
 achiev_desp_move_char("King", "Illusion Dance")
-achiev_desp_move_char("Rugal", "God Press")
+// achiev_desp_move_char("Rugal", "God Press")
 achiev_desp_move_char("Saisyu", "Ura 108 Shiki: Orochinagi")

@@ -148,7 +148,7 @@ characters = {
 //             Utility Functions             
 // =========================================
 
-function arcade_finished() => arcade_game_beaten_flag() == true && prev(arcade_game_beaten_flag()) == false
+function arcade_finished() => arcade_game_beaten_flag() == 1 && prev(arcade_game_beaten_flag()) == 0
 function arcade_finished_final_boss() {
     return (
         (p2_char1() == characters["Rugal"] || p2_char1() == characters["Akuma"] ||
@@ -165,16 +165,16 @@ function arcade_game_beaten_no_boss() {
     )
 }
 
-function arcade_ending_cutscene() => arcade_game_beaten_flag() == true && match_state() == 0x00000706 && prev(match_state()) != 0x00000706
+function arcade_ending_cutscene() => arcade_game_beaten_flag() == 1 && match_state() == 0x00000706 && prev(match_state()) != 0x00000706
 
-function is_arcade() => never(game_state() != gs_game) && arcade_boss_battle_mode() == false
-function is_boss_battle() => never(game_state() != gs_game) && arcade_boss_battle_mode() == true
+function is_arcade() => never(game_state() != gs_game) && arcade_boss_battle_mode() == 0
+function is_boss_battle() => never(game_state() != gs_game) && arcade_boss_battle_mode() == 1
 
 function super_combo_finished() => (arcade_sc_finishes() > prev(arcade_sc_finishes()) ||
                                     arcade_finest_kos() > prev(arcade_finest_kos()))
 
 function p1_only() => never(players_active() != 1)
-function p1_human() => bit0(0x332A18) == true
+function p1_human() => bit0(0x332A18) == 1
 
 function p1_has_won() => match_victory_type() == 1 && prev(match_victory_type()) == 0
 function p2_has_won() => match_victory_type() == 2 && prev(match_victory_type()) == 0
@@ -221,16 +221,16 @@ achievement("Mark of the Millennium 2001", "Finish Arcade Mode on 8 stars diffic
                         trigger_when(arcade_finished())
            )
 
-achievement("Millionaire Fighting 2001", "Finish Arcade Mode [Ratio/3 on 3] by defeating any last boss without using a continue (4 stars difficulty).", 10,
-            trigger =   is_arcade() &&
-                        never(game_sub_mode() == gm_sub_single) &&
-                        p1_only() &&
-                        settings_difficulty_4stars() &&
-                        once(arcade_match() == 0 && game_state_32bits() == gs_player_select) &&
-                        never(p2_has_won()) &&
-                        never(arcade_game_beaten_no_boss()) &&
-                        trigger_when(arcade_finished_final_boss())
-           )
+// achievement("Millionaire Fighting 2001", "Finish Arcade Mode [Ratio/3 on 3] by defeating any last boss without using a continue (4 stars difficulty).", 10,
+//             trigger =   is_arcade() &&
+//                         never(game_sub_mode() == gm_sub_single) &&
+//                         p1_only() &&
+//                         settings_difficulty_4stars() &&
+//                         once(arcade_match() == 0 && game_state_32bits() == gs_player_select) &&
+//                         never(p2_has_won()) &&
+//                         never(arcade_game_beaten_no_boss()) &&
+//                         trigger_when(arcade_finished_final_boss())
+//            )
 
 achievement("Single Champion", "Finish Arcade Mode [Single Match] by defeating any last boss without using a continue (4 stars difficulty).", 10,
             trigger =   is_arcade() &&
@@ -248,6 +248,7 @@ achievement("Groove!", "Finish Arcade Mode with 2000.000 Groove points or higher
                         p1_only() &&
                         settings_difficulty_4stars() &&
                         p1_groove_points() >= 2000000 &&
+                        p1_groove_points() <= 0x7fffffff &&
                         trigger_when(arcade_ending_cutscene())
            )
 
@@ -430,7 +431,7 @@ achievement("Finest K.O", "Get a Finest K.O (Arcade Mode).", 4,
                         arcade_finest_kos() > prev(arcade_finest_kos())
            )
 
-achievement("Dark Power (Akuma)", "Leave my sight! (Arcade Mode).", 4,
+achievement("Dark Power (Akuma)", "Leave my sight! (Arcade Mode).", 3,
             trigger =   is_arcade() &&
                         p1_only() &&
                         p1_current_character() == characters["Akuma"] &&
@@ -438,27 +439,27 @@ achievement("Dark Power (Akuma)", "Leave my sight! (Arcade Mode).", 4,
                         super_combo_finished()
            )
 
-function all_super_combo_character(title, char, move_array, add_description, cheevo_id) {
+function all_super_combo_character(title, char, move_array, add_description, cheevo_points, cheevo_id) {
     moves_logic = []
     for move in move_array {
         array_push(moves_logic, once((p1_hit_combo() > prev(p1_hit_combo())) && p1_move() == move))
     }
 
-    if (length(moves_logic) == 2) {
-        cheevo_points = 3
+    if (cheevo_points == 0) {
+        if (length(moves_logic) == 2) {
+            cheevo_points = 3
+        }
+        if (length(moves_logic) == 3) {
+            cheevo_points = 5
+        }
+        if (length(moves_logic) >= 4) {
+            cheevo_points = 10
+        }
     }
-
-    if (length(moves_logic) == 3) {
-        cheevo_points = 5
-    }
-
-    if (length(moves_logic) >= 4) {
-        cheevo_points = 10
-    }
+    
 
     achievement(title, format("{0}: Hit your opponent with all Super Combos{1} during an Arcade playthrough.", char, add_description), cheevo_points,
-                trigger =   is_arcade() &&
-                            p1_only() &&
+                trigger =   (always_false() || is_arcade() && p1_only()) &&
                             unless(p1_current_character() != characters[char]) &&
                             unless(p1_state() != move_type_sc) &&
                             measured(tally(length(moves_logic), moves_logic)) 
@@ -467,8 +468,7 @@ function all_super_combo_character(title, char, move_array, add_description, che
 }
 
 achievement("Shikabane o Koete Iku Nari", "Hibiki: Hit your opponent with all Super Combos and any \"Shikabane o Koete Iku Nari\" sequence during an Arcade playthrough.", 10,
-            trigger =   is_arcade() &&
-                        p1_only() &&
+            trigger =   (always_false() || is_arcade() && p1_only()) &&
                         unless(p1_current_character() != characters["Hibiki"]) &&
                         unless(p1_state() != move_type_sc) &&
                         measured(tally(3, 
@@ -478,63 +478,63 @@ achievement("Shikabane o Koete Iku Nari", "Hibiki: Hit your opponent with all Su
                         )) 
             )
 
-all_super_combo_character("Shin Shouryuuken", "Ryu", [0x04, 0x05, 0x0a], "", 0)
-all_super_combo_character("Shinryuken", "Ken", [0x05, 0x04, 0x09], "", 0)
-all_super_combo_character("Houyoku Sen", "Chun-Li", [0x05, 0x03], "", 0)
-all_super_combo_character("Somersault Strike", "Guile", [0x03, 0x02, 0x05], "", 0)
-all_super_combo_character("Final Atomic Buster", "Zangief", [0x05, 0x08], "", 0)
-all_super_combo_character("Yoga Volcano", "Dhalsim", [0x08, 0x0a, 0x09], "", 0)
-all_super_combo_character("Orochi Kudaki", "E. Honda", [0x04, 0x06], "", 0)
-all_super_combo_character("Ground Shave Rolling", "Blanka", [0x06, 0x04, 0x07], "", 0)
-all_super_combo_character("Rolling Izuna Drop", "Vega", [0x06, 0x07, 0x08, 0x09], "", 0)
-all_super_combo_character("Tiger Raid", "Sagat", [0x05, 0x06, 0x07, 0x08], "", 0)
-all_super_combo_character("Mega Psycho Crusher", "M. Bison", [0x06, 0x0e], "", 0)
-all_super_combo_character("Midare Zakura", "Sakura", [0x05, 0x07, 0x06], "", 0)
-all_super_combo_character("Reverse Shaft Breaker", "Cammy", [0x06, 0x07], "", 0)
-all_super_combo_character("Messatsu Gou Shouryuu", "Akuma", [0x05, 0x07, 0x09, 0x0b], "", 0)
-all_super_combo_character("Soul Phoenix", "Morrigan", [0x00, 0x09, 0x0d, 0x07, 0x06], "", 0)
-// all_super_combo_character("Messatsu Goushouryu", "Evil Ryu", [0x04, 0x0b, 0x0e, 0x07], "", 0)
-all_super_combo_character("Saishuu Kessen Ougi \"Mu Shiki\"", "Kyo", [0x05, 0x06], "", 0)
-all_super_combo_character("Ura 108 Shiki: Ya Sakazuki", "Iori", [0x06, 0x07], "", 0)
-all_super_combo_character("Buster Wolf", "Terry", [0x05, 0x06], "", 0)
-all_super_combo_character("Haou Shoukou Ken", "Ryo", [0x07, 0x00, 0x08], "", 0)
-all_super_combo_character("Beni Suzaku", "Mai", [0x05, 0x09, 0x03], "", 0)
-all_super_combo_character("Hou'ou Kyaku", "Kim", [0x07, 0x08, 0x0a], "", 0)
-all_super_combo_character("Deadly Rave", "Geese", [0x03, 0x07, 0x08], " and Deadly Rave full sequence", 0)
-all_super_combo_character("Drill", "Yamazaki", [0x09, 0x0a], "", 0)
-all_super_combo_character("Destruction Drop", "Raiden", [0x0a, 0x01, 0x0c], "", 0)
-all_super_combo_character("Total Annihilation", "Rugal", [0x07, 0x09], "", 0)
-all_super_combo_character("Withering Force", "Vice", [0x03, 0x0a], "", 0)
-all_super_combo_character("Denei Spark", "Benimaru", [0x03, 0x07, 0x0a], "", 0)
-all_super_combo_character("Hien Rekkou", "Yuri", [0x07, 0x08, 0x09], "", 0)
-all_super_combo_character("Silent Flash", "King", [0x08, 0x07], "", 0)
-// **** all_super_combo_character("Elerush Kamui Rimse", "Nakoruru", [0x09, 0x0b, 0x02], "", 0) // Different treatment, change only in emulator
-// all_super_combo_character("Ura 100 Shiki: Oni Honou", "Orochi Iori", [0x06, 0x07], "", 0)
-all_super_combo_character("Gigaton Blow", "Balrog", [0x08, 0x07], "", 0)
-all_super_combo_character("Kouryurekka", "Dan", [0x04, 0x05, 0x07], "", 0)
-all_super_combo_character("Bakuretsu Hurricane Tiger Kakato", "Joe", [0x03, 0x04, 0x08], "", 0)
-all_super_combo_character("Union Jack Platinum", "Eagle", [0x05, 0x06], "", 0)
-all_super_combo_character("Tesshin Hou", "Maki", [0x05, 0x07, 0x06], "", 0)
-all_super_combo_character("Super Raijin Upper", "Kyosuke", [0x05, 0x09, 0x0b, 0x07], "", 0)
-all_super_combo_character("Crystal Shoot", "Athena", [0x06, 0x07, 0x08], " (including Crystal Shoot)", 0)
-all_super_combo_character("Shin! Chouzetsu Tatsumaki Shinkuu Zan", "Chang", [0x06, 0x07], "", 0)
-all_super_combo_character("Shingan: Kuzu Otoshi", "Todoh", [0x04, 0x05], "", 0)
-all_super_combo_character("Neo Deadly Rave", "Rock", [0x07, 0x06, 0x08, 0x09], " and Neo Deadly Rave full sequence", 0)
-// all_super_combo_character("Shikabane o koete iku nari ", "Hibiki", [], "", 0) // Need special treatment because of roots
-all_super_combo_character("Tenha Danku Retsu Zan", "Haohmaru", [0x04, 0x05], "", 0)
-all_super_combo_character("Raishin Mahhaken", "Yun", [0x05, 0x08, 0x06, 0x09], "", 0)
-// all_super_combo_character("Misogi", "Shin Akuma", [0x05, 0x07, 0x09, 0x0b, 0x0c], "", 0)
-// all_super_combo_character("G. END", "Ultimate Rugal", [0x07, 0x09, 0x0d, 0x0c], "", 0)
-// **** all_super_combo_character("Steel Rain", "Rolento", [0x00, 0x02, 0x01], "", 0) // Different treatment, change only in emulator
+all_super_combo_character("Shin Shouryuuken", "Ryu", [0x04, 0x05, 0x0a], "", 4, 0)
+all_super_combo_character("Shinryuken", "Ken", [0x05, 0x04, 0x09], "", 0, 0)
+all_super_combo_character("Houyoku Sen", "Chun-Li", [0x05, 0x03], "", 0, 0)
+all_super_combo_character("Somersault Strike", "Guile", [0x03, 0x02, 0x05], "", 0, 0)
+all_super_combo_character("Final Atomic Buster", "Zangief", [0x05, 0x08], "", 5, 0)
+all_super_combo_character("Yoga Volcano", "Dhalsim", [0x08, 0x0a, 0x09], "", 0, 0)
+all_super_combo_character("Orochi Kudaki", "E. Honda", [0x04, 0x06], "", 5, 0)
+all_super_combo_character("Ground Shave Rolling", "Blanka", [0x06, 0x04, 0x07], "", 0, 0)
+all_super_combo_character("Rolling Izuna Drop", "Vega", [0x06, 0x07, 0x08, 0x09], "", 0, 0)
+all_super_combo_character("Tiger Raid", "Sagat", [0x05, 0x06, 0x07, 0x08], "", 5, 0)
+all_super_combo_character("Mega Psycho Crusher", "M. Bison", [0x06, 0x0e], "", 0, 0)
+all_super_combo_character("Midare Zakura", "Sakura", [0x05, 0x07, 0x06], "", 0, 0)
+all_super_combo_character("Reverse Shaft Breaker", "Cammy", [0x06, 0x07], "", 0, 0)
+all_super_combo_character("Messatsu Gou Shouryuu", "Akuma", [0x05, 0x07, 0x09, 0x0b], "", 0, 0)
+all_super_combo_character("Soul Phoenix", "Morrigan", [0x00, 0x09, 0x0d, 0x07, 0x06], "", 0, 0)
+// all_super_combo_character("Messatsu Goushouryu", "Evil Ryu", [0x04, 0x0b, 0x0e, 0x07], "", 0, 0)
+all_super_combo_character("Saishuu Kessen Ougi \"Mu Shiki\"", "Kyo", [0x05, 0x06], "", 0, 0)
+all_super_combo_character("Ura 108 Shiki: Ya Sakazuki", "Iori", [0x06, 0x07], "", 0, 0)
+all_super_combo_character("Buster Wolf", "Terry", [0x05, 0x06], "", 0, 0)
+all_super_combo_character("Haou Shoukou Ken", "Ryo", [0x07, 0x00, 0x08], "", 0, 0)
+all_super_combo_character("Beni Suzaku", "Mai", [0x05, 0x09, 0x03], "", 0, 0)
+all_super_combo_character("Hou'ou Kyaku", "Kim", [0x07, 0x08, 0x0a], "", 0, 0)
+all_super_combo_character("Deadly Rave", "Geese", [0x03, 0x07, 0x08], " and Deadly Rave full sequence", 0, 0)
+all_super_combo_character("Drill", "Yamazaki", [0x09, 0x0a], "", 5, 0)
+all_super_combo_character("Destruction Drop", "Raiden", [0x0a, 0x01, 0x0c], "", 0, 0)
+all_super_combo_character("Total Annihilation", "Rugal", [0x07, 0x09], "", 0, 0)
+all_super_combo_character("Withering Force", "Vice", [0x03, 0x0a], "", 5, 0)
+all_super_combo_character("Denei Spark", "Benimaru", [0x03, 0x07, 0x0a], "", 0, 0)
+all_super_combo_character("Hien Rekkou", "Yuri", [0x07, 0x08, 0x09], "", 0, 0)
+all_super_combo_character("Silent Flash", "King", [0x08, 0x07], "", 0, 0)
+// **** all_super_combo_character("Elerush Kamui Rimse", "Nakoruru", [0x09, 0x0b, 0x02], "", 0, 0) // Different treatment, change only in emulator
+// all_super_combo_character("Ura 100 Shiki: Oni Honou", "Orochi Iori", [0x06, 0x07], "", 0, 0)
+all_super_combo_character("Gigaton Blow", "Balrog", [0x08, 0x07], "", 0, 0)
+all_super_combo_character("Kouryurekka", "Dan", [0x04, 0x05, 0x07], "", 0, 0)
+all_super_combo_character("Bakuretsu Hurricane Tiger Kakato", "Joe", [0x03, 0x04, 0x08], "", 0, 0)
+all_super_combo_character("Union Jack Platinum", "Eagle", [0x05, 0x06], "", 0, 0)
+all_super_combo_character("Tesshin Hou", "Maki", [0x05, 0x07, 0x06], "", 0, 0)
+all_super_combo_character("Super Raijin Upper", "Kyosuke", [0x05, 0x09, 0x0b, 0x07], "", 0, 0)
+all_super_combo_character("Crystal Shoot", "Athena", [0x06, 0x07, 0x08], " (including Crystal Shoot)", 0, 0)
+all_super_combo_character("Shin! Chouzetsu Tatsumaki Shinkuu Zan", "Chang", [0x06, 0x07], "", 0, 0)
+all_super_combo_character("Shingan: Kuzu Otoshi", "Todoh", [0x04, 0x05], "", 5, 0)
+all_super_combo_character("Neo Deadly Rave", "Rock", [0x07, 0x06, 0x08, 0x09], " and Neo Deadly Rave full sequence", 0, 0)
+// all_super_combo_character("Shikabane o koete iku nari ", "Hibiki", [], "", 0, 0) // Need special treatment because of roots
+all_super_combo_character("Tenha Danku Retsu Zan", "Haohmaru", [0x04, 0x05], "", 0, 0)
+all_super_combo_character("Raishin Mahhaken", "Yun", [0x05, 0x08, 0x06, 0x09], "", 0, 0)
+// all_super_combo_character("Misogi", "Shin Akuma", [0x05, 0x07, 0x09, 0x0b, 0x0c], "", 0, 0)
+// all_super_combo_character("G. END", "Ultimate Rugal", [0x07, 0x09, 0x0d, 0x0c], "", 0, 0)
+// **** all_super_combo_character("Steel Rain", "Rolento", [0x00, 0x02, 0x01], "", 0, 0) // Different treatment, change only in emulator
 
 // =========================================
 //               Leaderboards              
 // =========================================
 
-leaderboard("CvS2 Groover", "Finish Arcade Mode with the highest Groove points as possible (4 stars difficulty).",
-           start = game_state() == gs_game && p1_only(),
-           cancel = game_state() != gs_game || players_active() != 1,
-           submit = arcade_ending_cutscene(),
-           value = p1_groove_points(),
-           format = "VALUE", lower_is_better=false
-           )
+// leaderboard("CvS2 Groover", "Finish Arcade Mode with the highest Groove points as possible (4 stars difficulty).",
+//            start = game_state() == gs_game && p1_only(),
+//            cancel = game_state() != gs_game || players_active() != 1,
+//            submit = arcade_ending_cutscene(),
+//            value = p1_groove_points(),
+//            format = "VALUE", lower_is_better=false
+//            )

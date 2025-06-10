@@ -18,7 +18,7 @@ function game_stage_file() => byte(0x021231)
 function game_stage_file_lastchar() => byte(0x021234)
 
 function settings_hero() => byte(0x01F210)
-function settings_hero_default() => settings_hero() >= 0x03
+function settings_hero_default() => settings_hero() == 0x03
 function settings_difficulty() => byte(0x01F213)
 function settings_difficulty_default() => settings_difficulty() >= 0x02
 function settings_difficulty_default_only() => settings_difficulty() == 0x02
@@ -180,7 +180,7 @@ function is_super_devil() {
 // =========================================
 
 function achiev_finish_mission(title, mission_id, points, cheevo_id) {
-    achievement(title, format("Finish Mission {0} (Normal difficulty).", mission_id + 1), points,
+    achievement(title, format("Finish Mission {0} (Normal difficulty).", mission_id + 1), points, type="progression",
                 trigger =   in_arcade_mode() &&
                             settings_difficulty_default() &&
                             game_mission() == mission_id &&
@@ -197,7 +197,7 @@ achiev_finish_mission("Death Valley", 3, 5, 0)
 achiev_finish_mission("The City Under Despotism", 4, 5, 0)
 // achiev_finish_mission("The Memorial Sea", 5, 0)
 
-achievement("World Peace, But at What Cost!?", "Beat the game (one session)", 10,
+achievement("World Peace, But at What Cost!?", "Beat the game (one session)", 10, type="win_condition",
                 trigger =   in_arcade_mode() &&
                             settings_difficulty_default() &&
                             once(mission1_start()) &&
@@ -221,7 +221,7 @@ achiev_get_rank("Warrant Officer", 220, 0x220, 10, 0)
 achiev_get_rank("Lieutenant Colonel", 660, 0x660, 25, 0)
 achiev_get_rank("Super Devil", 1000, 0x1000, 25, 0)
 
-achievement("Full Stamina Soldier", "FInish Survival Attack.", 50,
+achievement("Full Stamina Soldier", "Finish Survival Attack.", 50,
             trigger =   in_combat_school() &&
                         game_mode() == game_mode_survival &&
                         p1_or_p2_active() &&
@@ -304,6 +304,7 @@ achievement("Hittin' It Hard", "Beat the game without using a continue on Normal
                         settings_difficulty_default() &&
                         settings_hero_default() &&
                         once(mission1_start()) &&
+                        never(game_screen() == 0) &&
                         never(p1_continues_used() > 0) &&
                         never(p2_continues_used() > 0) &&
                         trigger_when(mission6_finished())
@@ -394,7 +395,7 @@ achievement("Minimalist Soldier V", "Finish Mission 5 without throwing grenades 
                         minimalist_restrictions() &&
                         trigger_when(mission_finished())
             )
-achievement("Minimalist Soldier VI", "Finish Mission 6 without throwing grenades and no deaths in Arcade Mission (Normal difficulty).", 25,
+achievement("Minimalist Soldier VI", "Finish Final Mission without throwing grenades and no deaths in Arcade Mission (Normal difficulty).", 25,
             trigger =   in_arcade_mode() &&
                         settings_difficulty_default() &&
                         never(game_mission() != 5) &&

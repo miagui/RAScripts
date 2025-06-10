@@ -112,7 +112,7 @@ function game_beaten() => game_match() == 0x07 && p1_won_match()
 // =========================================
 
 function achiev_arcade_character(title, char_name, points) {
-    achievement(title, format("Beat the game using only {0} (Medium Kombat CPU).", char_name), points,
+    achievement(title, format("Beat the game using only {0} on Medium Kombat CPU.", char_name), points,
                 trigger =   is_arcade() &&
                             p1_only() &&
                             p1_character() == characters[char_name] &&
@@ -140,7 +140,7 @@ achiev_arcade_character("Deadly Alliance Ambassador", "Tanya", 10)
 achiev_arcade_character("Earthrealm's Ghost", "Liu Kang", 10)
 achiev_arcade_character("Blessed Anarchy", "Kira", 10)
 achiev_arcade_character("Black Dragon Lives!", "Kabal", 10)
-achiev_arcade_character("Ken Masters", "Kobra", 10)
+achiev_arcade_character("Street Fighter", "Kobra", 10)
 achiev_arcade_character("Edenia Restorer", "Jade", 10)
 achiev_arcade_character("Mercenary", "Dairou", 10)
 achiev_arcade_character("Evil Raiden", "Raiden", 10)
@@ -148,7 +148,7 @@ achiev_arcade_character("Revolutionary", "Darrius", 10)
 achiev_arcade_character("Old Fool", "Shujinko", 10)
 achiev_arcade_character("Netherrealm Rulers", "Noob - Smoke", 10)
 
-achievement("Dragon Slayer", "Beat the game on Max Kombat CPU (default settings).", 25,
+achievement("Dragon Slayer", "Beat the game on Max Kombat CPU on default settings.", 25,
                 trigger =   is_arcade() &&
                             p1_only() &&
                             settings_kombat_cpu() == 4 &&
@@ -166,7 +166,7 @@ achievement("Deceptive Costume", "Beat the game from start to finish with an alt
                             trigger_when(game_beaten())
                 )
 
-achievement("Flawless Victory", "Win a round with a Flawless Victory (Medium Kombat CPU).", 3,
+achievement("Flawless Victory", "Win a round with a Flawless Victory on Medium Kombat CPU.", 3,
                 trigger =   is_arcade() &&
                             p1_only() &&
                             p1_hp() == 1.0 &&

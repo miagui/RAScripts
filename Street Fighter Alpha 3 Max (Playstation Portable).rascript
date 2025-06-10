@@ -26,7 +26,7 @@ function game_stage_c1() => byte(0xE75C50)
 function game_stage_c2() => byte(0x12E89F8)
 
 function game_current_match() => byte(0x12E123C)
-function game_matches_won() => byte(0x12e125f)
+function game_matches_won() => byte(0x12e125f) // VERY BAD, needs something to replace it
 function game_screen() => byte(0x12E1254)
 
 function training_combo_damage() => byte(0x150ff82)
@@ -304,8 +304,8 @@ achievement("Time to Get Serious", "Finish Arcade Mode as Ingrid on Mazi Mode (4
                         trigger_when(game_current_match() == 0x09 && game_stage() != 0x1e) &&
                         (trigger_when(p1_has_won_match()) || trigger_when(p2_has_won_match())) &&
                         (
-                            (p1_active() && slot1_character() == characters["Ingrid"] && slot1_mode() == mode_mazi && never(p1_active() && slot1_mode() != mode_mazi && game_matches_won() > prev(game_matches_won()))) ||
-                            (p2_active() && slot2_character() == characters["Ingrid"] && slot2_mode() == mode_mazi && never(p2_active() && slot2_mode() != mode_mazi && game_matches_won() > prev(game_matches_won())))
+                            (p1_active() && slot1_character() == characters["Ingrid"] && slot1_mode() == mode_mazi && never(p1_active() && slot1_mode() != mode_mazi && p1_has_won_match() )) ||
+                            (p2_active() && slot2_character() == characters["Ingrid"] && slot2_mode() == mode_mazi && never(p2_active() && slot2_mode() != mode_mazi && p2_has_won_match() ))
                          ) &&
                         settings_4stars_3rounds())
 
@@ -315,8 +315,8 @@ achievement("Saikyou Master", "Finish Arcade Mode as Dan on Saikyou Mode (4 star
                         trigger_when(game_current_match() == 0x09 && game_stage() != 0x1e) &&
                         (trigger_when(p1_has_won_match()) || trigger_when(p2_has_won_match())) &&
                         (
-                            (p1_active() && slot1_character() == characters["Dan"] && slot1_mode() == mode_saikyou && never(p1_active() && slot1_mode() != mode_saikyou && game_matches_won() > prev(game_matches_won()))) ||
-                            (p2_active() && slot2_character() == characters["Dan"] && slot2_mode() == mode_saikyou && never(p2_active() && slot2_mode() != mode_saikyou && game_matches_won() > prev(game_matches_won())))
+                            (p1_active() && slot1_character() == characters["Dan"] && slot1_mode() == mode_saikyou && never(p1_active() && slot1_mode() != mode_saikyou && p1_has_won_match() )) ||
+                            (p2_active() && slot2_character() == characters["Dan"] && slot2_mode() == mode_saikyou && never(p2_active() && slot2_mode() != mode_saikyou && p2_has_won_match() ))
                          ) &&
                         settings_4stars_3rounds())
 
@@ -414,26 +414,26 @@ cheevo_combo_v_ism_character("Ingrid", 57, 5, 219537)
 achievement("Untamable Fists", "Win a match as EX Balrog (Arcade Mode).", 2,
             trigger =   game_mode_playing() == gm_arcade &&
                         game_state() == gs_playing &&
-                        ((p1_active() && game_matches_won() > prev(game_matches_won()) && slot1_character() == characters["Extra Balrog"]) ||
-                         (p2_active() && game_matches_won() > prev(game_matches_won()) && slot2_character() == characters["Extra Balrog"]))
+                        ((p1_active() && p1_has_won_match() && slot1_character() == characters["Extra Balrog"]) ||
+                         (p2_active() && p2_has_won_match() && slot2_character() == characters["Extra Balrog"]))
                         )
 
 
 achievement("Groan", "Win a match as Shin Akuma (Arcade Mode).", 2,
             trigger =   game_mode_playing() == gm_arcade &&
                         game_state() == gs_playing &&
-                        ((p1_active() && game_matches_won() > prev(game_matches_won()) && slot1_character() == characters["Shin Akuma"]) ||
-                         (p2_active() && game_matches_won() > prev(game_matches_won()) && slot2_character() == characters["Shin Akuma"]))
+                        ((p1_active() && p1_has_won_match() && slot1_character() == characters["Shin Akuma"]) ||
+                         (p2_active() && p2_has_won_match() && slot2_character() == characters["Shin Akuma"]))
                         )
 
-achievement("Ultimate Psycho Crusher", "M. Bison: Finish a round with a Ultimate Psycho Crusher (Arcade Mode).", 2,
+achievement("Ultimate Psycho Crusher", "Finish a round with a Ultimate Psycho Crusher (Arcade Mode).", 2,
             trigger =   game_mode_playing() == gm_arcade &&
                         game_state() == gs_playing &&
                         ((p1_active() && slot1_current_victory() == 0x0c && slot1_move() == 0x04 && slot1_character() == characters["M. Bison"] && slot1_fighting_style() == fs_shadaloo) ||
                          (p2_active() && slot2_current_victory() == 0x0c && slot2_move() == 0x04 && slot2_character() == characters["M. Bison"] && slot2_fighting_style() == fs_shadaloo))
             )
 
-achievement("Sun Delta", "Ingrid: Finish a round with a Sun Delta (Arcade Mode).", 3,
+achievement("Sun Delta", "Finish a round with a Sun Delta (Arcade Mode).", 3,
             trigger =   game_mode_playing() == gm_arcade &&
                         game_state() == gs_playing &&
                         ((p1_active() && slot1_current_victory() == 0x0c && slot1_move() == 0x09 && slot1_character() == characters["Ingrid"]) ||

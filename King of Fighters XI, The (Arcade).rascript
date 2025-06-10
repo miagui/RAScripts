@@ -126,10 +126,7 @@ function in_char_select() => game_current_state() == GS_CHARACTER_SELECT
 function is_fighting() => game_current_state() == GS_FIGHTING
 function in_winners() => game_current_state() == GS_WINNERS_ANNOUNCEMENT
 
-function p1_won_match() => __ornext(p1_slot_1_rounds_wins() > prev(p1_slot_1_rounds_wins()) ||
-                                    p1_slot_2_rounds_wins() > prev(p1_slot_2_rounds_wins()) ||
-                                    p1_slot_3_rounds_wins() > prev(p1_slot_3_rounds_wins())
-                                   )
+function p1_won_match() => p1_ko() > prev(p1_ko()) && __ornext(p1_slot_1_hp() != 0xFFFF || p1_slot_2_hp() != 0xFFFF || p1_slot_3_hp() != 0xFFFF)
 
 function p1_current_char_is(char) {
       return (
@@ -148,7 +145,7 @@ function p1_dont_have_char(char_id) => p1_slot_1_character() != char_id && p1_sl
 // =========================================
 
 function achiev_beat_game_team(title, char1, char2, char3) {
-    achievement(title, format("Beat the game using only {0}, {1} and {2} (Level-4 difficulty).", char1, char2, char3), 10,
+    achievement(title, format("Beat the game using only {0}, {1} and {2} (Level-4 difficulty).", char1, char2, char3), 10, type="win_condition",
                 trigger = in_game() &&
                           p1_only() &&
                           once(game_arcade_match() == 0 && in_char_select() && p1_active_state() > 0) &&
@@ -188,7 +185,7 @@ achiev_beat_game_team("Buriki One Team", "Ryo", "Silber", "Gai")
 
 // achiev_beat_game_team("Savage Reign Team", "Sho Hayate", "Jazu", "")
 
-achievement("Savage Reign Team", "Beat the game using only Hayate, Jazu and other (Level-4 difficulty).", 10,
+achievement("Savage Reign Team", "Beat the game using only Hayate, Jazu and other (Level-4 difficulty).", 10, type="win_condition",
                 trigger = in_game() &&
                           p1_only() &&
                           once(game_arcade_match() == 0 && in_char_select() && p1_active_state() > 0) &&
@@ -200,7 +197,7 @@ achievement("Savage Reign Team", "Beat the game using only Hayate, Jazu and othe
                           trigger_when(game_beaten())
                 )
 
-achievement("Currently Reforming Team", "Beat the game using only Kim and two other evil characters (Level-4 difficulty).", 10,
+achievement("Currently Reforming Team", "Beat the game using only Kim and two other evil characters (Level-4 difficulty).", 10, type="win_condition",
                 trigger = in_game() &&
                           p1_only() &&
                           once(game_arcade_match() == 0 && in_char_select() && p1_active_state() > 0) &&
@@ -255,7 +252,7 @@ achievement("King", "Defeat Adelheid Bernstein during Arcade mode (Level-4 diffi
                         settings_difficulty_level4()
             )
 
-achievement("In High Gear", "Defeat Gai Tendo during Arcade mode (Level-4 difficulty).", 10,
+achievement("In High Gear", "Defeat Gai Tendo during Arcade mode (Level-4 difficulty).", 5,
             trigger =   p1_only() &&
                         in_game() &&
                         p2_slot_1_character() == characters["Gai"] &&
@@ -287,7 +284,7 @@ achievement("Jack II", "Defeat Jazu during Arcade mode (Level-4 difficulty).", 1
                         settings_difficulty_level4()
             )
 
-achievement("Tales of Ash II", "Beat the game without using a continue (Level-4 difficulty).", 25,
+achievement("Tales of Ash II", "Beat the game without using a continue (Level-4 difficulty).", 50,
                 trigger = in_game() &&
                           p1_only() &&
                           once(game_arcade_match() == 0 && in_char_select() && p1_active_state() > 0) &&
@@ -310,12 +307,12 @@ achievement("Distorted World", "Beat the game on Level-8 difficulty without ever
 //                    Misc              
 // =========================================
 
-achievement("Dream Cancel", "Perform a Dream Cancel during Arcade mode.", 3,
+achievement("Dream Cancel", "Perform a Dream Cancel during Arcade mode.", 5,
             trigger =   p1_only() &&
                         is_fighting() &&
                         p1_dream_cancel() > prev(p1_dream_cancel())
             )
-achievement("Super Cancel", "Perform a Super Cancel during Arcade mode.", 3,
+achievement("Super Cancel", "Perform a Super Cancel during Arcade mode.", 4,
             trigger =   p1_only() &&
                         is_fighting() &&
                         p1_super_cancel() > prev(p1_super_cancel())
@@ -329,7 +326,7 @@ achievement("L. Finish", "Finish a match with a Leader Desperation Move during A
                         settings_difficulty_level4()
             )
 
-achievement("Perfect XI", "Win a match with a perfect during Arcade mode (Level-4 difficulty).", 5,
+achievement("Perfect XI", "Win a match with a perfect during Arcade mode (Level-4 difficulty).", 3,
             trigger =   p1_only() &&
                         is_fighting() &&
                         p1_slot_1_hp() == 0x70 &&

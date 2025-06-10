@@ -102,7 +102,7 @@ function story_beaten() {
 // =========================================
 
 function achiev_story(title, char, points) {
-   achievement(title, format("Finish Story Mode as {0}.", char), 10,
+   achievement(title, format("Finish Story Mode as {0}.", char), 10, type="win_condition",
                trigger = p1_only() &&
                          game_mode() == MODE_STORY &&
                          p1_character() == chars[char] &&
@@ -156,7 +156,7 @@ achievement("Zoning Madness", "Defeat Mildred's first phase (default settings)."
                          default_settings_lv4() 
             )
 
-achievement("One Love Punch, Coming Right Up!", "Finish Arcade Mode (default settings).", 5,
+achievement("One Love Punch, Coming Right Up!", "Finish Arcade Mode (default settings).", 5, type="win_condition",
                trigger = p1_only() &&
                          game_mode() == MODE_ARCADE &&
                          prev(arcade_match()) == 0x09 &&   
@@ -196,6 +196,7 @@ function achiev_combo(title, char, hits, points) {
                             __ornext(training_recovery() == 1 || training_recovery() == 3) && // aerial or both
                             never(p1_character() != chars[char]) &&
                             never(p1_move() >= 0x300 && p1_move() != 0x337 && p1_move() != 0x338) && // arcana moves are above 0x300 apparently 
+                            never(p1_arcana_state() > 0) &&
                             never(p1_hit_combo() == 0) &&
                             once(p1_hit_combo() > 0 && prev(p1_hit_combo()) == 0) &&
                             trigger_when(p1_hit_combo() >= hits)

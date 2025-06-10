@@ -12,8 +12,14 @@ function settings_default_and_normal_diff() {
     return(
         settings_difficulty() >= 2 &&
         settings_rounds_wins() == 1 &&
-        settings_exceed_2p() == 0 &&
-        settings_exceed_1p() == 0 &&
+        settings_power_gauge_2p() == 0 &&
+        settings_power_gauge_1p() == 0
+    )
+}
+
+function settings_default_and_any_diff() {
+    return(
+        settings_rounds_wins() == 1 &&
         settings_power_gauge_2p() == 0 &&
         settings_power_gauge_1p() == 0
     )
@@ -23,8 +29,6 @@ function settings_default_and_expert_diff() {
     return(
         settings_difficulty() == 7 &&
         settings_rounds_wins() == 1 &&
-        settings_exceed_2p() == 0 &&
-        settings_exceed_1p() == 0 &&
         settings_power_gauge_2p() == 0 &&
         settings_power_gauge_1p() == 0
     )
@@ -136,14 +140,14 @@ function stage_8_beaten() => game_arcade_match() == 8 && prev(game_arcade_match(
 // =========================================
 
 function achiev_arcade_char(title, char_name) {
-    achievement(title, format("Reach and defeat the boss from the 8th stage using only {0} (default settings).", char_name), 10,
+    achievement(title, format("Reach and defeat the boss from the 8th stage using only {0} on any difficulty (default settings).", char_name), 10,
                 trigger =   is_arcade() &&
                             p1_only() &&
                             never(outside_game()) &&
                             p1_character() == characters[char_name] &&
                             once(game_players_active() == 1 && game_arcade_match() == 0 && in_game_2()) &&
                             never(p1_character() != characters[char_name] && p1_rounds_wins() > prev(p1_rounds_wins())) &&
-                            settings_default_and_normal_diff() &&
+                            settings_default_and_any_diff() &&
                             trigger_when(stage_8_beaten())
                 )
 }

@@ -141,10 +141,11 @@ function story_beaten() {
 // =========================================
 
 function achiev_story(title, char, points) {
-   achievement(title, format("Finish Story Mode with the good ending as {0}.", char), 10,
+   achievement(title, format("Finish Story Mode with the good ending as {0} on default difficulty.", char), 10, type="win_condition",
                trigger = p1_only() &&
                          game_mode() == MODE_STORY &&
                          p1_character() == chars[char] &&
+                         settings_difficulty() >= 4 &&
                          story_beaten()                      
                )
 }
@@ -181,7 +182,7 @@ achievement("Holy Spirit of Disaster", "Finish Story Mode without using a contin
                trigger = p1_only() &&
                          game_mode() == MODE_STORY &&
                          reset_main_menu() &&
-                         once(arcade_match() == 0 && game_character_selected_flag() == 0) &&
+                         once(arcade_match() == 0) &&
                          never(p2_rounds_won() == 2) &&
                          never(story_dialogue() == 0x0d) &&
                          trigger_when(story_beaten()) &&                  
@@ -205,7 +206,7 @@ achievement("Millennium Keeper", "Defeat Parace L'sia and finish Story Mode (def
                          default_settings_lv4()
             )
 
-achievement("Arcana Arcade Adventure!!", "Finish Arcade Mode (default settings).", 5,
+achievement("Arcana Arcade Adventure!!", "Finish Arcade Mode (default settings).", 10, type="win_condition",
                trigger = p1_only() &&
                          game_mode() == MODE_ARCADE &&
                          prev(arcade_match()) == 0x07 &&   
@@ -213,12 +214,12 @@ achievement("Arcana Arcade Adventure!!", "Finish Arcade Mode (default settings).
                          default_settings_lv4()   
             )
 
-achievement("One Million Hearts!!", "Finish Arcade Mode with over 1 million score (default settings).", 25,
+achievement("Five Million Hearts!!", "Finish Arcade Mode with over 5 million score (default settings).", 10,
                trigger = p1_only() &&
                          game_mode() == MODE_ARCADE &&
                          prev(arcade_match()) == 0x07 &&
                          arcade_match() == 0x08 &&
-                         arcade_score() >= 1000000 &&
+                         arcade_score() >= 5000000 &&
                          default_settings_lv4()   
             )
 
@@ -227,7 +228,7 @@ achievement("One Million Hearts!!", "Finish Arcade Mode with over 1 million scor
 // =========================================
 
 function achiev_critical_finish(title, char, points) {
-   achievement(title, format("{0}: Defeat the CPU with a Critical Heart finish.", char), points,
+   achievement(title, format("As {0}, Defeat the CPU with a Critical Heart finish.", char), points,
                trigger =   p1_only() &&
                            game_mode() != MODE_TRAINING &&
                            p1_character() == chars[char] &&
@@ -236,13 +237,13 @@ function achiev_critical_finish(title, char, points) {
                )
 }
 
-achiev_critical_finish("Shimatsuri", "Kamui", 10)
+achiev_critical_finish("Shimatsuri", "Kamui", 5)
 achiev_critical_finish("Konoha Special", "Konoha", 5)
 
 achiev_critical_finish("Funha", "Mei-Fang", 5)
 achiev_critical_finish("Cross Edge Typhoon", "Lilica", 5)
 achiev_critical_finish("Crimson Metzeln Stained Night", "Lieselotte", 5)
-achiev_critical_finish("The Inferno from the Demon World that Scorches Both Heaven and Earth", "Yoriko", 5)
+// achiev_critical_finish("The Inferno from the Demon World that Scorches Both Heaven and Earth", "Yoriko", 5)
 achiev_critical_finish("Last Armageddon Drop", "Kira", 10)
 
 achiev_critical_finish("L.G.A Superior Fire", "Petra", 5)

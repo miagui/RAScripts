@@ -2,8 +2,10 @@
 // #ID = 21020
 
 function settings_difficulty() => byte(0x9eda40)
+
 function settings_default_defense_level() => word(0x9edc1c) == 0x0303
 function settings_default_gauge_level() => word(0x9edc1e) == 0x0000
+function settings_default_time() => byte(0x009eda30) == 0x01
 
 function game_mode() => byte(0x9d6870)
          MODE_SINGLE_ARCADE = 0x00
@@ -209,8 +211,10 @@ characters = {
 //                  Utility              
 // =========================================
 
-function difficulty_level3() => settings_difficulty() >= 2
-function difficulty_level8() => settings_difficulty() == 7
+function default_settings_level3() => settings_difficulty() >= 2 && settings_default_defense_level() && settings_default_gauge_level() && settings_default_time()
+function default_settings_level8() => settings_difficulty() == 7 && settings_default_defense_level() && settings_default_gauge_level() && settings_default_time()
+
+
 
 function is_any_arcade() => __ornext(game_mode() <= MODE_TEAM_ARCADE || game_mode() == MODE_TEAM_PLAY)
 function is_any_team_play() => __ornext(game_mode() == MODE_TEAM_ARCADE || game_mode() == MODE_TEAM_PLAY)
@@ -233,8 +237,8 @@ function all_team_pictures() => sum_of(range(5, 7), b => bit(b,0x9eda14)) + // 3
 //               Beat the game             
 // =========================================
 
-function beat_game_team(title, char1, char2, char3) {
-    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (Level-3 diff., Default Defense and Power Gauge).", char1, char2, char3), 10,
+function beat_game_team_progression(title, char1, char2, char3) {
+    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (default settings).", char1, char2, char3), 10, type="progression",
                 trigger =   is_any_arcade() &&
                             p1_only() &&
                             once(game_arcade_match() == 0 && game_bgm() == BGM_CHAR_SELECT && p1_active_state() > 0) &&
@@ -245,77 +249,85 @@ function beat_game_team(title, char1, char2, char3) {
                             p1_team_has_char(characters[char1]) &&
                             p1_team_has_char(characters[char2]) &&
                             p1_team_has_char(characters[char3]) &&
-                            difficulty_level3() &&
-                            settings_default_defense_level() &&
-                            settings_default_gauge_level() &&
+                            default_settings_level3() &&
                             trigger_when(mukai_ending())
                 
                 )
 }
 
-beat_game_team("Splendid Evil", "Ash", "Duo Lon", "Shen Woo")
-beat_game_team("Prolongation", "Terry", "Joe", "Tizoc")
-beat_game_team("Kyoku-gen", "Ryo", "Robert", "Yuri")
-beat_game_team("Inside Skinny", "Leona", "Ralf", "Clark")
-beat_game_team("Hot For You", "King", "Mai", "Blue Mary")
-beat_game_team("Seoul Love", "Kim", "Chang", "Jhun")
-beat_game_team("Villaionous", "Yamazaki", "Billy", "Gato")
-beat_game_team("Joyrider", "Benimaru", "Daimon", "Shingo")
-beat_game_team("You Feel for Me", "Athena", "Hinako", "Malin")
-beat_game_team("KD", "K'", "Maxima", "Whip")
+function beat_game_team(title, char1, char2, char3) {
+    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (default settings).", char1, char2, char3), 10,
+                trigger =   is_any_arcade() &&
+                            p1_only() &&
+                            once(game_arcade_match() == 0 && game_bgm() == BGM_CHAR_SELECT && p1_active_state() > 0) &&
+                            never(p2_character_slot_1() == characters["Adel"]) && // reset if find Adel to remove the challenge indicator
+                            never(p1_dont_have_char(characters[char1]) && game_bgm() == BGM_FIGHT_INTRO) &&
+                            never(p1_dont_have_char(characters[char2]) && game_bgm() == BGM_FIGHT_INTRO) &&
+                            never(p1_dont_have_char(characters[char3]) && game_bgm() == BGM_FIGHT_INTRO) &&
+                            p1_team_has_char(characters[char1]) &&
+                            p1_team_has_char(characters[char2]) &&
+                            p1_team_has_char(characters[char3]) &&
+                            default_settings_level3() &&
+                            trigger_when(mukai_ending())
+                
+                )
+}
+
+beat_game_team_progression("Splendid Evil", "Ash", "Duo Lon", "Shen Woo")
+beat_game_team_progression("Prolongation", "Terry", "Joe", "Tizoc")
+beat_game_team_progression("Kyoku-gen", "Ryo", "Robert", "Yuri")
+beat_game_team_progression("Inside Skinny", "Leona", "Ralf", "Clark")
+beat_game_team_progression("Hot For You", "King", "Mai", "Blue Mary")
+beat_game_team_progression("Seoul Love", "Kim", "Chang", "Jhun")
+beat_game_team_progression("Villaionous", "Yamazaki", "Billy", "Gato")
+beat_game_team_progression("Joyrider", "Benimaru", "Daimon", "Shingo")
+beat_game_team_progression("You Feel for Me", "Athena", "Hinako", "Malin")
+beat_game_team_progression("KD", "K'", "Maxima", "Whip")
 beat_game_team("Cool Jam 2", "Kyo", "Iori", "Chizuru")
 beat_game_team("Blaze", "Kyo", "Benimaru", "Daimon")
 beat_game_team("Hot For You II", "King", "Mai", "Yuri")
 beat_game_team("ESAKA? 03", "Chizuru", "Maki", "Kusanagi")
 beat_game_team("The Final Door", "Mukai", "Adel", "Kusanagi")
 
-achievement("Unbounded", "Beat the game on Single Play (Level-3 diff., Default Defense and Power Gauge).", 10,
+achievement("Unbounded", "Beat the game on Single Play (default settings).", 10,
                 trigger =   game_mode() == MODE_SINGLE_ARCADE &&
                             p1_only() &&
-                            difficulty_level3() &&
-                            settings_default_defense_level() &&
-                            settings_default_gauge_level() &&
+                            default_settings_level3() &&
                             (mukai_ending() || adel_ending())
             )
 
-achievement("MvC Style", "Beat the game on Arcade Play (Level-3 diff., Default Defense and Power Gauge).", 10,
+achievement("MvC Style", "Beat the game on Arcade Play (default settings).", 10,
                 trigger =   game_mode() == MODE_TEAM_ARCADE &&
                             p1_only() &&
-                            difficulty_level3() &&
-                            settings_default_defense_level() &&
-                            settings_default_gauge_level() &&
+                            default_settings_level3() &&
                             (
                                 adel_ending() || mukai_ending()
                             )
             )
 
-achievement("KOF Style", "Beat the game on Team Play (Level-3 diff., Default Defense and Power Gauge).", 10,
+achievement("KOF Style", "Beat the game on Team Play (default settings).", 10,
                 trigger =   game_mode() == MODE_TEAM_PLAY &&
                             p1_only() &&
-                            difficulty_level3() &&
-                            settings_default_defense_level() &&
-                            settings_default_gauge_level() &&
+                            default_settings_level3() &&
                             (
                                 adel_ending() || mukai_ending()
                             )
             )
 
-achievement("Great Man", "Reach 36000 score on Arcade Play (Level-3 diff., Default Defense and Power Gauge).", 10,
+achievement("Great Man", "Reach 36000 score on Arcade Play (default settings).", 10,
             trigger = game_mode() == MODE_TEAM_ARCADE &&
                       p1_only() &&
-                      difficulty_level3() &&
+                      default_settings_level3() &&
                       arcade_score() >= 0x36000 &&
                       prev(arcade_score()) < 0x36000
             )
 
-achievement("Those From the Past", "Beat the game by defeating Mukai without using a continue (Level-3 diff., Default Defense and Power Gauge).", 25,
+achievement("Those From the Past", "Beat the game by defeating Mukai without using a continue (default settings).", 25,
                 trigger =   is_any_arcade() &&
                             p1_only() &&
                             once(game_arcade_match() == 0 && game_bgm() == BGM_CHAR_SELECT && p1_active_state() > 0) &&
                             never(p1_active_state() == 2) &&
-                            difficulty_level3() &&
-                            settings_default_defense_level() &&
-                            settings_default_gauge_level() &&
+                            default_settings_level3() &&
                             trigger_when(mukai_ending())
             )
 
@@ -325,14 +337,12 @@ achievement("Those From the Past", "Beat the game by defeating Mukai without usi
 // =========================================
 
 function single_play(char, title) {
-    achievement(title, format("Beat the game on Single Play Mode using only {0} (Level-3 diff., Default Defense and Power Gauge).", char), 10,
+    achievement(title, format("Beat the game on Single Play Mode using only {0} (default settings).", char), 10,
                 trigger =   never(game_mode() != MODE_SINGLE_ARCADE) &&
                             p1_only() &&
                             once(game_arcade_match() == 0 && p1_character_slot_1() == characters[char] && game_bgm() == BGM_CHAR_SELECT) &&
                             never(p1_character_slot_1() != characters[char] && game_bgm() != BGM_CHAR_SELECT) &&
-                            difficulty_level3() &&
-                            settings_default_defense_level() &&
-                            settings_default_gauge_level() &&
+                            default_settings_level3() &&
                             (mukai_ending() || adel_ending())
             )
 }
@@ -473,23 +483,19 @@ achievement("Styx", "Unlock Mukai.", 5,
                       unlockable_mukai() == 1 && prev(unlockable_mukai()) == 0
             )
 
-achievement("Lone Wolf", "Defeat 37 opponents in Single Survival Mode (Level-3 diff., Default Defense and Power Gauge).", 25,
+achievement("Lone Wolf", "Defeat 37 opponents in Single Survival Mode (default settings).", 25,
             trigger =   game_mode() == MODE_SINGLE_SURVIVAL &&
                         survival_wins_bcd() == 0x37 &&
                         prev(survival_wins_bcd()) == 0x36 &&
-                        difficulty_level3() &&
-                        settings_default_defense_level() &&
-                        settings_default_gauge_level()
+                        default_settings_level3()
             
             )
 
-achievement("My Team Is All I Need!", "Defeat 14 teams in Team Survival Mode (Level-3 diff., Default Defense and Power Gauge).", 25,
+achievement("My Team Is All I Need!", "Defeat 14 teams in Team Survival Mode (default settings).", 25,
             trigger =   game_mode() == MODE_TEAM_SURVIVAL &&
                         survival_wins_bcd() == 0x14 &&
                         prev(survival_wins_bcd()) == 0x13 &&
-                        difficulty_level3() &&
-                        settings_default_defense_level() &&
-                        settings_default_gauge_level()
+                        default_settings_level3()
             
             )
 
@@ -509,14 +515,14 @@ achievement("The Whole Story", "Unlock all team endings.", 5,
 //               Leaderboards              
 // =========================================
 
-leaderboard("KOF 2003 - Team Play Best Score", "Best score on Team Play (Level-3 difficulty).",
-           start = game_mode() == MODE_TEAM_ARCADE && p1_only() && difficulty_level3() && 
+leaderboard("KOF 2003 - Team Play Best Score", "Best score on Team Play (default settings).",
+           start = game_mode() == MODE_TEAM_ARCADE && p1_only() && default_settings_level3() && 
                    (
                         mukai_ending() ||
                         adel_ending() 
                    ),
            cancel = p2_active_state() > 0,
-           submit =  game_mode() == MODE_TEAM_ARCADE && p1_only() && difficulty_level3() && 
+           submit =  game_mode() == MODE_TEAM_ARCADE && p1_only() && default_settings_level3() && 
                      (
                         mukai_ending() ||
                         adel_ending() 
@@ -524,14 +530,14 @@ leaderboard("KOF 2003 - Team Play Best Score", "Best score on Team Play (Level-3
            value = bcd(arcade_score()) * 1,
            format = "SCORE", lower_is_better=false
            )
-leaderboard("KOF 2003 - Single Play Best Score", "Best score on Single Play (Level-3 difficulty).",
-           start = game_mode() == MODE_SINGLE_ARCADE && p1_only() && difficulty_level3() && 
+leaderboard("KOF 2003 - Single Play Best Score", "Best score on Single Play (default settings).",
+           start = game_mode() == MODE_SINGLE_ARCADE && p1_only() && default_settings_level3() && 
                    (
                         mukai_ending() ||
                         adel_ending() 
                    ),
            cancel = p2_active_state() > 0,
-           submit =  game_mode() == MODE_SINGLE_ARCADE && p1_only() && difficulty_level3() && 
+           submit =  game_mode() == MODE_SINGLE_ARCADE && p1_only() && default_settings_level3() && 
                      (
                         mukai_ending() ||
                         adel_ending() 

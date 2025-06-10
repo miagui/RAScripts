@@ -138,12 +138,19 @@ function game_beaten() {
             (ladder_tower() == tower_master_ii && prev(ladder_match()) == 10 && p1_rounds_wins() == 2 && prev(p1_rounds_wins()) == 1)
 } 
 
+function game_beaten_v2() {
+    return  (ladder_tower() == tower_novice && prev(ladder_match()) == 7 && p1_rounds_wins() == 1 && p2_hp() == 0 && prev(p2_hp()) != 0) || 
+            (ladder_tower() == tower_warrior && prev(ladder_match()) == 8 && p1_rounds_wins() == 1 && p2_hp() == 0 && prev(p2_hp()) != 0)|| 
+            (ladder_tower() == tower_master_i && prev(ladder_match()) == 9 && p1_rounds_wins() == 1 && p2_hp() == 0 && prev(p2_hp()) != 0) || 
+            (ladder_tower() == tower_master_ii && prev(ladder_match()) == 10 && p1_rounds_wins() == 1 && p2_hp() == 0 && prev(p2_hp()) != 0)
+} 
+
 // ========================
 //       Beat the Game
 // ========================
 
 function achiev_beat_game_char(char, points, id_cheevo) {
-    achievement(char, format("Beat the game using only {0} (No Kombat Kodes).", char), points, 
+    achievement(char, format("Beat the game using only {0} (no Kombat Kodes).", char), points, 
                 trigger = p1_only() &&
                           never(game_state() == gs_fighting && !no_kombat_code()) &&
                           once(ladder_match() == 0 && game_state() == gs_fighting) &&
@@ -163,7 +170,7 @@ achiev_beat_game_char("Triborg", 10, 210598)
         
 
 // Separate achievement for Super Sub-Zero, since he uses a different logic.
-achievement("Super Sub-Zero", "Beat the game using only Super Sub-Zero (No Kombat Kodes).", 10, 
+achievement("Super Sub-Zero", "Beat the game using only Super Sub-Zero (no Kombat Kodes).", 10, 
                 trigger = p1_only() &&
                           never(game_state() == gs_fighting && !no_kombat_code()) &&
                           once (ladder_match() == 0 && 
@@ -180,7 +187,7 @@ achievement("Super Sub-Zero", "Beat the game using only Super Sub-Zero (No Komba
 //          Towers
 // ========================
 
-achievement("Novice Tower", "Finish the Novice tower (No Kombat Kodes).", 3, 
+achievement("Novice Tower", "Finish the Novice tower (no Kombat Kodes).", 3, type="win_condition",
             trigger =   p1_only() &&
                         never(game_state() == gs_fighting && !no_kombat_code()) &&
                         once(ladder_match() == 0 && game_state() == gs_fighting) &&
@@ -188,7 +195,7 @@ achievement("Novice Tower", "Finish the Novice tower (No Kombat Kodes).", 3,
                         ladder_tower() == tower_novice,
             id = 210600)
 
-achievement("Warrior Tower", "Finish the Warrior tower (No Kombat Kodes).", 5, 
+achievement("Warrior Tower", "Finish the Warrior tower (no Kombat Kodes).", 5, type="win_condition",
             trigger =   p1_only() &&
                         never(game_state() == gs_fighting && !no_kombat_code()) &&
                         once(ladder_match() == 0 && game_state() == gs_fighting) &&
@@ -196,7 +203,7 @@ achievement("Warrior Tower", "Finish the Warrior tower (No Kombat Kodes).", 5,
                         ladder_tower() == tower_warrior,
             id = 210601)
 
-achievement("Master Tower", "Finish the Master tower (No Kombat Kodes).", 10, 
+achievement("Master Tower", "Finish the Master tower (no Kombat Kodes).", 10, type="win_condition",
             trigger =   p1_only() &&
                         never(game_state() == gs_fighting && !no_kombat_code()) &&
                         once(ladder_match() == 0 && game_state() == gs_fighting) &&
@@ -204,7 +211,7 @@ achievement("Master Tower", "Finish the Master tower (No Kombat Kodes).", 10,
                         ladder_tower() == tower_master_i,
             id = 210602)
 
-achievement("Champion Tower", "Finish the Champion tower on Extreme difficulty (No Kombat Kodes).", 25, 
+achievement("Champion Tower", "Finish the Champion tower on Extreme difficulty (no Kombat Kodes).", 25, type="win_condition",
             trigger =   p1_only() &&
                         never(game_state() == gs_fighting && !no_kombat_code()) &&
                         once(ladder_match() == 0 && game_state() == gs_post_char_select && game_cpu_diff() == 9) &&
@@ -231,7 +238,7 @@ achievement("Ran Over", "Perform a Stage Fatality on The Subway.", 2,
                         game_stage() == 0x00 &&
                         p1_hp() > 0)
 
-achievement("Meat Skewer", "Perform a Stage Fatality on Bell Tower.", 3,
+achievement("Meat Skewer", "Perform a Stage Fatality on Bell Tower.", 2,
             trigger =   p1_human() &&
                         unless(game_state() != gs_fighting) &&
                         round_finishing_move() == f_pit_fatality &&
@@ -253,7 +260,7 @@ achievement("Welcome to Hell", "Perform a Stage Fatality on Scorpion's Lair.", 2
                         p1_hp() > 0)
 
 
-achievement("Roundhouse Explosion", "Rain: Perform a Fatality, Babality and Friendship during an arcade playthrough.", 10,
+achievement("Roundhouse Explosion", "Perform a Fatality, Babality and Friendship as Rain during an arcade playthrough.", 10,
             trigger =   unless(!p1_only()) &&
                         no_kombat_code() &&
                         unless(p1_char() != characters["Rain"]) &&
@@ -265,7 +272,7 @@ achievement("Roundhouse Explosion", "Rain: Perform a Fatality, Babality and Frie
                         (always_true() || never(ladder_match() == 0 && p1_state() == ps_char_selected))
                 )  
 
-achievement("Clone Throw", "Noob Saibot: Perform a Fatality and Babality during an arcade playthrough.", 10,
+achievement("Clone Throw", "Perform a Fatality and Babality as Noob during an arcade playthrough.", 10,
             trigger =   unless(!p1_only()) &&
                         no_kombat_code() &&
                         unless(p1_char() != characters["Noob Saibot"]) &&
@@ -276,7 +283,7 @@ achievement("Clone Throw", "Noob Saibot: Perform a Fatality and Babality during 
                         (always_true() || never(ladder_match() == 0 && p1_state() == ps_char_selected))
             )
 
-achievement("Ice Spike", "Super Sub-Zero: Perform a Fatality, Babality and Friendship during an arcade playthrough.", 10,
+achievement("Ice Spike", "Perform a Fatality, Babality and Friendship as Super Sub-Zero during an arcade playthrough.", 10,
             trigger =   unless(!p1_only()) &&
                         no_kombat_code() &&
                         unless(p1_char() != characters["Classic Sub-Zero"] || p1_super_sub_zero_transformed() != 1) &&
@@ -290,7 +297,7 @@ achievement("Ice Spike", "Super Sub-Zero: Perform a Fatality, Babality and Frien
 
 for char in characters {
     if (char != "Chameleon" && char != "Khameleon" && char != "Shao Kahn" && char != "Motaro")
-    achievement(format("MKX Brutality - {0}", char), format("{0}: Perform a MKX Brutality (Arcade Mode).", char), 10,
+    achievement(format("MKX Brutality - {0}", char), format("Perform a MKX Brutality as {0} during Arcade mode.", char), 10,
                 trigger = unless(!p1_only()) &&
                           unless(p1_char() != characters[char]) &&
                           unless(p1_hp() == 0) &&
@@ -305,13 +312,13 @@ for char in characters {
 //     Flawless Victory
 // ========================
 
-achievement("Flawless Victory", "Get a Flawless Victory (Arcade Mode).", 1, 
+achievement("Flawless Victory", "Get a Flawless Victory during Arcade mode.", 1, 
             trigger =   p1_only() &&
                         no_kombat_code() &&
                         unless(p1_hp() < 0xa6) &&
                         p1_rounds_wins() > prev(p1_rounds_wins()))
 
-achievement("Double Flawless Victory", "Get a Double Flawless Victory (Arcade Mode).", 4, 
+achievement("Double Flawless Victory", "Get a Double Flawless Victory during Arcade mode.", 4, 
             trigger =   p1_only() &&
                         no_kombat_code() &&
                         unless(p1_hp() < 0xa6) &&
@@ -322,7 +329,7 @@ achievement("Double Flawless Victory", "Get a Double Flawless Victory (Arcade Mo
 //          Misc
 // ========================
 
-achievement("We're Out of Ninja Sprites, What Do We Do?!", "Play as Noob MK3.", 2,
+achievement("We Don't Have Ninja Sprites, What Should We Do?!", "Play as Noob MK3.", 2,
             trigger =   p1_human() &&
                         game_state() == gs_round_intro &&
                         p1_char() == characters["Kano"] &&
@@ -352,21 +359,21 @@ achievement("Pedrinho Matador", "Perform a Fart-ality.", 3,
                       game_state() == gs_round_end &&
                       game_modifier() == 0x69420) 
 
-achievement("We Are Many", "Defeat Chameleon (No Kombat Kodes).", 25,
+achievement("We Are Many", "Defeat Chameleon (no Kombat Kodes).", 25,
             trigger =   p1_only() &&
                         no_kombat_code() &&
                         never(p2_char() != characters["Chameleon"]) &&
                         once(match_current_round() == 1 && game_state() == gs_round_intro) &&
                         prev(p1_rounds_wins()) == 1 && p1_rounds_wins() == 2)
 
-achievement("Secret Battle", "Defeat Khameleon (No Kombat Kodes).", 25,
+achievement("Secret Battle", "Defeat Khameleon (no Kombat Kodes).", 25,
             trigger =   p1_only() &&
                         no_kombat_code() &&
                         never(p2_char() != characters["Khameleon"]) &&
                         once(match_current_round() == 1 && game_state() == gs_round_intro) &&
                         prev(p1_rounds_wins()) == 1 && p1_rounds_wins() == 2)
 
-achievement("Boss Endurance", "Beat the Boss Endurance (No Kombat Kodes).", 25,
+achievement("Boss Endurance", "Beat the Boss Endurance (no Kombat Kodes).", 25,
             trigger =   never(!p1_only()) &&
                         no_kombat_code() &&
                         once(p2_char() == characters["Motaro"] && game_state() == gs_fighting) &&
@@ -375,7 +382,7 @@ achievement("Boss Endurance", "Beat the Boss Endurance (No Kombat Kodes).", 25,
                         p1_rounds_wins() == 2,
             id = 210646)
 
-achievement("Plus Ultimate Endurance", "Beat the Plus Ultimate Endurance (No Kombat Kodes).", 50,
+achievement("Plus Ultimate Endurance", "Beat the Plus Ultimate Endurance (no Kombat Kodes).", 50,
             trigger =   never(!p1_only()) &&
                         no_kombat_code() &&
                         once(p2_char() == characters["Chameleon"]) &&
