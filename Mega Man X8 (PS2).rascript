@@ -283,7 +283,7 @@ function achievement_exf_finish(title, boss_name, stage_id, points, cheevo_id) {
 }
 
 function achievement_no_damage_clear(stage_name, stage_id, points, cheevo_id) {
-    achievement(format("{0} Damageless", stage_name), format("Reach the boss door of {0} stage without taking damage (Normal difficulty).", stage_name), points,
+    achievement(format("{0} Damageless", stage_name), format("Achieve a 'No Damage' clear on {0}'s' stage (Normal difficulty).", stage_name), points,
                 trigger =   game_stage() == stage_id &&
                             stage_intermission_flag() == 0 &&
                             trigger_when(stage_has_been_sucessfully_cleared()) &&

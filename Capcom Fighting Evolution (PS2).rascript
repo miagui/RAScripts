@@ -92,7 +92,7 @@ function game_beaten() => __ornext(p2_current_character_battle() == characters["
 // =========================================
 
 function achiev_finish_arcade(title, char1, char2) {
-    achievement(title, format("Complete Arcade Mode using only {0} and {1} (3 stars difficulty, 3 rounds, damage lv. 2).", char1, char2), 10,
+    achievement(title, format("Complete Arcade Mode using only {0} and {1} on default settings.", char1, char2), 10,
                 trigger =   is_arcade() &&
                             p1_only() &&
                             once(game_arcade_match() == 0 && game_current_bgm() == BGM_PLAYER_SELECT) &&
@@ -122,7 +122,7 @@ achiev_finish_arcade("Naked Team", "Zangief", "Urien")
 achiev_finish_arcade("Girls Rivalry Team", "Karin", "Sakura")
 achiev_finish_arcade("Bosses Team", "Shin Akuma", "Pyron")
 
-achievement("Capcom Fighting Evolution", "Finish Arcade Mode on 8 stars difficulty (3 rounds, damage lv. 2)", 10,
+achievement("Capcom Fighting Evolution", "Finish Arcade Mode on 8-star difficulty and default settings.", 10,
             trigger =   is_arcade() &&
                         p1_only() &&
                         trigger_when(game_beaten()) &&
@@ -131,7 +131,7 @@ achievement("Capcom Fighting Evolution", "Finish Arcade Mode on 8 stars difficul
                         settings_damage_level_default()
             )
 
-achievement("Eternal Goddess", "Defeat Ingrid during Arcade Mode (3 stars difficulty, 3 rounds, damage lv. 2)", 10,
+achievement("Eternal Goddess", "Defeat Ingrid during Arcade Mode on default settings.", 10,
             trigger =   is_arcade() &&
                         p1_only() &&
                         p2_current_character_battle() == characters["Ingrid"] &&
@@ -141,7 +141,7 @@ achievement("Eternal Goddess", "Defeat Ingrid during Arcade Mode (3 stars diffic
                         settings_damage_level_default()
             )
 
-achievement("The Lord of the Living Flames", "Defeat Pyron during Arcade Mode (3 stars difficulty, 3 rounds, damage lv. 2)", 5,
+achievement("The Lord of the Living Flames", "Defeat Pyron during Arcade Mode on default settings.", 5, type="win_condition",
             trigger =   is_arcade() &&
                         p1_only() &&
                         p2_current_character_battle() == characters["Pyron"] &&
@@ -151,7 +151,7 @@ achievement("The Lord of the Living Flames", "Defeat Pyron during Arcade Mode (3
                         settings_damage_level_default()
             )
 
-achievement("True Great Devil", "Defeat Shin Akuma during Arcade Mode (3 stars difficulty, 3 rounds, damage lv. 2)", 25,
+achievement("True Great Devil", "Defeat Shin Akuma during Arcade Mode on default settings.", 25,
             trigger =   is_arcade() &&
                         p1_only() &&
                         p2_current_character_battle() == characters["Shin Akuma"] &&
@@ -162,7 +162,7 @@ achievement("True Great Devil", "Defeat Shin Akuma during Arcade Mode (3 stars d
             )
 
 function achiev_super_finish(title, char) {
-    achievement(title, format("{0}: Finish a round with a Super Move during Arcade Mode (3 stars difficulty).", char), 5,
+    achievement(title, format("Finish a round with a Super Move as {0} during Arcade Mode on default difficulty.", char), 5,
                 trigger =   is_arcade() &&
                             p1_only() &&
                             p1_current_character_battle() == characters[char] &&

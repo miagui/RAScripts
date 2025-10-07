@@ -8,7 +8,6 @@
 // Settings
 function default_extra_options() {
     return (
-        settings_system_direction() == 0 &&
         dword(0x63415C) == 0x30301 && word(0x634160) == 0x100 &&
         dword(0x634164) == 0x2020000 && 
         word(0x634168) == 0x808 && extra_options_sa_gauge_increase_speed() == 0x02 &&
@@ -24,6 +23,7 @@ function default_settings() {
         settings_rounds_1p() == 1 &&
         settings_rounds_vs() == 1 &&
         settings_damage_level() == 1 &&
+        settings_system_direction() == 0 &&
         default_extra_options()
     )
 }
@@ -35,6 +35,17 @@ function default_settings_level8() {
         settings_rounds_1p() == 1 &&
         settings_rounds_vs() == 1 &&
         settings_damage_level() == 1 &&
+        settings_system_direction() == 0 &&
+        default_extra_options()
+    )
+}
+
+function default_settings_any_rounds() {
+    return (
+        settings_difficulty() >= 2 &&
+        settings_time_limit() == 2 &&
+        settings_damage_level() == 1 &&
+        settings_system_direction() == 0 &&
         default_extra_options()
     )
 }
@@ -229,7 +240,7 @@ function is_arcade() => never(game_mode() != 0)
 // =========================================
 
 function achiev_beat_the_game(title, char) {
-    achievement(title, format("Finish Arcade Mode using only {0} (default settings).", char), 10,
+    achievement(title, format("Finish Arcade Mode using only {0} on any round settings and default settings.", char), 10, type="win_condition",
                 trigger = p1_only() &&
                           is_arcade() &&
                           is_ingame() &&
@@ -237,7 +248,7 @@ function achiev_beat_the_game(title, char) {
                           never(p1_character() != characters[char] && game_arcade_match() > prev(game_arcade_match())) &&
                           p1_character() == characters[char] &&
                           trigger_when(game_beaten()) &&
-                          default_settings()
+                          default_settings_any_rounds()
                 )
 }
 
@@ -263,16 +274,17 @@ achiev_beat_the_game("00101.11010.01010.01111.00010", "Twelve")
 achiev_beat_the_game("Why Am I Here, Anyway?", "Remy")
 
 
-achievement("Psyche Out", "Finish Arcade Mode on 8-stars difficulty (default settings).", 10,
+achievement("Psyche Out", "Finish Arcade Mode on 8-stars difficulty and default settings.", 10,
                 trigger = p1_only() &&
                           is_arcade() &&
                           is_ingame() &&
                           trigger_when(game_beaten()) &&
-                          default_settings_level8()
+                          default_settings() &&
+                          settings_difficulty() == 7
             )
 
 
-achievement("Live the Legend", "Finish Arcade Mode without using a continue (default settings).", 25,
+achievement("Live the Legend", "Finish Arcade Mode without using a continue on default settings.", 25,
                 trigger = p1_only() &&
                           is_arcade() &&
                           is_ingame() &&
@@ -282,7 +294,7 @@ achievement("Live the Legend", "Finish Arcade Mode without using a continue (def
                           default_settings()
                 )
 
-achievement("Third Strike", "Win a round with a Perfect (default settings).", 2,
+achievement("Third Strike", "Win a round with a Perfect on default settings.", 2,
             trigger =   p1_only() &&
                         is_arcade() &&
                         is_ingame() &&
@@ -292,7 +304,7 @@ achievement("Third Strike", "Win a round with a Perfect (default settings).", 2,
             )
 
 
-achievement("*heavy breathing*", "Defeat Q during Arcade Mode (default settings).", 25,
+achievement("*heavy breathing*", "Defeat Q during Arcade Mode on default settings.", 25,
             trigger =   p1_only() &&
                         is_arcade() &&
                         is_ingame() &&

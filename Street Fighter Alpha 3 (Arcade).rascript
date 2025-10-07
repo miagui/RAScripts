@@ -249,7 +249,7 @@ achievement("V-ISM Scorer", "Get a Score of 750.000 using only V-ISM on Arcade M
 // =========================================
 
 function achievement_beat_game_char(title, char, id) {
-    achievement(title, format("Finish Arcade Mode as {0}.", char), 5,
+    achievement(title, format("Finish Arcade Mode as {0}.", char), 5, type="win_condition",
                 trigger = p1_only() &&
                           playing_arcade() &&
                           prior(ladder_opponents_defeated_bitflag()) > 0 &&
@@ -277,14 +277,14 @@ achievement_beat_game_char("Praying", "Dhalsim", 0)
 achievement_beat_game_char("Heavy Swell", "Zangief", 0)
 // achievement_beat_game_char("Moments", "Gen", 0)
 
-achievement("Moments", "Finish Arcade Mode as Gen.", 5,
+achievement("Moments", "Finish Arcade Mode as Gen.", 5, type="win_condition",
                 trigger = p1_only() &&
                           playing_arcade() &&
                           (p1_char() == characters["Gen"] || p1_char() == characters["Gen (Crane)"]) && 
                           beaten_arcade_mode()
             )
 
-achievement("Resolution", "Finish Arcade Mode as Chun-Li.", 5,
+achievement("Resolution", "Finish Arcade Mode as Chun-Li.", 5, type="win_condition",
                 trigger = p1_only() &&
                           playing_arcade() &&
                           p1_char() == characters["Chun-Li"] && 
@@ -293,7 +293,7 @@ achievement("Resolution", "Finish Arcade Mode as Chun-Li.", 5,
             id = 217593
             )
 
-achievement("Spinning Bird Kick", "Finish Arcade Mode using only Classic Chun-Li.", 5,
+achievement("Spinning Bird Kick", "Finish Arcade Mode using only Classic Chun-Li.", 5, type="win_condition",
                 trigger = p1_only() &&
                           playing_arcade() &&
                           p1_char() == characters["Chun-Li"] && 
@@ -490,7 +490,7 @@ function achievement_all_super_combo(char, title, points, move_array, id) {
         array_push(moves_logic, once((p2_taking_damage() > prev(p2_taking_damage()) || p1_hit_combo() > prev(p1_hit_combo())) && p1_move() == move))
     }
     
-    achievement(title, format("{0}: Hit your opponent with all Super Combos during an Arcade playthrough.", char), points,
+    achievement(title, format("Hit your opponent with all Super Combos as {0} during an Arcade playthrough.", char), points,
                 trigger =   p1_only() &&
                             playing_arcade() &&
                             unless(p1_char() != characters[char]) &&
@@ -526,7 +526,7 @@ achievement_all_super_combo("Karin", "Kanzuki-ryuu Shinpikaibyaku", 5, [0x10, 0x
 achievement_all_super_combo("Juli", "Reverse Shaft Breaker", 5, [0x1e, 0x0c], 217662)
 achievement_all_super_combo("Juni", "Psycho Streak", 5, [0x26, 0x0c], 217663)
 
-achievement("Aura Soul Spark", "Rose: Hit your opponent with all Super Combos and use Soul Illusion once during an Arcade playthrough.", 5,
+achievement("Aura Soul Spark", "Hit your opponent with all Super Combos and use Soul Illusion once as Rose during an Arcade playthrough.", 5,
                 trigger =   p1_only() &&
                             playing_arcade() &&
                             unless(p1_char() != characters["Rose"]) &&
@@ -535,7 +535,7 @@ achievement("Aura Soul Spark", "Rose: Hit your opponent with all Super Combos an
                                               once(p1_move() == 0x0c))),
             id = 0)
 
-achievement("Tiger Cannon", "Sagat: Hit your opponent with all Super Combos and use Angry Charge once during an Arcade playthrough.", 5,
+achievement("Tiger Cannon", "Hit your opponent with all Super Combos and use Angry Charge once as Sagat during an Arcade playthrough.", 5,
                 trigger =   p1_only() &&
                             playing_arcade() &&
                             unless(p1_char() != characters["Sagat"]) &&
@@ -545,7 +545,7 @@ achievement("Tiger Cannon", "Sagat: Hit your opponent with all Super Combos and 
                                               once(p1_move() == 0x16))),
             id = 0)
 
-achievement("Zan'ei and Kouga", "Gen: Hit your opponent with all Super Combos from Crane and Mantis form during an Arcade playthrough.", 5,
+achievement("Zan'ei and Kouga", "Hit your opponent with all Super Combos from Crane and Mantis form as Gen during an Arcade playthrough.", 5,
                 trigger =   p1_only() &&
                             playing_arcade() &&
                             measured(tally(4, once(p1_char() == 0x11 && p1_hit_with_move(0x0a)),
@@ -554,7 +554,7 @@ achievement("Zan'ei and Kouga", "Gen: Hit your opponent with all Super Combos fr
                                               once(p1_char() == 0x13 && p1_hit_with_move(0x0c)))),
             id = 0)
 
-achievement("Death Cross Dancing", "Juli & Juni: Hit your opponent with all Super Combos during a Dramatic Battle playthrough.", 5,
+achievement("Death Cross Dancing", "Hit your opponent with all Super Combos as Juni & Juli during a Dramatic Battle playthrough.", 5,
                 trigger =   p1_only() &&
                             playing_dramatic_battle() &&
                             ((measured(tally(2, once(p1_char() == characters["Juli"] && p1_hit_with_move_2(0x22)),
@@ -563,7 +563,7 @@ achievement("Death Cross Dancing", "Juli & Juni: Hit your opponent with all Supe
                                               once(p1_char() == characters["Juni"] && p1_move_type() == move_type_super_combo && p1_move() == 0x1c && p1_animation() == 0xe5b0))))),
             id = 0)
 
-achievement("The Actual Saikyou Style", "Dan: Use Chouhatsu Densetsu during a fight and let it play entirely (Arcade Mode).", 4,
+achievement("The Actual Saikyou Style", "As Dan, use Chouhatsu Densetsu during a fight and let it play entirely (Arcade Mode).", 4,
             trigger =   p1_only() &&
                         playing_arcade() &&
                         unless(p1_char() != characters["Dan"]) &&
@@ -572,13 +572,18 @@ achievement("The Actual Saikyou Style", "Dan: Use Chouhatsu Densetsu during a fi
                         p1_move_type() == move_type_super_combo,
             id = 0)
 
-achievement("Curse You, CPU!", "Dan: Taunt 10 times in mid air during Chouhatsu Shinwa (Arcade Mode).", 5,
+achievement("Curse You, CPU!", "As Dan taunt 10 times in mid air during Chouhatsu Shinwa (Arcade Mode).", 5,
             trigger =   p1_only() &&
                         playing_arcade() &&
-                        never(p1_char() != characters["Dan"]) &&
                         unless(p1_in_air_flag() == 0) &&
-                        never(word(0x843a) == 0) && // Chouhatsu Shinwa Timer (Dan) [16 bits]
-                        measured(repeated(10, p1_attacking_flag() == 1 && prev(p1_attacking_flag()) == 0)),
-            id = 0)
+                        measured(repeated(10, p1_animation() == 0xa18c && prev(p1_animation()) != 0xa18c)) &&
+                        (always_true() || 
+                            (
+                                never(p1_char() != characters["Dan"]) && 
+                                never(p1_move_type() != move_type_super_combo) // Chouhatsu Shinwa Timer (Dan) [16 bits])
+                            )
+                        )
+                         
+            )
 
 

@@ -30,6 +30,7 @@ function round_timer() => byte(0x00A837)
 
 // P1
 function p1_active_state() => byte(0x00FDB7)
+function p1_rounds_won() => byte(0xa853)
 
 function p1_team() => byte(0x00A840)
 function p1_character_1() => byte(0x00A842)
@@ -92,6 +93,24 @@ function game_beaten_single_play() {
             arcade_team_defeated_total() == 8
     )
 }
+
+// =========================================
+//                  Misc              
+// =========================================
+
+
+
+
+achievement(
+    title = "First Step to be a King", points = 4,
+    description = "Win a round with a perfect.",
+    id = 59908, badge = "62658", published = "06/05/2018 15:17:02", modified = "10/10/2024 17:15:47",
+    trigger =   p1_only() && 
+                p1_hp() == 0xcf && 
+                p2_characters_defeated() > prev(p2_characters_defeated()) &&
+                p2_characters_defeated() != 0xff
+)
+
 
 // =========================================
 //                Story Teams              

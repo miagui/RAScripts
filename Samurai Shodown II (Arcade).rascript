@@ -213,9 +213,6 @@ achievement(
                (won_round_condition() == 8))
 )
 
-// Ticket 32230: I was playing at AES, no continues. I won the second round against Mizuki by time over.
-//               
-//               The cheevo didn't trigger.<br>MD5: Unknown<br>Emulator: RetroArch (FBneo)
 achievement(
     title = "Oni", points = 10, type="win_condition",
     description = "Finish the game playing only as Genjuro Kibagami (P1)",
@@ -228,15 +225,6 @@ achievement(
                (won_round_condition() == 8))
 )
 
-// Ticket 66384: Hi there, sorry to bother u. I have won the game with Cham Cham twice now but this hasnt triggered.
-//               Here is a savestate on the last round:
-//               
-//               https://www.mediafire.com/file/cobfma006ru0sg6/samsho2.state/file
-//               
-//               Am i doing something wrong? I havent changed anything in the game config.
-//               
-//               Thanks.
-//               RetroAchievements Hash: Unknown
 achievement(
     title = "Juujo", points = 10, type="win_condition",
     description = "Finish the game playing only as Cham Cham (P1)",
@@ -1041,11 +1029,6 @@ achievement(
               never(p2_active_state() != 0)
 )
 
-// Ticket 16604: With Galford
-//               
-//               My life Red and Cham Cham Life red, I used DM kill Cham Cham and active the Achievement, Isn`t only
-//               total Life ???
-//               MD5: Unknown
 achievement(
     title = "Kanzen Shori SS2", points = 5,
     description = "Win a perfect round (P1, difficulty>=Normal)",

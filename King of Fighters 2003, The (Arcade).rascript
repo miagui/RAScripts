@@ -263,7 +263,7 @@ function adel_ending() => game_bgm() == BGM_ENDING_ADEL && prev(game_bgm()) != B
 // =========================================
 
 function beat_game_team_progression(title, char1, char2, char3) {
-    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (default settings).", char1, char2, char3), 10, type="progression",
+    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (default settings).", char1, char2, char3), 10, type="win_condition",
                 trigger =   is_arcade() &&
                             p1_only() &&
                             once(game_arcade_match() == 0 && game_bgm() == BGM_CHAR_SELECT && p1_active_state() > 0) &&
@@ -281,7 +281,7 @@ function beat_game_team_progression(title, char1, char2, char3) {
 }
 
 function beat_game_team(title, char1, char2, char3) {
-    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (default settings).", char1, char2, char3), 10,
+    achievement(title, format("Beat the game by defeating Mukai using only {0}, {1} and {2} (default settings).", char1, char2, char3), 10, type="win_condition",
                 trigger =   is_arcade() &&
                             p1_only() &&
                             once(game_arcade_match() == 0 && game_bgm() == BGM_CHAR_SELECT && p1_active_state() > 0) &&
@@ -322,7 +322,7 @@ achievement("Unbounded", "Beat the game on Single Play (default settings).", 10,
                             (mukai_ending() || adel_ending())
             )
             
-achievement("Melody of Sorrow", "Defeat Adelheid Bernstein and beat the game on Team Play (default settings).", 10,
+achievement("Melody of Sorrow", "Defeat Adelheid Bernstein and beat the game on Team Play (default settings).", 10, type="win_condition",
                 trigger =   game_mode() == MODE_TEAM_ARCADE &&
                             p1_only() &&
                             default_settings_level3() &&
@@ -364,10 +364,9 @@ achievement("Tales of Ash I", "Beat the game without using a continue (default s
 // =========================================
 
 function hit_leader_dm(char, title) {
-    achievement(title, format("{0}: Hit your opponent with Leader Super Desperation Move on Arcade Mode.", char), 5,
+    achievement(title, format("Hit your opponent with Leader Super Desperation Move as {0} on Arcade Mode.", char), 5,
                 trigger =   is_arcade() &&
                             p1_only() &&
-                            settings_power_gauge_1p() == 0 &&
                             p1_leader_dm() == 1 && __ornext(p1_target_damaged() == 1 || p1_target_grabbed() == 1 || (p2_player_hit() == 1 && p2_player_hit_2() == 1)) &&
                             (
                                 (p1_current_character_slot() == 0 && p1_order_select_slot_1() == characters[char]) ||
@@ -413,10 +412,9 @@ hit_leader_dm("Iori", "San Shingi no Ni")
 hit_leader_dm("Chizuru", "San Shingi no San")
 hit_leader_dm("Kusanagi", "Ura 108 Shiki • Orochi Nagi")
 
-achievement("Kissy, Kissy Psycho Bomber", "Athena: Hit your opponent with a Leader Super Desperation Move and finish it with Kissy, Kissy Psycho Bomber on Arcade Mode.", 5,
+achievement("Kissy, Kissy Psycho Bomber", "Hit your opponent with a Leader Super Desperation Move and finish it with Kissy, Kissy Psycho Bomber as Athena on Arcade Mode.", 5,
                 trigger =   is_arcade() &&
                             p1_only() &&
-                            settings_power_gauge_1p() == 0 &&
                             p1_leader_dm() == 1 && p1_current_move() == 0x00e1 && prev(p1_current_move()) != 0x00e1 &&
                             (
                                 (p1_current_character_slot() == 0 && p1_order_select_slot_1() == characters["Athena"]) ||
@@ -426,10 +424,9 @@ achievement("Kissy, Kissy Psycho Bomber", "Athena: Hit your opponent with a Lead
                 
                 )
 
-achievement("Tenryu Retsu Kiba", "Gato: Hit your opponent with Leader Super Desperation Move on Arcade Mode.", 5,
+achievement("Tenryu Retsu Kiba", "Hit your opponent with Leader Super Desperation Move as Gato on Arcade Mode.", 5,
                 trigger =   is_arcade() &&
                             p1_only() &&
-                            settings_power_gauge_1p() == 0 &&
                             p1_leader_dm() == 1 && p1_current_move() == 0x00cb && 
                             __ornext(p1_target_damaged() == 1 || p1_target_grabbed() == 1 || (p2_player_hit() == 1 && p2_player_hit_2() == 1)) &&
                             (
